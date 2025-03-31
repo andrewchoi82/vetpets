@@ -19,7 +19,7 @@ export default function dashboardSmallBox({label, value, image}: SidebarProps) {
             <div className="w-60 h-27 relative bg-white rounded-[20px] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.10)] overflow-hidden">
             <div className="w-28 left-[23px] top-[20px] absolute inline-flex flex-col justify-start items-start gap-2">
             <div className="self-stretch h-5 justify-center text-[#a3a3a3] text-lg whitespace-nowrap overflow-visible">{label}</div>
-            <div className="self-stretch h-9 justify-center text-black text-3xl whitespace-nowrap overflow-visible">{value}</div>
+            <div className="self-stretch h-9 justify-center text-black text-3xl whitespace-nowrap overflow-visible ">{value}</div>
             </div>
             <Image
                     src={image}
