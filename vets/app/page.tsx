@@ -2,11 +2,11 @@
 
 import React, { useState } from 'react'
 import Image from "next/image";
-import DashboardSmallBox from "../components/dashboardSmallBox"
-import DashboardAppointmentsBox from "../components/dashboardAppointmentsBox"
-import DashboardRecentTestBox from "../components/dashboardRecentTestBox"
-import DashboardBillingBox from "../components/dashboardBillingBox"
-import DashboardMessagesBox from "../components/dashboardMessagesBox"
+import DashboardSmallBox from "./components/dashboardSmallBox"
+import DashboardAppointmentsBox from "./components/dashboardAppointmentsBox"
+import DashboardRecentTestBox from "./components/dashboardRecentTestBox"
+import DashboardBillingBox from "./components/dashboardBillingBox"
+import DashboardMessagesBox from "./components/dashboardMessagesBox"
 
 
 
