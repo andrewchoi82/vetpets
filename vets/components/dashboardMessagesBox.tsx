@@ -16,31 +16,31 @@ export default function DashboardMessagesBox() {
             messageId: 1,
             name: "Lab Results Ready",
             date: "03/16/25",
-            type: "compLabIcon.svg",
+            type: "/img/dashboard/compLabIcon.svg",
         },
         {
             messageId: 2,
             name: "Medication Results Approved", 
             date: "02/22/25 ",
-            type: "compApprovedIcon.svg",
+            type: "/img/dashboard/compApprovedIcon.svg",
         },
         {
             messageId: 3,
             name: "Urgent: Vaccine Due",
             date: "01/13/25 ",
-            type: "compVaccineIcon.svg",
+            type: "/img/dashboard/compVaccineIcon.svg",
         },
         {
             messageId: 4,
             name: "New Test Ordered",
             date: "11/24/24",
-            type: "compTestIcon.svg",
+            type: "/img/dashboard/compTestIcon.svg",
         },
         {
             messageId: 5,
             name: "Annual Check-up",
             date: "03/16/24",
-            type: "compApprovedIcon.svg",
+            type: "/img/dashboard/compApprovedIcon.svg",
         }
     ];
     const [messageData, setMessageData] = useState<Message[]>([]);
@@ -60,7 +60,7 @@ export default function DashboardMessagesBox() {
                     <React.Fragment key={message.messageId}>
                         <div className="flex items-center gap-3">
                             <Image
-                                src={`/${message.type}`}
+                                src={message.type}
                                 alt="Failed to Load"
                                 width={28}
                                 height={28}

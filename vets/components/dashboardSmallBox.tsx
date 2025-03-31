@@ -11,7 +11,7 @@ type SidebarProps = {
 
 //small box components for breed, age, weight, and gender tab in the dashboard
 //input the labels and image location from higher up file and set it
-//to make one call it like this         <DashboardSmallBox label={"Gender"} value = {"Male"} image={"/dashboardGender.svg"}/>
+//to make one call it like this         <DashboardSmallBox label={"Gender"} value = {"Male"} image={"/img/dashboard/dashboardGender.svg"}/>
 export default function dashboardSmallBox({label, value, image}: SidebarProps) {
 
 
