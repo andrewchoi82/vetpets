@@ -43,9 +43,9 @@ export default function dashboardRecentTestBox() {
                     <span className="text-black text-lg"> {testData?.name}</span>
                 </div>
 
-                <div className="flex items-center gap-8">
+                <div className="flex items-center">
                     <div className="text-neutral-400 text-lg">Date Ordered: {testData?.dateOrdered}</div>
-                    <div className="w-[1px] h-6 bg-neutral-400"></div>
+                    <div className="w-[1px] h-6 bg-neutral-400 mx-2"></div>
                     <div className="text-neutral-400 text-lg">Expected by: {testData?.dateExpected}</div>
                 </div>
 
