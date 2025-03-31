@@ -1,26 +1,100 @@
-@import "tailwindcss";
-
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* SF Pro Display - Regular */
+@font-face {
+  font-family: "SF Pro Display";
+  src: url("/fonts/sf-pro/SFPRODISPLAYREGULAR.OTF") format("opentype");
+  font-weight: normal;
+  font-style: normal;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* SF Pro Display - Bold */
+@font-face {
+  font-family: "SF Pro Display";
+  src: url("/fonts/sf-pro/SFPRODISPLAYBOLD.OTF") format("opentype");
+  font-weight: bold;
+  font-style: normal;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* SF Pro Display - Medium */
+@font-face {
+  font-family: "SF Pro Display";
+  src: url("/fonts/sf-pro/SFPRODISPLAYMEDIUM.OTF") format("opentype");
+  font-weight: 500;
+  font-style: normal;
 }
 
+/* SF Pro Display - Black Italic */
+@font-face {
+  font-family: "SF Pro Display";
+  src: url("/fonts/sf-pro/SFPRODISPLAYBLACKITALIC.OTF") format("opentype");
+  font-weight: 900;
+  font-style: italic;
+}
+
+/* SF Pro Display - Heavy Italic */
+@font-face {
+  font-family: "SF Pro Display";
+  src: url("/fonts/sf-pro/SFPRODISPLAYHEAVYITALIC.OTF") format("opentype");
+  font-weight: 800;
+  font-style: italic;
+}
+
+/* SF Pro Display - Light Italic */
+@font-face {
+  font-family: "SF Pro Display";
+  src: url("/fonts/sf-pro/SFPRODISPLAYLIGHTITALIC.OTF") format("opentype");
+  font-weight: 300;
+  font-style: italic;
+}
+
+/* SF Pro Display - Semibold Italic */
+@font-face {
+  font-family: "SF Pro Display";
+  src: url("/fonts/sf-pro/SFPRODISPLAYSEMIBOLDITALIC.OTF") format("opentype");
+  font-weight: 600;
+  font-style: italic;
+}
+
+/* SF Pro Display - Thin Italic */
+@font-face {
+  font-family: "SF Pro Display";
+  src: url("/fonts/sf-pro/SFPRODISPLAYTHINITALIC.OTF") format("opentype");
+  font-weight: 100;
+  font-style: italic;
+}
+
+/* SF Pro Display - Ultrathin Italic */
+@font-face {
+  font-family: "SF Pro Display";
+  src: url("/fonts/sf-pro/SFPRODISPLAYULTRALIGHTITALIC.OTF") format("opentype");
+  font-weight: 200;
+  font-style: italic;
+}
+
+/* Sulphur Point - Regular */
+@font-face {
+  font-family: "Sulphur Point";
+  src: url("/fonts/sulphur-point/SulphurPoint-Regular.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* Sulphur Point - Bold */
+@font-face {
+  font-family: "Sulphur Point";
+  src: url("/fonts/sulphur-point/SulphurPoint-Bold.ttf") format("truetype");
+  font-weight: bold;
+  font-style: normal;
+}
+
+/* Sulphur Point - Light */
+@font-face {
+  font-family: "Sulphur Point";
+  src: url("/fonts/sulphur-point/SulphurPoint-Light.ttf") format("truetype");
+  font-weight: 300;
+  font-style: normal;
+}
+
+/* Apply to body */
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "SF Pro Display", sans-serif;
 }
