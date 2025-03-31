@@ -56,7 +56,7 @@ export default function dashboardAppointmentsBox() {
             <div className="flex flex-col gap-4">
                 <div className="flex items-center gap-2.5">
                     <Image
-                        src={"/compNavigation.svg"}
+                        src={"/img/dashboard/compNavigation.svg"}
                         alt="Failed to Load"
                         width={20}
                         height={20}
@@ -66,7 +66,7 @@ export default function dashboardAppointmentsBox() {
 
                 <div className="flex items-center gap-2">
                     <Image
-                        src={"/compGreenStatus.svg"}
+                        src={"/img/dashboard/compGreenStatus.svg"}
                         alt="Failed to Load"
                         width={24}
                         height={24}

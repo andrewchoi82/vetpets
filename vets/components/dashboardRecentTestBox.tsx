@@ -51,7 +51,7 @@ export default function dashboardRecentTestBox() {
 
                 <div className="flex items-center gap-2 mt-4">
                     <Image
-                        src="/compYellowStatus.svg"
+                        src="/img/dashboard/compYellowStatus.svg"
                         alt="Failed to Load"
                         width={24}
                         height={24}

@@ -1,17 +1,39 @@
+"use client";
+
+import React, { useState } from 'react'
 import Image from "next/image";
+import DashboardSmallBox from "../components/dashboardSmallBox"
+import DashboardAppointmentsBox from "../components/dashboardAppointmentsBox"
+import DashboardRecentTestBox from "../components/dashboardRecentTestBox"
+import DashboardBillingBox from "../components/dashboardBillingBox"
+import DashboardMessagesBox from "../components/dashboardMessagesBox"
+
+
+
+
 
 export default function Home() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
+    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)] bg-amber-600">
+      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start bg-amber-600">
+        <div className = "flex flex-row gap-5">
+        <DashboardSmallBox label={"Breed"} value = {"Husky"} image={"/img/dashboard/dashboardBreed.svg"}/>
+        <DashboardSmallBox label={"Age"} value = {"4 Month"} image={"/img/dashboard/dashboardAge.svg"}/>
+        <DashboardSmallBox label={"Weight"} value = {"32 lb"} image={"/img/dashboard/dashboardWeight.svg"}/>
+        <DashboardSmallBox label={"Gender"} value = {"Male"} image={"/img/dashboard/dashboardGender.svg"}/>
+        </div>
+       
+        <div className = "flex flex-row gap-5">
+        <DashboardAppointmentsBox/>
+        <DashboardMessagesBox/>
+        </div>
+
+        <div className = "flex flex-row gap-5">
+          <DashboardBillingBox/>
+          <DashboardRecentTestBox/>
+        </div>
+
+
         <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
           <li className="mb-2 tracking-[-.01em]">
             Get started by editing{" "}
