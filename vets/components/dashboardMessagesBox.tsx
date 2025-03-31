@@ -52,10 +52,10 @@ export default function DashboardMessagesBox() {
     }, []);
 
     return (
-        <div className="w-[524px] h-72 bg-white rounded-[20px] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.10)] p-4">
+        <div className="w-[524px] h-[280px] bg-white rounded-[20px] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.10)] p-4 cursor-pointer">
             <div className="text-black text-xl font-bold mb-4">Recent Messages</div>
             
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-[15px]">
                 {messageData.slice(0, 4).map((message, index) => (
                     <React.Fragment key={message.messageId}>
                         <div className="flex items-center gap-3">
