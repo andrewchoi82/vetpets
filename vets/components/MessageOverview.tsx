@@ -101,7 +101,7 @@ export default function MessageOverview({ setPageState }: MessageOverviewProps) 
 
     return (
         <main className="absolute max-w-[1200px] max-h-[82vh] bg-[#F7F7F7] left-[270px] 2xl:left-[350px] 2xl:w-[1200px] top-[13.6vh] rounded-[40px] p-[30px] mr-[10px] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.10)] overflow-y-auto">
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-y-[60px] gap-x-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-y-[60px] gap-x-4">
                 {/*First grid item is create new message. Clicking this changes the state to create and sets the create component to be rendered*/}
                 <div 
                     onClick={() => setPageState('create')}
