@@ -121,7 +121,7 @@ export default function MessageOverview({ setPageState }: MessageOverviewProps) 
 
                 {/*The rest is thes messages. Clicking this changes the state to texting and sets the texting component to be rendered*/}
                 {messageData.map((message) => (
-                    <div key={message.messageId} data-property-1="Default" className="w-60 h-64 relative bg-white rounded-[20px] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.10)] overflow-hidden">
+                    <div key={message.messageId} data-property-1="Default" onClick={() => setPageState('texting')} className="w-60 h-64 cursor-pointer relative bg-white rounded-[20px] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.10)] overflow-hidden">
                         <div className="w-52 left-[16px] top-[13px] absolute inline-flex flex-col justify-start items-start gap-4">
                             <div className="self-stretch h-6 justify-center text-neutral-400 text-base font-bold  leading-snug">{message.doctor}</div>
                             <div className="self-stretch flex flex-col justify-start items-center gap-7">
