@@ -34,7 +34,7 @@ export default function dashboardRecentTestBox() {
     }, []);
 
     return (
-        <div className="w-[524px] h-56 relative bg-white rounded-[20px] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.10)] overflow-hidden p-6">
+        <div className="w-[524px] h-56 relative bg-white rounded-[20px] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.10)] overflow-hidden p-6 ">
             <div className="text-black text-xl font-bold mb-6">Recent Test</div>
             
             <div className="flex flex-col gap-4">

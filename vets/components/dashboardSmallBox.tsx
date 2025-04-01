@@ -16,19 +16,21 @@ export default function dashboardSmallBox({label, value, image}: SidebarProps) {
 
 
     return(
-            <div className="w-60 h-27 relative bg-white rounded-[20px] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.10)] overflow-hidden">
-            <div className="w-28 left-[23px] top-[20px] absolute inline-flex flex-col justify-start items-start gap-2">
-            <div className="self-stretch h-5 justify-center text-[#a3a3a3] text-lg whitespace-nowrap overflow-visible">{label}</div>
-            <div className="self-stretch h-9 justify-center text-black text-3xl whitespace-nowrap overflow-visible ">{value}</div>
-            </div>
-            <Image
-                    src={image}
-                    alt="Failed to Load"
-                    width={54}
-                    height={54}
-                    className="left-[193px] top-[28px] absolute h-auto w-auto max-w-[54px] max-h-[54px] -translate-x-1/2"
+            <div className="w-full max-w-[240px] min-w-[180px] h-[108px] relative bg-white rounded-[20px] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.10)] overflow-hidden">
+                <div className="absolute left-[10%] top-[20%] w-[45%] inline-flex flex-col justify-start items-start gap-2">
+                    <div className="self-stretch text-[#a3a3a3] text-lg whitespace-nowrap overflow-visible">{label}</div>
+                    <div className="self-stretch text-black text-3xl whitespace-nowrap overflow-visible">{value}</div>
+                </div>
+                <div className="absolute right-[10%] top-[50%] -translate-y-1/2">
+                    <Image
+                        src={image}
+                        alt="Failed to Load"
+                        width={54}
+                        height={54}
+                        className="h-auto w-auto"
                     />
-        </div>
+                </div>
+            </div>
     );
 
     

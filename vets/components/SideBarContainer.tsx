@@ -2,22 +2,37 @@
 
 import { SideBarItem } from "@/components/SideBarItem";
 import Image from "next/image";
-import { useState } from "react";
+import { useRouter } from 'next/navigation';
 
-export const SideBarContainer = () => {
-   const [selectedItem, setSelectedItem] = useState("Dashboard");
-   
+
+interface SideBarContainerProps {
+   selectedPage: string;
+}
+
+
+export const SideBarContainer = ({ selectedPage }: SideBarContainerProps) => {
+   const router = useRouter();
+
    const menuItems = [
-      { path: "../img/sidebar-options/dashboard.svg", text: "Dashboard" },
-      { path: "../img/sidebar-options/appointments.svg", text: "Appointments" },
-      { path: "../img/sidebar-options/message.svg", text: "Message" },
-      { path: "../img/sidebar-options/billing.svg", text: "Billing" },
-      { path: "../img/sidebar-options/test-results.svg", text: "Test Results" },
-      { path: "../img/sidebar-options/immunization.svg", text: "Immunization" },
+      { path: "../img/sidebar-options/dashboard.svg", text: "Dashboard", href: "/" },
+      { path: "../img/sidebar-options/appointments.svg", text: "Appointments", href: "/appointments" },
+      { path: "../img/sidebar-options/message.svg", text: "Message", href: "/message" },
+      { path: "../img/sidebar-options/billing.svg", text: "Billing", href: "/billing" },
+      { path: "../img/sidebar-options/test-results.svg", text: "Test Results", href: "/test-results" },
+      { path: "../img/sidebar-options/immunization.svg", text: "Immunization", href: "/immunization" },
    ];
 
+   const handleClick = (href: string) => {
+      // Force a hard reload even if on same page
+      if (window.location.pathname === href) {
+         window.location.reload();
+      } else {
+         router.push(href);
+      }
+   };
+
    return(
-      <aside style={{ width: "180px", height: "auto"}}>
+      <aside style={{ width: "250px", height: "auto", padding:"18px"}}>
          <div style={{display: "flex", alignItems: "center"}} >
             <Image
                src="/img/vetrail-logo.svg"
@@ -34,8 +49,8 @@ export const SideBarContainer = () => {
                   key={item.text}
                   path={item.path}
                   text={item.text}
-                  isSelected={selectedItem === item.text}
-                  onClick={() => setSelectedItem(item.text)}
+                  isSelected={selectedPage === item.text}
+                  onClick={() => handleClick(item.href)}
                />
             ))}
          </div>
