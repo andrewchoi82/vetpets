@@ -21,13 +21,16 @@ export default function Message() {
       {/* Header */}
       <Header title="Message" />
 
-      {/* Side Bar */}
-      <SideBarContainer selectedPage="Message"/>
+      <div className="flex">
+        {/* Side Bar */}
+        <SideBarContainer selectedPage="Message"/>
 
-      {/* Main Page */}
-      {pageState === 'overview' && <MessageOverview setPageState={setPageState}/>}
-      {pageState === 'create' && <MessageCreate setPageState={setPageState}/>}
-      {pageState === 'texting' && <MessageTexting />}
+        {/* Main Page */}
+        
+        {pageState === 'overview' && <MessageOverview setPageState={setPageState}/>}
+        {pageState === 'create' && <MessageCreate setPageState={setPageState}/>}
+        {pageState === 'texting' && <MessageTexting />}
+      </div>
 
     </div>
   );
