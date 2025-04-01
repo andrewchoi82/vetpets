@@ -15,7 +15,7 @@ export const MessageMain = ({message, setMessage} : MessageProps) => {
             display: "flex",
             backgroundColor: "white",
             width: "700px",
-            height: "500px",
+            height:"350px",
             padding: "20px 30px",
             borderRadius: "20px",
             alignItems: "center",

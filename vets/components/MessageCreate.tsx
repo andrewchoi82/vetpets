@@ -20,7 +20,7 @@ export default function MessageCreate({ setPageState }: MessageOverviewProps) {
    const [message, setMessage] = useState("");
 
    return (
-      <main className="w-full bg-[#F7F7F7] mr-10 mt-5 mb-10 pb-5 rounded-[32px] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.10)]">
+      <main className="w-full max-h-[700px] bg-[#F7F7F7] ml-10 mr-10 mt-10 mb-20 pb-5 rounded-[32px] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.10)]">
          <div className="flex flex-col gap-10">
          <Image
                src="/img/message/backbutton.svg"

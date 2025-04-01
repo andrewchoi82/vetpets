@@ -238,7 +238,7 @@ export default function MessageTexting() {
    }, []);
 
    return (
-      <main className="fixed max-w-[1300px] w-[1300px] h-[82vh] bg-[#F7F7F7] left-[250px] 2xl:left-[350px] top-[13.6vh] rounded-[40px] p-[30px] mr-[10px] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.10)] flex flex-col">
+      <main className="fixed w-[95%] max-w-[1100px] min-w-[400px] h-[82vh] bg-[#F7F7F7] left-[250px] 2xl:left-[350px] top-[13.6vh] rounded-[40px] p-[30px] mr-[30px] right-[30px] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.10)] flex flex-col">
          {/* Contact namecard */}
          <div className="absolute top-4 left-4 z-10 flex items-center gap-3 bg-white p-3 rounded-lg shadow">
             <div className="w-14 h-12 bg-gray-200 rounded-lg">
@@ -256,22 +256,22 @@ export default function MessageTexting() {
             </div>
          </div>
 
-         <div className="flex-1 overflow-y-auto p-3">
+         <div className="flex-1 overflow-y-auto p-3 mt-20 mx-2">
             <div className="flex flex-col gap-4">
                {allMessages.map((message, index) => (
                   <div 
                      key={`${message.messageId}-${index}`}
-                     className={`flex ${message.senderId === 1 ? 'justify-end' : 'justify-start'}`}
+                     className={`flex ${message.senderId === 1 ? 'justify-end pr-2' : 'justify-start pl-2'}`}
                   >
                      <div 
-                        className={`max-w-[70%] rounded-lg p-3 ${
+                        className={`max-w-[90%] md:max-w-[70%] rounded-lg p-3 ${
                            message.senderId === 1 
                               ? message.type === 'text' ? 'bg-[#004D81] text-white' : ''
                               : message.type === 'text' ? 'bg-[#919191] text-white' : ''
                         }`}
                      >
                         {message.type === 'text' && (
-                           <p className="break-words">{message.content}</p>
+                           <p className="break-words text-sm md:text-base">{message.content}</p>
                         )}
                         {message.type === 'image' && (
                            <div className={`${message.senderId === 1 ? 'flex justify-end' : ''}`}>
@@ -280,7 +280,7 @@ export default function MessageTexting() {
                                  alt="Message image"
                                  width={300}
                                  height={200}
-                                 className="rounded-lg"
+                                 className="rounded-lg w-full h-auto max-w-[300px]"
                               />
                            </div>
                         )}
@@ -292,7 +292,7 @@ export default function MessageTexting() {
                                  width={20}
                                  height={20}
                               />
-                              <span>{message.fileName}</span>
+                              <span className="text-sm md:text-base truncate">{message.fileName}</span>
                            </div>
                         )}
                      </div>
@@ -301,12 +301,12 @@ export default function MessageTexting() {
             </div>
          </div>
 
-         <div className="mt-auto pt-2">
+         <div className="mt-auto pt-2 mx-2">
             {/* Preview area for pending files/images */}
             {(pendingImages.length > 0 || pendingFiles.length > 0) && (
                <div className="flex flex-wrap gap-2 p-2 bg-gray-50 rounded-lg mb-2">
                   {pendingImages.map((img, idx) => (
-                     <div key={idx} className="relative w-16 h-16">
+                     <div key={idx} className="relative w-12 md:w-16 h-12 md:h-16">
                         <Image
                            src={URL.createObjectURL(img)}
                            alt="Preview"
@@ -323,7 +323,7 @@ export default function MessageTexting() {
                            width={16}
                            height={16}
                         />
-                        <span className="text-sm truncate max-w-[100px]">{file.name}</span>
+                        <span className="text-xs md:text-sm truncate max-w-[80px] md:max-w-[100px]">{file.name}</span>
                      </div>
                   ))}
                </div>
@@ -336,7 +336,7 @@ export default function MessageTexting() {
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSendingMessage(e.target.value)}
                   onKeyPress={handleKeyPress}
                   placeholder="Type a message..."
-                  className="flex-1 border-none outline-none px-3 py-2"
+                  className="flex-1 border-none outline-none px-3 py-2 text-sm md:text-base"
                />
                
                <div className="relative">
@@ -347,12 +347,13 @@ export default function MessageTexting() {
                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                      multiple
                   />
-                  <div className="flex items-center justify-center w-10 h-10 rounded-lg cursor-pointer hover:bg-gray-50">
+                  <div className="flex items-center justify-center w-8 md:w-10 h-8 md:h-10 rounded-lg cursor-pointer hover:bg-gray-50">
                      <Image
                         src="/img/message/messageImage.svg"
                         alt="Add image"
                         width={20}
                         height={20}
+                        className="w-4 md:w-5 h-4 md:h-5"
                      />
                   </div>
                </div>
@@ -375,18 +376,19 @@ export default function MessageTexting() {
                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                      multiple
                   />
-                  <div className="flex items-center justify-center w-10 h-10 rounded-lg cursor-pointer hover:bg-gray-50">
+                  <div className="flex items-center justify-center w-8 md:w-10 h-8 md:h-10 rounded-lg cursor-pointer hover:bg-gray-50">
                      <Image
                         src="/img/message/messageAttach.svg"
                         alt="Add file"
                         width={20}
                         height={20}
+                        className="w-4 md:w-5 h-4 md:h-5"
                      />
                   </div>
                </div>
                <div className="relative">
                   <div 
-                     className="flex items-center justify-center w-10 h-10 rounded-lg cursor-pointer hover:bg-gray-50"
+                     className="flex items-center justify-center w-8 md:w-10 h-8 md:h-10 rounded-lg cursor-pointer hover:bg-gray-50"
                      onClick={handleSubmit}
                   >
                      <Image
@@ -394,6 +396,7 @@ export default function MessageTexting() {
                         alt="Send message"
                         width={20}
                         height={20}
+                        className="w-4 md:w-5 h-4 md:h-5"
                      />
                   </div>
                </div>
