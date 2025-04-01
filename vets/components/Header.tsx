@@ -26,9 +26,14 @@ export const Header = ({ title }: HeaderProps) => {
                height={50}
                style={{
                   objectFit: "cover",
-                  borderRadius: "50%", 
+                  borderRadius: "50%",
+                  overflow: "hidden",
+                  aspectRatio: "1/1", 
+                  maxWidth: "50px",  
+                  maxHeight: "50px"
                }} 
             />
+
 
             <div style={{display: "flex", flexDirection: "column", marginLeft: "10px", marginRight: "20px"}}>
                <p style={{fontWeight: "500", marginBottom: "3px"}}>Snowball</p>

@@ -100,13 +100,13 @@ export default function MessageOverview({ setPageState }: MessageOverviewProps) 
 
 
     return (
-        <main className="absolute max-w-[1200px] max-h-[82vh] bg-[#F7F7F7] left-[270px] 2xl:left-[350px] 2xl:w-[1200px] top-[13.6vh] rounded-[40px] p-[30px] mr-[10px] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.10)] overflow-y-auto">
+        <main className="w-full bg-[#F7F7F7] mr-10 mt-5 mb-10 pb-10 rounded-[32px] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.10)] overflow-y-auto">
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-y-[60px] gap-x-4">
                 {/*First grid item is create new message. Clicking this changes the state to create and sets the create component to be rendered*/}
                 <div 
                     onClick={() => setPageState('create')}
                     data-property-1="Default" 
-                    className="w-60 h-64 relative bg-white rounded-[20px] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.10)] border-[1px] border-dashed border-stone-900 overflow-hidden cursor-pointer"
+                    className="w-60 h-64 ml-10 mt-10 relative bg-white rounded-[20px] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.10)] border-[1px] border-dashed border-stone-900 overflow-hidden cursor-pointer"
                 >
                     <div className="w-48 left-[24px] top-[92px] absolute inline-flex flex-col justify-start items-center gap-8">
                         <Image
@@ -121,7 +121,7 @@ export default function MessageOverview({ setPageState }: MessageOverviewProps) 
 
                 {/*The rest is thes messages. Clicking this changes the state to texting and sets the texting component to be rendered*/}
                 {messageData.map((message) => (
-                    <div key={message.messageId} data-property-1="Default" className="w-60 h-64 relative bg-white rounded-[20px] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.10)] overflow-hidden">
+                    <div key={message.messageId} data-property-1="Default" className="w-60 h-64 ml-10 mt-10 relative bg-white rounded-[20px] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.10)] overflow-hidden">
                         <div className="w-52 left-[16px] top-[13px] absolute inline-flex flex-col justify-start items-start gap-4">
                             <div className="self-stretch h-6 justify-center text-neutral-400 text-base font-bold  leading-snug">{message.doctor}</div>
                             <div className="self-stretch flex flex-col justify-start items-center gap-7">
