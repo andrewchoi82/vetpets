@@ -2,13 +2,13 @@
 import Image from "next/image";
 import React, { useEffect, useState } from 'react'
 import { Header } from "@/components/Header";
-import { SideBarContainer } from "@/components/SideBarContainer";
-import  MessageTexting  from "@/components/MessageTexting";
-import  MessageOverview  from "@/components/MessageOverview";
-import  MessageCreate  from "@/components/MessageCreate";
+import { SideBarContainer } from "@/components/SideBar/SideBarContainer";
+import  MessageTexting  from "@/components/MessageComponents/MessageTexting";
+import  MessageOverview  from "@/components/MessageComponents/MessageOverview";
+import  MessageCreate  from "@/components/MessageComponents/MessageCreate";
 
 
-import DashboardSmallBox from "@/components/dashboardSmallBox"
+import DashboardSmallBox from "@/components/DashboardComponents/dashboardSmallBox"
 
 export default function Message() {
 

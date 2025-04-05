@@ -1,26 +1,16 @@
-"use client";
-import Image from "next/image";
-import React, { useEffect, useState } from 'react'
 import { Header } from "@/components/Header";
-import { SideBarContainer } from "@/components/SideBarContainer";
-import  MainContent  from "@/components/MainContent";
-
+import { SideBarContainer } from "@/components/SideBar/SideBarContainer";
+import MainContent from "@/components/MainContent";
 
 export default function Home() {
-
-
   return (
+    <div style={{ display: "flex", height: "100vh", overflow: "hidden" }}>
+      <SideBarContainer selectedPage="Dashboard" />
 
-    <div>
-      {/* Header */}
-      <Header title="Dashboard"/>
-
-      {/* Side Bar */}
-      <SideBarContainer selectedPage="Dashboard"/>
-
-      {/* Main Page */}
-      <MainContent/>
-
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", background: "#fff", overflowY: "auto" }}>
+        <Header title="Dashboard" />
+        <MainContent />
+      </div>
     </div>
   );
 }

@@ -2,12 +2,12 @@
 import Image from "next/image";
 import React, { useEffect, useState, KeyboardEvent } from 'react'
 
-import { SideBarContainer } from "@/components/SideBarContainer";
-import DashboardRecentTestBox from "@/components/dashboardRecentTestBox"
-import DashboardBillingBox from "@/components/dashboardBillingBox"
-import DashboardMessagesBox from "@/components/dashboardMessagesBox"
-import DashboardAppointmentsBox from "@/components/dashboardAppointmentsBox"
-import DashboardSmallBox from "@/components/dashboardSmallBox"
+import { SideBarContainer } from "@/components/SideBar/SideBarContainer";
+import DashboardRecentTestBox from "@/components/DashboardComponents/dashboardRecentTestBox"
+import DashboardBillingBox from "@/components/DashboardComponents/dashboardBillingBox"
+import DashboardMessagesBox from "@/components/DashboardComponents/dashboardMessagesBox"
+import DashboardAppointmentsBox from "@/components/DashboardComponents/dashboardAppointmentsBox"
+import DashboardSmallBox from "@/components/DashboardComponents/dashboardSmallBox"
 
 
 export default function MessageTexting() {
