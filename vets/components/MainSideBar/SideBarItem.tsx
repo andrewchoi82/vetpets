@@ -15,6 +15,10 @@ export const SideBarItem = ({
   onClick,
   notificationCount = 0,
 }: SideBarItemProps) => {
+  const imagePath = isSelected
+    ? path.replace("nonSelectedVersion", "selectedVersion")
+    : path;
+
   return (
     <div
       onClick={onClick}
@@ -26,21 +30,21 @@ export const SideBarItem = ({
         color: isSelected ? "#004D81" : "#444",
         fontWeight: isSelected ? "600" : "400",
         cursor: "pointer",
-        width: "100%", 
+        width: "100%",
         borderRight: isSelected ? "4px solid #004D81" : "4px solid transparent",
         transition: "all 0.2s ease",
       }}
     >
       <Image
-        src={path}
+        src={imagePath}
         alt={text}
         width={18}
         height={18}
         style={{
           marginRight: "12px",
-          filter: isSelected ? "none" : "grayscale(100%)",
         }}
       />
+
       <p style={{ margin: 0, fontSize: "15px", flexGrow: 1 }}>{text}</p>
 
       {notificationCount > 0 && (
