@@ -12,12 +12,12 @@ export const SideBarContainer = ({ selectedPage }: SideBarContainerProps) => {
   const router = useRouter();
 
   const menuItems = [
-    { path: "/img/sidebar-options/dashboard.svg", text: "Dashboard", href: "/" },
-    { path: "/img/sidebar-options/message.svg", text: "Messages", href: "/message", notificationCount: 2 },
-    { path: "/img/sidebar-options/appointments.svg", text: "Appointments", href: "/appointments" },
-    { path: "/img/sidebar-options/test-results.svg", text: "Health records", href: "/health-records" },
-    { path: "/img/sidebar-options/billing.svg", text: "Billings", href: "/billing" },
-    { path: "/img/sidebar-options/immunization.svg", text: "Settings", href: "/settings" },
+    { path: "/img/sidebar-options/nonSelectedVersion/dashboard.svg", text: "Dashboard", href: "/" },
+    { path: "/img/sidebar-options/nonSelectedVersion/messages.svg", text: "Messages", href: "/message", notificationCount: 2 },
+    { path: "/img/sidebar-options/nonSelectedVersion/appointments.svg", text: "Appointments", href: "/appointments" },
+    { path: "/img/sidebar-options/nonSelectedVersion/health-records.svg", text: "Health records", href: "/health-records" },
+    { path: "/img/sidebar-options/nonSelectedVersion/billing.svg", text: "Billings", href: "/billing" },
+    { path: "/img/sidebar-options/nonSelectedVersion/settings.svg", text: "Settings", href: "/settings" },
   ];
 
   const handleClick = (href: string) => {
