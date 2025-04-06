@@ -1,8 +1,8 @@
-import DashboardRecentTestBox from "@/components/DashboardComponents/dashboardRecentTestBox";
-import DashboardBillingBox from "@/components/DashboardComponents/dashboardBillingBox";
-import DashboardMessagesBox from "@/components/DashboardComponents/dashboardMessagesBox";
-import DashboardAppointmentsBox from "@/components/DashboardComponents/dashboardAppointmentsBox";
-import DashboardSmallBox from "@/components/DashboardComponents/dashboardSmallBox";
+import DashboardRecentTestBox from "@/components/Dashboard/dashboardRecentTestBox";
+import DashboardBillingBox from "@/components/Dashboard/dashboardBillingBox";
+import DashboardMessagesBox from "@/components/Dashboard/dashboardMessagesBox";
+import DashboardAppointmentsBox from "@/components/Dashboard/dashboardAppointmentsBox";
+import DashboardSmallBox from "@/components/Dashboard/dashboardSmallBox";
 
 export default function MainContent() {
   return (

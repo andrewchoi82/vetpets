@@ -1,6 +1,6 @@
 "use client";
 
-import { SideBarItem } from "@/components/SideBar/SideBarItem";
+import { SideBarItem } from "@/components/MainSideBar/SideBarItem";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
@@ -15,7 +15,7 @@ export const SideBarContainer = ({ selectedPage }: SideBarContainerProps) => {
     { path: "/img/sidebar-options/dashboard.svg", text: "Dashboard", href: "/" },
     { path: "/img/sidebar-options/message.svg", text: "Messages", href: "/message", notificationCount: 2 },
     { path: "/img/sidebar-options/appointments.svg", text: "Appointments", href: "/appointments" },
-    { path: "/img/sidebar-options/test-results.svg", text: "Health records", href: "/test-results" },
+    { path: "/img/sidebar-options/test-results.svg", text: "Health records", href: "/health-records" },
     { path: "/img/sidebar-options/billing.svg", text: "Billings", href: "/billing" },
     { path: "/img/sidebar-options/immunization.svg", text: "Settings", href: "/settings" },
   ];

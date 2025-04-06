@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { SearchBar } from "./HeaderComponents/SearchBar";
+import { SearchBar } from "./SearchBar";
 
 interface HeaderProps {
   title: string;
