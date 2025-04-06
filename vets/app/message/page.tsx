@@ -1,14 +1,14 @@
 "use client";
 import Image from "next/image";
 import React, { useEffect, useState } from 'react';
-import { Header } from "@/components/Header";
-import { SideBarContainer } from "@/components/SideBar/SideBarContainer";
-import MessageTexting from "@/components/MessageComponents/MessageTexting";
-import MessageOverview from "@/components/MessageComponents/MessageOverview";
-import MessageCreate from "@/components/MessageComponents/MessageCreate";
+import { Header } from "@/components/MainHeader/Header";
+import { SideBarContainer } from "@/components/MainSideBar/SideBarContainer";
+import MessageTexting from "@/components/Messages/MessageTexting";
+import MessageOverview from "@/components/Messages/MessageOverview";
+import MessageCreate from "@/components/Messages/MessageCreate";
 
 
-import MainContent from "@/components/MainContent";
+import MainContent from "@/components/Dashboard/MainContent";
 
 export default function Message() {
   const [pageState, setPageState] = useState<'overview' | 'create' | 'texting'>('overview');

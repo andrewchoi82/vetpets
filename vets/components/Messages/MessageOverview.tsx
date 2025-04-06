@@ -2,12 +2,12 @@
 import Image from "next/image";
 import React, { useEffect, useState } from 'react'
 
-import { SideBarContainer } from "@/components/SideBar/SideBarContainer";
-import DashboardRecentTestBox from "@/components/DashboardComponents/dashboardRecentTestBox"
-import DashboardBillingBox from "@/components/DashboardComponents/dashboardBillingBox"
-import DashboardMessagesBox from "@/components/DashboardComponents/dashboardMessagesBox"
-import DashboardAppointmentsBox from "@/components/DashboardComponents/dashboardAppointmentsBox"
-import DashboardSmallBox from "@/components/DashboardComponents/dashboardSmallBox"
+import { SideBarContainer } from "@/components/MainSideBar/SideBarContainer";
+import DashboardRecentTestBox from "@/components/Dashboard/dashboardRecentTestBox"
+import DashboardBillingBox from "@/components/Dashboard/dashboardBillingBox"
+import DashboardMessagesBox from "@/components/Dashboard/dashboardMessagesBox"
+import DashboardAppointmentsBox from "@/components/Dashboard/dashboardAppointmentsBox"
+import DashboardSmallBox from "@/components/Dashboard/dashboardSmallBox"
 
 
 interface MessageOverviewProps {
