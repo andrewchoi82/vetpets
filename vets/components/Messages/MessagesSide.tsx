@@ -117,9 +117,9 @@ export default function MessagesSide({ setPageState }: MessageOverviewProps) {
 
 
     return (
-        <main className="w-full bg-white h-full">
+        <main className="w-full bg-white h-full overflow-hidden">
             <div className="flex h-full">
-                <div className="w-md h-full mt-0 ml-0 overflow-y-auto">
+                <div className="w-md h-full overflow-y-auto">
                     {messageData.map((message, index) => (
                         <div
                             key={message.messageId}
@@ -186,7 +186,7 @@ export default function MessagesSide({ setPageState }: MessageOverviewProps) {
 
                 {/*when we dont select any messages*/}
                 {convoNum == -1 &&   
-                <div className="flex-1 flex justify-center items-center">
+                <div className="flex-1 flex justify-center items-center overflow-hidden">
                     <div
                         onClick={() => {setConvoNum(-2)
                             setOnMessage(true)}}
@@ -206,7 +206,9 @@ export default function MessagesSide({ setPageState }: MessageOverviewProps) {
                 </div>
                 }
                 {convoNum != -1 && 
-                    <MessageText convoID={convoNum}></MessageText>
+                    <div className="flex-1 h-full overflow-hidden">
+                        <MessageText convoID={convoNum}></MessageText>
+                    </div>
                 }
             </div>
         </main>

@@ -247,10 +247,8 @@ export default function MessageText({ convoID }: MessageTextProp) {
     };
 
     return (
-        <main className="w-7xl bg-white h-full flex flex-col relative">
-
-            <div className="w-full flex flex-row justify-between items-center mt-0 h-[60px] border-b-[1px] border-solid border-[#DFDFDF] px-4">
-
+        <main className="w-full h-full flex flex-col overflow-hidden">
+            <div className="w-full flex flex-row justify-between items-center h-[60px] border-b-[1px] border-solid border-[#DFDFDF] px-4 flex-shrink-0">
                 <div className="ml-3 flex flex-col w-[200px]">
                     <div className="text-[#919191]">
                     To: Dr. Sarah
@@ -267,12 +265,10 @@ export default function MessageText({ convoID }: MessageTextProp) {
                     height={20}
                     className="mr-3 h-auto max-w-[25px]"
                 />
-
             </div>
 
-
-            <div className="flex-1 overflow-y-auto p-3 mt-20 mx-2 mb-[80px]">
-                <div className="flex flex-col gap-4">
+            <div className="flex-1 overflow-y-auto px-3 relative">
+                <div className="flex flex-col gap-4 pb-[80px] pt-2">
                     {messageData.map((message, index) => (
                         <div
                             key={`${message.messageId}-${index}`}
@@ -314,10 +310,8 @@ export default function MessageText({ convoID }: MessageTextProp) {
                     ))}
                 </div>
             </div>
-
             
-            <div className="absolute bottom-[10px] left-0 right-0 pt-2 mx-2">
-                {/* Preview area for pending files/images */}
+            <div className="w-full bg-white border-t border-gray-100 pt-2 px-2">
                 {(pendingImages.length > 0 || pendingFiles.length > 0) && (
                     <div className="flex flex-wrap gap-2 p-2 bg-gray-50 rounded-lg mb-2">
                         {pendingImages.map((img, idx) => (

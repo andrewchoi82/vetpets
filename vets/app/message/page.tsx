@@ -24,13 +24,12 @@ export default function Message() {
     <div style={{ display: "flex", height: "100vh", overflow: "hidden" }}>
       <SideBarContainer selectedPage="Messages" />
 
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", background: "#fff", overflowY: "auto" }}>
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", background: "#fff", overflow: "hidden" }}>
         <Header title="Messages" />
-        <div style={{ flexGrow: 1, padding: "0px" }}>
+        <div style={{ flex: 1, overflow: "hidden" }}>
         {pageState.view === 'overview' && (
             <MessagesSide setPageState={setPageState} />
           )}
-
          </div>
       </div>
     </div>
