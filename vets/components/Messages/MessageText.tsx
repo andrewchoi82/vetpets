@@ -257,7 +257,7 @@ export default function MessageText({ convoID }: MessageTextProp) {
     };
 
     return (
-        <main className="w-full bg-white h-full flex flex-col relative">
+        <main className="w-7xl bg-white h-full flex flex-col relative">
 
             <div className="w-full flex flex-row justify-between items-center mt-0 h-[60px] border-b-[1px] border-solid border-[#DFDFDF] px-4">
 
