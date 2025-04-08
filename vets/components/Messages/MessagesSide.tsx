@@ -101,15 +101,7 @@ export default function MessagesSide({ setPageState }: MessageOverviewProps) {
             doctorImage: "/img/message/sarah.svg",
             numUnreadMessages: 0
         },
-        {
-            messageId: 9,
-            name: "Lab Results Ready",
-            date: "04/16/24",
-            doctor: "Dr.Sarah",
-            doctorImage: "/img/message/sarah.svg",
-            numUnreadMessages: 0
-
-        },
+        
     ];
     const [messageData, setMessageData] = useState<Message[]>([]);
     const [convoNum, setConvoNum] = useState(-1);
@@ -185,7 +177,7 @@ export default function MessagesSide({ setPageState }: MessageOverviewProps) {
                                     {message.doctor}
                                 </div>
                             </div>
-                            <div className="flex w-[73px] text-[#919191] font-thin">
+                            <div className="flex w-[73px] mr-3 text-[#919191] font-thin">
                                 {message.date}
                             </div>
                         </div>
