@@ -16,7 +16,7 @@ export const SideBarContainer = ({ selectedPage }: SideBarContainerProps) => {
     { path: "/img/sidebar-options/nonSelectedVersion/messages.svg", text: "Messages", href: "/message", notificationCount: 2 },
     { path: "/img/sidebar-options/nonSelectedVersion/appointments.svg", text: "Appointments", href: "/appointments" },
     { path: "/img/sidebar-options/nonSelectedVersion/health-records.svg", text: "Health records", href: "/health-records" },
-    { path: "/img/sidebar-options/nonSelectedVersion/billing.svg", text: "Billings", href: "/billing" },
+    { path: "/img/sidebar-options/nonSelectedVersion/billing.svg", text: "Billings", href: "/billings" },
     { path: "/img/sidebar-options/nonSelectedVersion/settings.svg", text: "Settings", href: "/settings" },
   ];
 

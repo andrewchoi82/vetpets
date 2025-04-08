@@ -34,7 +34,7 @@ export default function DashboardAppointmentsBox() {
   return (
     <div
       style={{
-        width: "500px",
+        width: "550px",
         backgroundColor: "white",
         borderRadius: "10px",
         border: "1px solid #e5e5e5",

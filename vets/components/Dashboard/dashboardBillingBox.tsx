@@ -24,7 +24,7 @@ export default function DashboardBillingBox() {
   }, []);
 
   return (
-    <div className="w-[524px] bg-white rounded-[10px] border border-[#e5e5e5] p-4 flex flex-col gap-4">
+    <div className="w-[550px] bg-white rounded-[10px] border border-[#e5e5e5] p-4 flex flex-col gap-4">
       <div className="flex justify-between items-center">
         <div className="text-lg font-semibold text-gray-800">Billing</div>
         <div className="text-gray-400 text-xl">{">"}</div>

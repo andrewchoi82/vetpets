@@ -3,19 +3,19 @@
 import React from "react";
 import Image from "next/image";
 
-interface AppointmentsHeaderProps {
+interface HealthRecordsHeaderProps {
   selectedTab: "vaccinations" | "test results" | "medications" | "medical history";
-  setSelectedTab: (tab: "vaccinations" | "test results" | "medications" | "medical history") => void;
+  setSelectedTabAction: (tab: "vaccinations" | "test results" | "medications" | "medical history") => void;
 }
 
-export default function RecordsHeader({ selectedTab, setSelectedTab }: AppointmentsHeaderProps) {
+export default function RecordsHeader({ selectedTab, setSelectedTabAction }: HealthRecordsHeaderProps) {
   return (
     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", padding: "0 24px", borderBottom: "1px solid #e5e7eb" }}>
       {/* Tabs */}
       <div style= {{display: "flex", alignItems: "center"}}> 
          <div style={{ display: "flex", gap: "32px", marginTop: "25px" }}>
             <button
-               onClick={() => setSelectedTab("vaccinations")}
+               onClick={() => setSelectedTabAction("vaccinations")}
                style={{
                   display: "flex",
                   alignItems: "center",
@@ -36,7 +36,7 @@ export default function RecordsHeader({ selectedTab, setSelectedTab }: Appointme
             </button>
 
             <button
-               onClick={() => setSelectedTab("test results")}
+               onClick={() => setSelectedTabAction("test results")}
                style={{
                   display: "flex",
                   alignItems: "center",
@@ -57,7 +57,7 @@ export default function RecordsHeader({ selectedTab, setSelectedTab }: Appointme
             </button>
 
             <button
-               onClick={() => setSelectedTab("medications")}
+               onClick={() => setSelectedTabAction("medications")}
                style={{
                   display: "flex",
                   alignItems: "center",
@@ -78,7 +78,7 @@ export default function RecordsHeader({ selectedTab, setSelectedTab }: Appointme
             </button>
 
             <button
-               onClick={() => setSelectedTab("medical history")}
+               onClick={() => setSelectedTabAction("medical history")}
                style={{
                   display: "flex",
                   alignItems: "center",
