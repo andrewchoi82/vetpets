@@ -34,24 +34,14 @@ export default function MessageText({ convoID }: MessageTextProp) {
 
 
     const sampMessage: Message[] = [
-        {
-            messageId: 1,
-            chatId: 1,
-            senderId: 1,
-            receiverId: 2,
-            type: "text",
-            content: "I've noticed some concerning symptoms with Snowball that might indicate an ear infection. He has been scratching his ear frequently, shaking his head, and there's a noticeable odor coming from the ear. Please let me know what you recommend.",
-            fileName: "",
-            fileType: "",
-            createdAt: "2025-04-01T05:38:15"
-        },
+       
         {
             messageId: 2,
             chatId: 1,
             senderId: 2,
             receiverId: 1,
             type: "text",
-            content: "Type Shit",
+            content: "Hi What do you need help with",
             fileName: "",
             fileType: "",
             createdAt: "2025-04-01T05:38:15"
