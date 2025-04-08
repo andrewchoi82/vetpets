@@ -17,8 +17,8 @@ export default function HealthRecords() {
          <div style={{ flex: 1, display: "flex", flexDirection: "column", background: "#fff", overflowY: "auto" }}>
             <Header title="Health Records" />
 
-            <RecordsHeader selectedTab={selectedTab} setSelectedTab={setSelectedTab}/>
-            <RecordsTable/>
+            <RecordsHeader selectedTab={selectedTab} setSelectedTabAction={setSelectedTab}/>
+            <RecordsTable selectedTab={selectedTab} setSelectedTabAction={setSelectedTab}/>
          </div>
        </div>
    );
