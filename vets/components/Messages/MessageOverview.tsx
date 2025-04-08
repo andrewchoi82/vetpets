@@ -91,7 +91,6 @@ export default function MessageOverview({ setPageState }: MessageOverviewProps) 
         },
     ];
     const [messageData, setMessageData] = useState<Message[]>([]);
-
     //this currently sets the sample appointment data to the state
     //change this later to add API to get real data
     useEffect(() => {
