@@ -31,12 +31,9 @@ export default function MessageText({ convoID }: MessageTextProp) {
         createdAt: string;
     };
 
-
-
-    const sampMessage: Message[] = [
-       
+    const sampMessage1: Message[] = [
         {
-            messageId: 2,
+            messageId: 1,
             chatId: 1,
             senderId: 2,
             receiverId: 1,
@@ -47,12 +44,23 @@ export default function MessageText({ convoID }: MessageTextProp) {
             createdAt: "2025-04-01T05:38:15"
         },
         {
-            messageId: 3,
+            messageId: 2,
             chatId: 1,
             senderId: 1,
             receiverId: 2,
             type: "text",
-            content: "I think my dog is dead",
+            content: "I think my dog is sick",
+            fileName: "",
+            fileType: "",
+            createdAt: "2025-04-01T05:38:15"
+        },
+        {
+            messageId: 3,
+            chatId: 1,
+            senderId: 2,
+            receiverId: 1,
+            type: "text",
+            content: "What symptoms is your dog showing?",
             fileName: "",
             fileType: "",
             createdAt: "2025-04-01T05:38:15"
@@ -62,19 +70,149 @@ export default function MessageText({ convoID }: MessageTextProp) {
             chatId: 1,
             senderId: 1,
             receiverId: 2,
-            type: "image",
-            content: "",
-            fileName: "/img/message/bear.png",
-            fileType: ".png",
+            type: "text",
+            content: "He's not eating and seems lethargic",
+            fileName: "",
+            fileType: "",
             createdAt: "2025-04-01T05:38:15"
-        },
+        }
+    ];
+
+    const sampMessage2: Message[] = [
         {
-            messageId: 5, // Changed from 4 to 5 to ensure unique IDs
-            chatId: 1,
+            messageId: 1,
+            chatId: 2,
             senderId: 2,
             receiverId: 1,
             type: "text",
-            content: "TYPEE SHIIIITTTT",
+            content: "Hello, how can I assist you today?",
+            fileName: "",
+            fileType: "",
+            createdAt: "2025-04-01T05:38:15"
+        },
+        {
+            messageId: 2,
+            chatId: 2,
+            senderId: 1,
+            receiverId: 2,
+            type: "text",
+            content: "My cat has been coughing a lot",
+            fileName: "",
+            fileType: "",
+            createdAt: "2025-04-01T05:38:15"
+        },
+        {
+            messageId: 3,
+            chatId: 2,
+            senderId: 2,
+            receiverId: 1,
+            type: "text",
+            content: "How long has this been happening?",
+            fileName: "",
+            fileType: "",
+            createdAt: "2025-04-01T05:38:15"
+        },
+        {
+            messageId: 4,
+            chatId: 2,
+            senderId: 1,
+            receiverId: 2,
+            type: "text",
+            content: "About three days now",
+            fileName: "",
+            fileType: "",
+            createdAt: "2025-04-01T05:38:15"
+        }
+    ];
+
+    const sampMessage3: Message[] = [
+        {
+            messageId: 1,
+            chatId: 3,
+            senderId: 2,
+            receiverId: 1,
+            type: "text",
+            content: "Good morning, what brings you here today?",
+            fileName: "",
+            fileType: "",
+            createdAt: "2025-04-01T05:38:15"
+        },
+        {
+            messageId: 2,
+            chatId: 3,
+            senderId: 1,
+            receiverId: 2,
+            type: "text",
+            content: "I need to schedule a vaccination for my puppy",
+            fileName: "",
+            fileType: "",
+            createdAt: "2025-04-01T05:38:15"
+        },
+        {
+            messageId: 3,
+            chatId: 3,
+            senderId: 2,
+            receiverId: 1,
+            type: "text",
+            content: "How old is your puppy and what vaccines has it received so far?",
+            fileName: "",
+            fileType: "",
+            createdAt: "2025-04-01T05:38:15"
+        },
+        {
+            messageId: 4,
+            chatId: 3,
+            senderId: 1,
+            receiverId: 2,
+            type: "text",
+            content: "She's 12 weeks old and has had her first round of shots",
+            fileName: "",
+            fileType: "",
+            createdAt: "2025-04-01T05:38:15"
+        }
+    ];
+
+    const sampMessage4: Message[] = [
+        {
+            messageId: 1,
+            chatId: 4,
+            senderId: 2,
+            receiverId: 1,
+            type: "text",
+            content: "Hi there, how may I help you?",
+            fileName: "",
+            fileType: "",
+            createdAt: "2025-04-01T05:38:15"
+        },
+        {
+            messageId: 2,
+            chatId: 4,
+            senderId: 1,
+            receiverId: 2,
+            type: "text",
+            content: "My rabbit isn't drinking water",
+            fileName: "",
+            fileType: "",
+            createdAt: "2025-04-01T05:38:15"
+        },
+        {
+            messageId: 3,
+            chatId: 4,
+            senderId: 2,
+            receiverId: 1,
+            type: "text",
+            content: "That's concerning. When did you first notice this?",
+            fileName: "",
+            fileType: "",
+            createdAt: "2025-04-01T05:38:15"
+        },
+        {
+            messageId: 4,
+            chatId: 4,
+            senderId: 1,
+            receiverId: 2,
+            type: "text",
+            content: "Since yesterday morning",
             fileName: "",
             fileType: "",
             createdAt: "2025-04-01T05:38:15"
@@ -121,7 +259,7 @@ export default function MessageText({ convoID }: MessageTextProp) {
             senderId: 2,
             receiverId: 1,
             type: "text",
-            content: "Can you explain the situation in more detail?",
+            content: "Im not following",
             fileName: "",
             fileType: "",
             createdAt: "2025-04-01T05:38:15"
@@ -133,6 +271,39 @@ export default function MessageText({ convoID }: MessageTextProp) {
             receiverId: 1,
             type: "text",
             content: "Let me ask CHATGPT. Please be on hold for 2 minutes",
+            fileName: "",
+            fileType: "",
+            createdAt: "2025-04-01T05:38:15"
+        },
+        {
+            messageId: 11,
+            chatId: 1,
+            senderId: 2,
+            receiverId: 1,
+            type: "text",
+            content: "too bad",
+            fileName: "",
+            fileType: "",
+            createdAt: "2025-04-01T05:38:15"
+        },
+        {
+            messageId: 11,
+            chatId: 1,
+            senderId: 2,
+            receiverId: 1,
+            type: "text",
+            content: "I dont get paid enough for this man",
+            fileName: "",
+            fileType: "",
+            createdAt: "2025-04-01T05:38:15"
+        },
+        {
+            messageId: 11,
+            chatId: 1,
+            senderId: 2,
+            receiverId: 1,
+            type: "text",
+            content: "LMFAOOOOOOOO",
             fileName: "",
             fileType: "",
             createdAt: "2025-04-01T05:38:15"
@@ -152,10 +323,20 @@ export default function MessageText({ convoID }: MessageTextProp) {
     //this currently sets the sample appointment data to the state
     //change this later to add API to get real data
     useEffect(() => {
-        if(convoID!=-2){
-            setMessageData(sampMessage);
+        if(convoID === -2) {
+            setMessageData([]);
+        } else if(convoID === 1) {
+            setMessageData(sampMessage1);
+        } else if(convoID === 2) {
+            setMessageData(sampMessage2);
+        } else if(convoID === 3) {
+            setMessageData(sampMessage3);
+        } else if(convoID === 4) {
+            setMessageData(sampMessage4);
+        } else {
+            setMessageData(sampMessage1);
         }
-    }, []);
+    }, [convoID]);
 
     const handleChangeFile = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
