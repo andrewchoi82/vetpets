@@ -231,24 +231,14 @@ export default function MessageText({ convoID }: MessageTextProp) {
             fileType: "",
             createdAt: "2025-04-01T05:38:15"
         },
-        {
-            messageId: 8,
-            chatId: 1,
-            senderId: 2,
-            receiverId: 1,
-            type: "text",
-            content: "Type Shit",
-            fileName: "",
-            fileType: "",
-            createdAt: "2025-04-01T05:38:15"
-        },
+        
         {
             messageId: 9,
             chatId: 1,
             senderId: 2,
             receiverId: 1,
             type: "text",
-            content: "No",
+            content: "Can you explain it in more details please?",
             fileName: "",
             fileType: "",
             createdAt: "2025-04-01T05:38:15"
@@ -259,55 +249,12 @@ export default function MessageText({ convoID }: MessageTextProp) {
             senderId: 2,
             receiverId: 1,
             type: "text",
-            content: "Im not following",
+            content: "Sorry Im not following",
             fileName: "",
             fileType: "",
             createdAt: "2025-04-01T05:38:15"
         },
-        {
-            messageId: 11,
-            chatId: 1,
-            senderId: 2,
-            receiverId: 1,
-            type: "text",
-            content: "Let me ask CHATGPT. Please be on hold for 2 minutes",
-            fileName: "",
-            fileType: "",
-            createdAt: "2025-04-01T05:38:15"
-        },
-        {
-            messageId: 11,
-            chatId: 1,
-            senderId: 2,
-            receiverId: 1,
-            type: "text",
-            content: "too bad",
-            fileName: "",
-            fileType: "",
-            createdAt: "2025-04-01T05:38:15"
-        },
-        {
-            messageId: 11,
-            chatId: 1,
-            senderId: 2,
-            receiverId: 1,
-            type: "text",
-            content: "I dont get paid enough for this man",
-            fileName: "",
-            fileType: "",
-            createdAt: "2025-04-01T05:38:15"
-        },
-        {
-            messageId: 11,
-            chatId: 1,
-            senderId: 2,
-            receiverId: 1,
-            type: "text",
-            content: "LMFAOOOOOOOO",
-            fileName: "",
-            fileType: "",
-            createdAt: "2025-04-01T05:38:15"
-        },
+        
     ];
 
 

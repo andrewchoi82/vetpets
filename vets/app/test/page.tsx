@@ -3,6 +3,8 @@ import React, { useState, useEffect } from 'react';
 import Image from "next/image";
 import { Header } from "@/components/MainHeader/Header";
 import { SideBarContainer } from "@/components/MainSideBar/SideBarContainer";
+import { FilePond } from 'react-filepond';
+
 
 export default function PDFTestPage() {
   const [file, setFile] = useState<File | null>(null);
@@ -113,6 +115,7 @@ export default function PDFTestPage() {
                         />
                         <p className="text-gray-500">Click to browse files</p>
                       </label>
+                      
                     </div>
                     
                     {file && (
@@ -152,6 +155,13 @@ export default function PDFTestPage() {
               
               <div className="bg-white rounded-lg shadow-md p-4">
                 <h2 className="text-xl font-semibold mb-4">Recent Uploads</h2>
+                <FilePond
+      server={{
+        process: '/api/parse-pdf',
+        fetch: null,
+        revert: null,
+      }}
+    />
                 <div className="space-y-3 max-h-[400px] overflow-y-auto">
                   {uploadHistory.map((item, index) => (
                     <div key={index} className="flex items-center p-2 hover:bg-gray-50 rounded-md cursor-pointer">
