@@ -1,11 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import axios from 'axios';
-import FormData from 'form-data';
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY!;
-const ASSISTANT_ID = process.env.OPENAI_ASSISTANT_ID!; // set this in your .env.local
-
-const OPENAI_BETA_HEADER = { 'OpenAI-Beta': 'assistants=v2' };
 
 export async function POST(req: NextRequest) {
   try {
@@ -15,109 +11,49 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'No file data provided' }, { status: 400 });
     }
 
-    // Convert base64 data to buffer
+    // Extract the base64 data
     const base64Data = fileData.split(',')[1];
-    const fileBuffer = Buffer.from(base64Data, 'base64');
-    const filename = 'VetLabResult.pdf';
-
-    // 1. Upload PDF file to OpenAI
-    const formData = new FormData();
-    formData.append('file', fileBuffer, {
-      filename,
-      contentType: 'application/pdf',
-    });
-    formData.append('purpose', 'assistants');
-
-    const fileUploadRes = await axios.post('https://api.openai.com/v1/files', formData, {
-      headers: {
-        Authorization: `Bearer ${OPENAI_API_KEY}`,
-        ...formData.getHeaders(),
-        ...OPENAI_BETA_HEADER,
+    
+    // Use GPT-4 Vision to analyze the image-based PDF
+    const gptResponse = await axios.post(
+      'https://api.openai.com/v1/chat/completions',
+      {
+        model: 'gpt-4-vision-preview',
+        messages: [
+          {
+            role: 'system',
+            content: 'You are a helpful veterinary assistant analyzing lab results. Create a concise summary of the lab report, highlighting key findings, abnormal values, and their potential implications for the pet\'s health.'
+          },
+          {
+            role: 'user',
+            content: [
+              {
+                type: 'text',
+                text: 'This is a veterinary lab report. Please provide a summary of the key findings and their significance.'
+              },
+              {
+                type: 'image_url',
+                image_url: {
+                  url: `data:application/pdf;base64,${base64Data}`
+                }
+              }
+            ]
+          }
+        ],
+        max_tokens: 4000
       },
-    });
-
-    const fileId = fileUploadRes.data.id;
-
-    // 2. Create a new thread
-    const threadRes = await axios.post(
-      'https://api.openai.com/v1/threads',
-      {},
       {
         headers: {
-          Authorization: `Bearer ${OPENAI_API_KEY}`,
-          ...OPENAI_BETA_HEADER,
-        },
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${OPENAI_API_KEY}`
+        }
       }
     );
 
-    const threadId = threadRes.data.id;
-
-    // 3. Add user message with file to the thread
-    await axios.post(
-      `https://api.openai.com/v1/threads/${threadId}/messages`,
-      {
-        role: 'user',
-        content: 'Please analyze this veterinary lab report and summarize it in plain English.',
-        attachments: [{
-            file_id: fileId,
-            tools: [{ type: "file_search" }]
-          }]
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${OPENAI_API_KEY}`,
-          ...OPENAI_BETA_HEADER,
-        },
-      }
-    );
-
-
-    // 4. Run the assistant on the thread
-    const runRes = await axios.post(
-      `https://api.openai.com/v1/threads/${threadId}/runs`,
-      {
-        assistant_id: ASSISTANT_ID,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${OPENAI_API_KEY}`,
-          ...OPENAI_BETA_HEADER,
-        },
-      }
-    );
-
-    const runId = runRes.data.id;
-
-    // 5. Poll until the run completes
-    let status = 'queued';
-    let output = '';
-    while (status !== 'completed' && status !== 'failed') {
-      const runStatus = await axios.get(`https://api.openai.com/v1/threads/${threadId}/runs/${runId}`, {
-        headers: {
-          Authorization: `Bearer ${OPENAI_API_KEY}`,
-          ...OPENAI_BETA_HEADER,
-        },
-      });
-
-      status = runStatus.data.status;
-      if (status === 'completed') break;
-      if (status === 'failed') throw new Error('Assistant run failed');
-
-      await new Promise((r) => setTimeout(r, 1000));
-    }
-
-    // 6. Get the assistant's response
-    const messagesRes = await axios.get(`https://api.openai.com/v1/threads/${threadId}/messages`, {
-      headers: {
-        Authorization: `Bearer ${OPENAI_API_KEY}`,
-        ...OPENAI_BETA_HEADER,
-      },
-    });
-
-    const messageContent = messagesRes.data.data[0]?.content[0]?.text?.value;
-    console.log(messageContent);
-
-    return NextResponse.json({ component: messageContent });
+    const summary = gptResponse.data.choices[0].message.content;
+    console.log("Lab report summary:", summary);
+    
+    return NextResponse.json({ summary });
   } catch (error: any) {
     console.error('Error:', error.response?.data || error.message);
     return NextResponse.json({ error: error.message || 'Internal server error' }, { status: 500 });

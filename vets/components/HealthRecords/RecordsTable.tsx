@@ -3,8 +3,9 @@ import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { getTests } from "@/app/lib/api/tests";
 import { getImageUrl } from "@/app/lib/supabaseGetFile";
+import { Document, Page, pdfjs } from "react-pdf";
 
-
+pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 interface RecordsHeaderProps {
   selectedTab: "vaccinations" | "test results" | "medications" | "medical history";
   setSelectedTabAction: (tab: "vaccinations" | "test results" | "medications" | "medical history") => void;
@@ -35,58 +36,110 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction, tabCha
   const [htmlComponent, setHtmlComponent] = useState('');
   const [error, setError] = useState('');
 
-  const handleAnalysis = async (blob: any) => {
+  const handleAnalysis = async (blob: Blob) => {
     try {
       setLoading(true);
       setError('');
       setHtmlComponent('');
-
-      // Fetch the blob data
-      // const response = await fetch(blobUrl);
-      // const blob = await response.blob();
       
-      // Convert blob to base64
-      const reader = new FileReader();
-      reader.readAsDataURL(blob);
+      // Load the PDF document
+      const arrayBuffer = await blob.arrayBuffer();
+      const pdf = await pdfjs.getDocument({ data: arrayBuffer }).promise;
       
-      reader.onloadend = async () => {
-        const base64data = reader.result as string;
-
-        const res1 = await fetch('/api/summarze-doc', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ fileData: base64data }),
-        });
-        const data1= await res1.json();
-        console.log(data1);
-
-        
-        // Send the base64 data to the API
-        const res = await fetch('/api/testing-analysis', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ fileData: base64data }),
-        });
-
-        const data = await res.json();
-
-        if (!res.ok) {
-          throw new Error(data.error || 'Failed to analyze lab report');
-        }
-
-        setHtmlComponent(data.component); // This is the HTML <div> as a string
-        setLoading(false);
-      };
+      // Get the first page (or you could process multiple pages)
+      const page = await pdf.getPage(1);
+      
+      // Render the page to a canvas
+      const viewport = page.getViewport({ scale: 2.0 }); // Higher scale for better quality
+      const canvas = document.createElement('canvas');
+      const context = canvas.getContext('2d');
+      canvas.height = viewport.height;
+      canvas.width = viewport.width;
+      
+      await page.render({
+        canvasContext: context!,
+        viewport: viewport
+      }).promise;
+      
+      // Convert canvas to base64 image
+      const imageData = canvas.toDataURL('image/jpeg', 0.95);
+      
+      // Send the image data to the API
+      const res = await fetch('/api/summarize-doc', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ fileData: imageData }),
+      });
+  
+      const data = await res.json();
+      
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to analyze lab report');
+      }
+  
+      setHtmlComponent(data.component);
+      setLoading(false);
     } catch (err: any) {
       console.error('Error:', err.message);
       setError(err.message);
       setLoading(false);
     }
   };
+
+  // const handleAnalysis = async (blob: any) => {
+  //   try {
+  //     setLoading(true);
+  //     setError('');
+  //     setHtmlComponent('');
+
+  //     // Fetch the blob data
+  //     // const response = await fetch(blobUrl);
+  //     // const blob = await response.blob();
+      
+  //     // Convert blob to base64
+  //     const reader = new FileReader();
+  //     reader.readAsDataURL(blob);
+      
+  //     reader.onloadend = async () => {
+  //       const base64data = reader.result as string;
+
+  //       const res1 = await fetch('/api/summarize-doc', {
+  //         method: 'POST',
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //         },
+  //         body: JSON.stringify({ fileData: base64data }),
+  //       });
+  //       const data1 = await res1.json();
+  //       console.log("Summary response:", JSON.stringify(data1, null, 2));
+
+        
+  //       // Send the base64 data to the API
+  //       const res = await fetch('/api/testing-analysis', {
+  //         method: 'POST',
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //         },
+  //         body: JSON.stringify({ fileData: base64data }),
+  //       });
+
+  //       const data = await res.json();
+
+  //       if (!res.ok) {
+  //         throw new Error(data.error || 'Failed to analyze lab report');
+  //       }
+
+  //       setHtmlComponent(data.component); // This is the HTML <div> as a string
+  //       setLoading(false);
+  //     };
+  //   } catch (err: any) {
+  //     console.error('Error:', err.message);
+  //     setError(err.message);
+  //     setLoading(false);
+  //   }
+  // };
 
 
   useEffect(() => {
