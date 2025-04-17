@@ -21,7 +21,7 @@ export const Header = ({ title }: HeaderProps) => {
         backgroundColor: "#fff",
       }}
     >
-      <h1 style={{ fontSize: "24px", fontWeight: "300" }}>{title}</h1>
+      <h1 style={{ fontSize: "30px", fontWeight: "500" }}>{title}</h1>
 
       <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
         <SearchBar />

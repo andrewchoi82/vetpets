@@ -34,7 +34,8 @@ export default function DashboardAppointmentsBox() {
   return (
     <div
       style={{
-        width: "550px",
+        width: "580px",
+        height: "300px",
         backgroundColor: "white",
         borderRadius: "10px",
         border: "1px solid #e5e5e5",
@@ -53,55 +54,64 @@ export default function DashboardAppointmentsBox() {
           alignItems: "center",
         }}
       >
-        <div style={{ fontSize: "1.125rem", fontWeight: 600, color: "#1f2937" }}>
+        <div style={{ fontSize: "20px", fontWeight: "500", color: "#4c4c4c" }}>
           Upcoming Appointment
         </div>
-        <div style={{ fontSize: "1.25rem", color: "#9ca3af" }}>{">"}</div>
       </div>
 
       {/* Main Info Box */}
       <div
         style={{
-          backgroundColor: "#f3f4f6",
-          borderRadius: "6px",
-          padding: "12px 16px",
-          border: "1px solid #e5e7eb",
+          backgroundColor: "#f4f4f4",             // lighter gray
+          padding: "16px 20px",
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
+          marginLeft: "-16px",
+          marginRight: "-16px",
+          color: "#4c4c4c"
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
           <div style={{ display: "flex", flexDirection: "column" }}>
-            <div style={{ fontSize: "0.875rem", color: "#4b5563" }}>{appointmentData?.date}</div>
+            <div style={{ fontSize: "17px", fontWeight: "normal" }}>{appointmentData?.date}</div>
             <div
               style={{
-                fontSize: "0.875rem",
-                color: "#2563eb",
-                textDecoration: "underline",
-                cursor: "pointer",
+                fontSize: "17px",
               }}
             >
               {appointmentData?.time}
             </div>
           </div>
-          <div style={{ width: "1px", height: "40px", backgroundColor: "#d1d5db" }} />
-          <div style={{ fontSize: "0.875rem", color: "#1f2937" }}>{appointmentData?.name}</div>
+          <div
+            style={{
+              width: "1px",
+              backgroundColor: "#919191",
+              alignSelf: "stretch",
+              marginTop: "-6px",
+              marginBottom: "-6px",
+            }}
+          />
+
+          <div style={{ fontSize: "17px", fontWeight: "normal" }}>
+            {appointmentData?.name}
+          </div>
         </div>
 
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            {appointmentData?.doctorImage && (
+          {appointmentData?.doctorImage && (
             <Image
-                src={appointmentData.doctorImage}
-                alt="Doctor"
-                width={32}
-                height={32}
-                style={{ borderRadius: "9999px" }}
+              src={appointmentData.doctorImage}
+              alt="Doctor"
+              width={42.4}
+              height={41.5}
+              style={{ borderRadius: "9999px" }}
             />
-            )}
-          <div style={{ fontSize: "0.875rem", color: "#374151" }}>{appointmentData?.doctorName}</div>
+          )}
+          <div style={{ fontSize: "15px", color: "#6b7280" }}>{appointmentData?.doctorName}</div>
         </div>
       </div>
+
 
       {/* Location */}
       <div
@@ -109,8 +119,8 @@ export default function DashboardAppointmentsBox() {
           display: "flex",
           alignItems: "center",
           gap: "12px",
-          fontSize: "0.875rem",
-          color: "#4b5563",
+          fontSize: "17px",
+          color: "#919191",
           padding: "5px",
           marginTop: "10px"
         }}
@@ -125,13 +135,14 @@ export default function DashboardAppointmentsBox() {
           display: "flex",
           alignItems: "center",
           gap: "12px",
-          fontSize: "0.875rem",
-          color: "#4b5563",
-          padding: "5px"
+          fontSize: "17px",
+          color: "#919191",
+          padding: "5px",
+          paddingBottom: "0px"
         }}
       >
         <Image src="/img/dashboard/compGreenStatus.svg" alt="status" width={18} height={18} />
-        <span style={{ color: "#65a30d", fontStyle: "italic" }}>{appointmentData?.status}</span>
+        <span style={{ color: "#919191", fontStyle: "italic" }}>{appointmentData?.status}</span>
       </div>
 
       {/* Actions */}
@@ -140,12 +151,13 @@ export default function DashboardAppointmentsBox() {
             display: "flex",
             justifyContent: "flex-end",
             gap: "16px",
-            paddingTop: "8px",
+            fontSize: "17px",
+            marginBottom: "15px",
         }}
         >
         <button
             style={{
-            fontSize: "0.9375rem",
+            fontSize: "15px",
             color: "#1e3a8a",
             textDecoration: "underline",
             background: "none",
@@ -158,7 +170,7 @@ export default function DashboardAppointmentsBox() {
 
         <button
             style={{
-            fontSize: "0.9375rem",
+            fontSize: "15px",
             backgroundColor: "#004d81",
             color: "white",
             padding: "4px 10px",

@@ -2,7 +2,7 @@
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 
-export default function DashboardMessagesBox() {
+export default function DashboardRecentMessagesBox() {
   interface Message {
     messageId: number;
     name: string;
@@ -49,30 +49,31 @@ export default function DashboardMessagesBox() {
   }, []);
 
   return (
-    <div className="w-[524px] bg-white rounded-[10px] border border-[#e5e5e5] p-4 flex flex-col">
+    <div className="w-[544px] h-[300px] bg-white rounded-[10px] border border-[#e5e5e5] p-4 flex flex-col">
       {/* Header */}
       <div className="flex justify-between items-center mb-2">
-        <div className="text-lg font-semibold text-gray-900">Recent Messages</div>
-        <div className="text-gray-400 text-xl">{">"}</div>
+        <div style= {{ color: "#4c4c4c", fontWeight: "500", fontSize: "20px" }} className="text-lg">Recent Messages</div>
       </div>
 
       {/* Messages */}
-      <div className="divide-y divide-gray-200">
+      <div className="divide-y divide-gray-200 text-[17px]">
         {messageData.map((message) => (
           <div
             key={message.messageId}
             className="flex justify-between items-center py-3"
           >
             <div className="flex items-center gap-3">
-              <div className={`w-8 h-8 ${message.bgColor} rounded-[6px] flex items-center justify-center`}>
-                <Image src={message.type} alt="icon" width={16} height={16} />
+              <div className="w-8 h-8 rounded-[6px] flex items-center justify-center">
+                <Image src={message.type} alt="icon" width={30} height={30} />
               </div>
-              <div className="text-sm text-black">{message.name}</div>
+              <div style={{ color: "#4c4c4c" }}>{message.name}</div>
             </div>
-            <div className="text-sm text-gray-400">{message.date}</div>
+            <div style={{ color: "#4c4c4c" }}>{message.date}</div>
           </div>
         ))}
       </div>
+
+
     </div>
   );
 }

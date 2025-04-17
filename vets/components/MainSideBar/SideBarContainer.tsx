@@ -48,10 +48,10 @@ export const SideBarContainer = ({ selectedPage }: SideBarContainerProps) => {
           <h1
             style={{
               fontFamily: "Sulphur Point",
-              fontSize: "22px",
+              fontSize: "25px",
               fontWeight: "bold",
               marginLeft: "10px",
-              marginTop: "2px",
+              marginTop: "8px",
             }}
           >
             Vetrail

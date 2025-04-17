@@ -28,11 +28,11 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction }: Bill
       <table style={{ width: "100%", borderCollapse: "collapse" }}>
         <thead>
           <tr style={{ borderBottom: "1px solid #d1d5db" }}>
-            <th style={{ ...baseThStyle, paddingLeft: 40, width: "160px" }}>Date</th>
-            <th style={{ ...baseThStyle, paddingLeft: 24, width: "240px" }}>Appointment reason</th>
-            <th style={{ ...baseThStyle, paddingLeft: 24, width: "160px" }}>Total amount</th>
-            <th style={{ ...baseThStyle, paddingLeft: 24, width: "160px" }}>Status</th>
-            <th style={{ ...baseThStyle, paddingLeft: 24, width: "120px" }}></th>
+            <th style={{ ...baseThStyle, fontSize: 17, paddingLeft: 40, width: "160px" }}>Date</th>
+            <th style={{ ...baseThStyle, fontSize: 17, paddingLeft: 24, width: "240px" }}>Appointment reason</th>
+            <th style={{ ...baseThStyle, fontSize: 17, paddingLeft: 24, width: "160px" }}>Total amount</th>
+            <th style={{ ...baseThStyle, fontSize: 17, paddingLeft: 24, width: "160px" }}>Status</th>
+            <th style={{ ...baseThStyle, fontSize: 17, paddingLeft: 24, width: "120px" }}></th>
           </tr>
         </thead>
         <tbody>
@@ -43,11 +43,11 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction }: Bill
 
             return (
               <tr key={index} style={{ height: "64px", borderBottom: "1px solid #e5e5e5" }}>
-                <td style={{ paddingLeft: 40, fontSize: "14px", color: "#111827" }}>{date}</td>
-                <td style={{ paddingLeft: 24, fontSize: "14px", color: "#111827" }}>{reason}</td>
-                <td style={{ paddingLeft: 24, fontSize: "14px", color: "#111827" }}>{amount}</td>
+                <td style={{ paddingLeft: 40, fontSize: "17px", color: "#111827" }}>{date}</td>
+                <td style={{ paddingLeft: 24, fontSize: "17px", color: "#111827" }}>{reason}</td>
+                <td style={{ paddingLeft: 24, fontSize: "17px", color: "#111827" }}>{amount}</td>
                 <td style={{ paddingLeft: 24 }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "14px", color: "#111827" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "17px", color: "#111827" }}>
                     <img src={iconSrc} alt={`${status} Icon`} style={{ width: "16px", height: "16px", marginTop: "1px" }} />
                     {status}
                   </div>
@@ -60,7 +60,7 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction }: Bill
                       gap: "6px",
                       border: "none",
                       background: "transparent",
-                      fontSize: "14px",
+                      fontSize: "17px",
                       color: "#374151",
                       cursor: "pointer",
                       padding: 0,

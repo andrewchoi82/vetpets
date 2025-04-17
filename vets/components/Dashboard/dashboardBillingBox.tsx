@@ -24,26 +24,40 @@ export default function DashboardBillingBox() {
   }, []);
 
   return (
-    <div className="w-[550px] bg-white rounded-[10px] border border-[#e5e5e5] p-4 flex flex-col gap-4">
+    <div className="w-[580px] h-[266px] bg-white rounded-[10px] border border-[#e5e5e5] p-4 flex flex-col gap-4">
       <div className="flex justify-between items-center">
-        <div className="text-lg font-semibold text-gray-800">Billing</div>
-        <div className="text-gray-400 text-xl">{">"}</div>
+        <div style= {{ color: "#4c4c4c", fontWeight: "500", fontSize: "20px" }} className="text-lg text-gray-800">Billing</div>
       </div>
 
-      <div className="flex flex-col divide-y divide-gray-200">
+      <div
+        className="flex flex-col divide-y divide-gray-200 text-[17px] text-[#4c4c4c] overflow-y-auto max-h-[180px]"
+        style={{
+          scrollbarWidth: "none", // Firefox
+          msOverflowStyle: "none", // IE/Edge
+        }}
+      >
+        <style jsx>{`
+          div::-webkit-scrollbar {
+            display: none;
+          }
+        `}</style>
+
         {billingData.map((billing) => (
           <div
             key={billing.billingId}
-            className="flex justify-between items-center py-2 text-sm text-gray-700"
+            className="flex justify-between items-center py-2"
           >
             <div className="flex gap-6">
               <span className="w-[70px]">{billing.date}</span>
               <span>{billing.name}</span>
             </div>
-            <div className="text-gray-500">${billing.cost.toFixed(2)}</div>
+            <div>${billing.cost.toFixed(2)}</div>
           </div>
         ))}
       </div>
+
+
+
     </div>
   );
 }

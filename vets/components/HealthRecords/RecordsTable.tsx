@@ -82,11 +82,11 @@ export default function RecordsTable({selectedTab, setSelectedTabAction} : Healt
            <tbody>
              {vaccinationsData.map(([date, time, vaccine, manufacturer, dosage, administeredBy], index) => (
                <tr key={index} style={{ height: "64px", borderBottom: "1px solid #e5e5e5" }}>
-                 <td style={{ paddingLeft: 40, fontSize: "14px", color: "#111827" }}>{date}</td>
-                 <td style={{ paddingLeft: 24, fontSize: "14px", color: "#111827" }}>{vaccine}</td>
-                 <td style={{ paddingLeft: 24, fontSize: "14px", color: "#111827" }}>{manufacturer}</td>
-                 <td style={{ paddingLeft: 24, fontSize: "14px", color: "#111827" }}>{dosage}</td>
-                 <td style={{ paddingLeft: 24, fontSize: "14px", color: "#111827" }}>{administeredBy}</td>
+                 <td style={{ paddingLeft: 40, color: "#111827" }}>{date}</td>
+                 <td style={{ paddingLeft: 24, color: "#111827" }}>{vaccine}</td>
+                 <td style={{ paddingLeft: 24, color: "#111827" }}>{manufacturer}</td>
+                 <td style={{ paddingLeft: 24, color: "#111827" }}>{dosage}</td>
+                 <td style={{ paddingLeft: 24, color: "#111827" }}>{administeredBy}</td>
                  <td style={{ paddingLeft: 24 }}>
                    <button
                      style={{
@@ -95,7 +95,6 @@ export default function RecordsTable({selectedTab, setSelectedTabAction} : Healt
                        gap: "6px",
                        border: "none",
                        background: "transparent",
-                       fontSize: "14px",
                        color: "#374151",
                        cursor: "pointer",
                        padding: 0,
@@ -105,9 +104,9 @@ export default function RecordsTable({selectedTab, setSelectedTabAction} : Healt
                      <img
                        src="/img/health-records/details-icon.svg"
                        alt="Details Icon"
-                       style={{ width: "18px", height: "18px", marginTop: "5px" }}
+                       style={{ width: "17px", height: "17px" }}
                      />
-                     <span style={{ textDecoration: "underline" }}>Details</span>
+                     <span style={{ textDecoration: "underline", marginLeft: "17px", fontSize: 17 }}>Details</span>
                    </button>
                  </td>
                </tr>
@@ -136,11 +135,11 @@ export default function RecordsTable({selectedTab, setSelectedTabAction} : Healt
 
           return (
             <tr key={index} style={{ height: "64px", borderBottom: "1px solid #e5e5e5" }}>
-              <td style={{ paddingLeft: 40, fontSize: "14px", color: "#111827" }}>{date}</td>
-              <td style={{ paddingLeft: 24, fontSize: "14px", color: "#111827" }}>{test}</td>
+              <td style={{ paddingLeft: 40, color: "#111827" }}>{date}</td>
+              <td style={{ paddingLeft: 24, color: "#111827" }}>{test}</td>
               <td style={{ paddingLeft: 24 }}>
-                <div style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "14px", color: "#111827" }}>
-                  <img src={iconSrc} alt={`${status} Icon`} style={{ width: "16px", height: "16px", marginTop: "1px" }} />
+                <div style={{ display: "flex", alignItems: "center", gap: "8px", color: "#111827" }}>
+                  <img src={iconSrc} alt={`${status} Icon`} style={{ width: "16px", height: "16px" }} />
                   {status}
                 </div>
               </td>
@@ -153,7 +152,7 @@ export default function RecordsTable({selectedTab, setSelectedTabAction} : Healt
                       gap: "6px",
                       border: "none",
                       background: "transparent",
-                      fontSize: "14px",
+                    
                       color: "#374151",
                       cursor: "pointer",
                       padding: 0,
@@ -163,9 +162,9 @@ export default function RecordsTable({selectedTab, setSelectedTabAction} : Healt
                     <img
                       src="/img/health-records/details-icon.svg"
                       alt="Download Icon"
-                      style={{ width: "18px", height: "18px", marginTop: "5px" }}
+                      style={{ width: "17px", height: "17px" }}
                     />
-                    <span style={{ textDecoration: "underline" }}>Results</span>
+                    <span style={{ textDecoration: "underline", marginLeft: "17px", fontSize: 17 }}>Results</span>
                   </button>
                 )}
               </td>
@@ -197,12 +196,12 @@ export default function RecordsTable({selectedTab, setSelectedTabAction} : Healt
 
           return (
             <tr key={index} style={{ height: "64px", borderBottom: "1px solid #e5e5e5" }}>
-              <td style={{ paddingLeft: 40, fontSize: "14px", color: "#111827" }}>{date}</td>
-              <td style={{ paddingLeft: 24, fontSize: "14px", color: "#111827" }}>{medication}</td>
-              <td style={{ paddingLeft: 24, fontSize: "14px", color: "#111827" }}>{frequency}</td>
+              <td style={{ paddingLeft: 40, color: "#111827" }}>{date}</td>
+              <td style={{ paddingLeft: 24, color: "#111827" }}>{medication}</td>
+              <td style={{ paddingLeft: 24, color: "#111827" }}>{frequency}</td>
               <td style={{ paddingLeft: 24 }}>
-                <div style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "14px", color: "#111827" }}>
-                  <img src={iconSrc} alt={`${status} Icon`} style={{ width: "16px", height: "16px", marginTop: "1px" }} />
+                <div style={{ display: "flex", alignItems: "center", gap: "8px", color: "#111827" }}>
+                  <img src={iconSrc} alt={`${status} Icon`} style={{ width: "16px", height: "16px" }} />
                   {status}
                 </div>
               </td>
@@ -214,7 +213,7 @@ export default function RecordsTable({selectedTab, setSelectedTabAction} : Healt
                     gap: "6px",
                     border: "none",
                     background: "transparent",
-                    fontSize: "14px",
+                  
                     color: "#374151",
                     cursor: "pointer",
                     padding: 0,
@@ -224,7 +223,7 @@ export default function RecordsTable({selectedTab, setSelectedTabAction} : Healt
                   <img
                     src="/img/health-records/details-icon.svg"
                     alt="Download Icon"
-                    style={{ width: "18px", height: "18px", marginTop: "5px" }}
+                    style={{ width: "17px", height: "17px" }}
                   />
                   <span style={{ textDecoration: "underline" }}>Instructions</span>
                 </button>
@@ -249,8 +248,8 @@ export default function RecordsTable({selectedTab, setSelectedTabAction} : Healt
         <tbody>
           {medicalHistoryData.map(([date, category], index) => (
             <tr key={index} style={{ height: "64px", borderBottom: "1px solid #e5e5e5" }}>
-              <td style={{ paddingLeft: 40, fontSize: "14px", color: "#111827" }}>{date}</td>
-              <td style={{ paddingLeft: 24, fontSize: "14px", color: "#111827" }}>{category}</td>
+              <td style={{ paddingLeft: 40, color: "#111827" }}>{date}</td>
+              <td style={{ paddingLeft: 24, color: "#111827" }}>{category}</td>
               <td style={{ paddingLeft: 24 }}>
                 <button
                   style={{
@@ -259,7 +258,7 @@ export default function RecordsTable({selectedTab, setSelectedTabAction} : Healt
                     gap: "6px",
                     border: "none",
                     background: "transparent",
-                    fontSize: "14px",
+                  
                     color: "#374151",
                     cursor: "pointer",
                     padding: 0,
@@ -269,9 +268,9 @@ export default function RecordsTable({selectedTab, setSelectedTabAction} : Healt
                   <img
                     src="/img/health-records/details-icon.svg"
                     alt="Download Icon"
-                    style={{ width: "18px", height: "18px", marginTop: "5px" }}
+                    style={{ width: "17px", height: "17px" }}
                   />
-                  <span style={{ textDecoration: "underline" }}>Details</span>
+                  <span style={{ textDecoration: "underline", marginLeft: "17px", fontSize: 17 }}>Details</span>
                 </button>
               </td>
             </tr>
@@ -289,7 +288,7 @@ export default function RecordsTable({selectedTab, setSelectedTabAction} : Healt
 const baseThStyle = {
   paddingTop: "20px",
   paddingBottom: "8px",
-  fontSize: "13px",
+  fontSize: "17px",
   fontWeight: 500,
   color: "#6B7280",
   textAlign: "left" as const,

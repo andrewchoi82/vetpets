@@ -27,7 +27,7 @@ export default function RecordsHeader({ selectedTab, setSelectedTabAction }: Bil
                   borderBottom: selectedTab === "current bills" ? "2px solid #1e3a8a" : "2px solid transparent",
                   color: selectedTab === "current bills" ? "#1e3a8a" : "#4b5563",
                   fontWeight: selectedTab === "current bills" ? 500 : 300,
-                  fontSize: "15px",
+                  fontSize: "17px",
                   cursor: "pointer",
                }}
             >
@@ -48,7 +48,7 @@ export default function RecordsHeader({ selectedTab, setSelectedTabAction }: Bil
                   borderBottom: selectedTab === "payment history" ? "2px solid #1e3a8a" : "2px solid transparent",
                   color: selectedTab === "payment history" ? "#1e3a8a" : "#4b5563",
                   fontWeight: selectedTab === "payment history" ? 500 : 300,
-                  fontSize: "15px",
+                  fontSize: "17px",
                   cursor: "pointer",
                }}
             >

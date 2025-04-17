@@ -27,8 +27,7 @@ export const SideBarItem = ({
         alignItems: "center",
         padding: "22px 40px",
         backgroundColor: isSelected ? "#E9EFF4" : "transparent",
-        color: isSelected ? "#004D81" : "#444",
-        fontWeight: isSelected ? "600" : "400",
+        color: "#4c4c4c",
         cursor: "pointer",
         width: "100%",
         borderRight: isSelected ? "4px solid #004D81" : "4px solid transparent",
@@ -38,8 +37,8 @@ export const SideBarItem = ({
       <Image
         src={imagePath}
         alt={text}
-        width={18}
-        height={18}
+        width={15}
+        height={15}
         style={{
           marginRight: "12px",
         }}

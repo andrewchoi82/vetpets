@@ -1,6 +1,7 @@
 "use client";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
+import ProgressBar from "./ProgressBar";
 
 interface Test {
   testId: number;
@@ -27,22 +28,30 @@ export default function DashboardRecentTestBox() {
     setTestData(sampData[0]);
   }, []);
 
+  // Progress Bar
+  const statusToStep = {
+    "Pending": 1,
+    "In Progress": 2,
+    "Complete": 3,
+  };
+  
+  const step = statusToStep[testData?.status as keyof typeof statusToStep] || 1;
+
   return (
-    <div className="w-[524px] bg-white rounded-[10px] border border-[#e5e5e5] p-4 flex flex-col gap-3">
+    <div className="w-[544px] h-[266px] bg-white rounded-[10px] border border-[#e5e5e5] p-4 flex flex-col gap-3">
       {/* Header */}
       <div className="flex justify-between items-center">
-        <div className="text-lg font-semibold text-gray-900">Recent Test</div>
-        <div className="text-gray-400 text-xl">{">"}</div>
+        <div style= {{ color: "#4c4c4c", fontWeight: "500", fontSize: "20px" }} className="text-lg">Recent Test</div>
       </div>
 
       {/* Test Name */}
-      <div className="flex gap-1 text-sm text-gray-900">
-        <span className="font-medium">Test:</span>
-        <span>{testData?.name}</span>
+      <div style={{ fontSize: "17px"}} className="flex gap-1 text-sm">
+        <span style={{ color: "#4c4c4c", fontWeight: "bold" }}>Test:</span>
+        <span style={{ color: "#4c4c4c"}}>{testData?.name}</span>
       </div>
 
       {/* Dates */}
-      <div className="flex items-center gap-2 text-sm text-gray-500">
+      <div style={{fontSize: "17px", color: "#4c4c4c"}} className="flex items-center gap-2 text-sm">
         <span>Date Ordered: {testData?.dateOrdered}</span>
         <div className="w-[1px] h-4 bg-gray-300" />
         <span>Expected by: {testData?.dateExpected}</span>
@@ -51,28 +60,11 @@ export default function DashboardRecentTestBox() {
       {/* Status */}
       <div className="flex items-center gap-2 text-sm italic text-gray-500 mt-1">
         <div className="w-4 h-4 bg-yellow-300 rounded-full" />
-        <span>Status: {testData?.status}</span>
+        <span style={{ fontSize: "17px" }}>Status: {testData?.status}</span>
       </div>
 
-      {/* Progress bar */}
-      <div style={{marginLeft: "20px", marginTop: "20px"}}>
-        <div className="flex items-center mt-2 w-full gap-0">
-            {/* Step 1 */}
-            <div className="flex items-center gap-0">
-                <div className="w-4 h-4 bg-blue-900 rounded-full" />
-                <div className="w-[100px] h-[2px] bg-blue-900" />
-            </div>
+      <ProgressBar step={step} style={{ marginLeft: 49, marginTop: "32px", marginBottom: "49px"}} />
 
-            {/* Step 2 */}
-            <div className="flex items-center gap-0">
-                <div className="w-4 h-4 bg-gray-300 rounded-full" />
-                <div className="w-[100px] h-[2px] bg-gray-200" />
-            </div>
-
-            {/* Step 3 */}
-            <div className="w-4 h-4 bg-gray-200 rounded-full" />
-        </div>
-     </div>
     </div>
   );
 }

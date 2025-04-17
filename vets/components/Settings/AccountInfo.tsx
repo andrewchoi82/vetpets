@@ -26,7 +26,7 @@ export default function AccountInfo({
       }}
     >
       <div style={{ paddingLeft: "25px", paddingRight: "25px" }}>
-        <h5 style={{ fontWeight: "500", marginTop: "20px", color: "#4C4C4C" }}>
+        <h5 style={{ fontSize: "20px", fontWeight: "500", marginTop: "20px", color: "#4C4C4C" }}>
           Account information
         </h5>
 
@@ -45,6 +45,7 @@ export default function AccountInfo({
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
+              fontSize: "17px"
             }}
           >
             <div style={{ display: "flex", alignItems: "center" }}>

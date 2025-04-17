@@ -5,7 +5,7 @@ import React, { useEffect, useState, KeyboardEvent } from 'react'
 import { SideBarContainer } from "@/components/MainSideBar/SideBarContainer";
 import DashboardRecentTestBox from "@/components/Dashboard/dashboardRecentTestBox"
 import DashboardBillingBox from "@/components/Dashboard/dashboardBillingBox"
-import DashboardMessagesBox from "@/components/Dashboard/dashboardMessagesBox"
+import DashboardMessagesBox from "@/components/Dashboard/dashboardRecentMessagesBox"
 import DashboardAppointmentsBox from "@/components/Dashboard/dashboardAppointmentsBox"
 import DashboardSmallBox from "@/components/Dashboard/dashboardSmallBox"
 import { MessageHeaderBox } from "./MessageHeaderBox";

@@ -18,7 +18,7 @@ export default function AppointmentsHeader({ selectedTab, setSelectedTab }: Appo
                style={{
                   display: "flex",
                   alignItems: "center",
-                  gap: "6px",
+                  gap: "14px",
                   marginTop: "5px",
                   paddingBottom: "14px",
                   border: "none",
@@ -26,11 +26,11 @@ export default function AppointmentsHeader({ selectedTab, setSelectedTab }: Appo
                   borderBottom: selectedTab === "upcoming" ? "2px solid #1e3a8a" : "2px solid transparent",
                   color: selectedTab === "upcoming" ? "#1e3a8a" : "#4b5563",
                   fontWeight: selectedTab === "upcoming" ? 500 : 300,
-                  fontSize: "15px",
+                  fontSize: "17px",
                   cursor: "pointer",
                }}
             >
-               <Image src="/img/appointments/upcoming-appointments.svg" alt="Upcoming" width={16} height={16} />
+               <Image src="/img/appointments/upcoming-appointments.svg" alt="Upcoming" width={19} height={14} />
                Upcoming Appointments
             </button>
 
@@ -39,7 +39,7 @@ export default function AppointmentsHeader({ selectedTab, setSelectedTab }: Appo
                style={{
                   display: "flex",
                   alignItems: "center",
-                  gap: "6px",
+                  gap: "14px",
                   marginTop: "5px",
                   paddingBottom: "14px",
                   border: "none",
@@ -47,11 +47,11 @@ export default function AppointmentsHeader({ selectedTab, setSelectedTab }: Appo
                   borderBottom: selectedTab === "past" ? "2px solid #1e3a8a" : "2px solid transparent",
                   color: selectedTab === "past" ? "#1e3a8a" : "#4b5563",
                   fontWeight: selectedTab === "past" ? 500 : 300,
-                  fontSize: "15px",
+                  fontSize: "17px",
                   cursor: "pointer",
                }}
             >
-               <Image src="/img/appointments/past-appointments.svg" alt="Past" width={16} height={16} />
+               <Image src="/img/appointments/past-appointments.svg" alt="Past" width={20} height={14} />
                Past Appointments
             </button>
             </div>

@@ -14,7 +14,7 @@ type SidebarProps = {
 //to make one call it like this         <DashboardSmallBox label={"Gender"} value = {"Male"} image={"/img/dashboard/dashboardGender.svg"}/>
 export default function DashboardSmallBox({ label, value, image }: SidebarProps) {
     return (
-      <div className="w-full max-w-[180px] min-w-[140px] h-[84px] bg-white rounded-[10px] border border-[#e5e5e5] flex items-center justify-between px-4 py-2">
+      <div className="w-full max-w-[180px] min-w-[140px] h-[84px] bg-white rounded-[10px] border border-[#e5e5e5] flex items-center justify-between px-5 py-2">
         <div className="flex flex-col justify-center">
           <div className="text-sm text-gray-400">{label}</div>
           <div className="text-xl font-medium text-black">{value}</div>
@@ -28,11 +28,6 @@ export default function DashboardSmallBox({ label, value, image }: SidebarProps)
                 className="object-contain max-w-[34px] max-h-[34px]"
             />
         </div>
-
-
-
-
-
       </div>
 
 
