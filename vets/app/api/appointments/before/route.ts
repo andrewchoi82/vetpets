@@ -10,10 +10,14 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'petId is required' }, { status: 400 });
     }
     
+    // Get current date in ISO format (YYYY-MM-DD)
+    const today = new Date().toISOString().split('T')[0];
+    
     const { data, error } = await supabase
       .from('appointments')
       .select('*')
       .eq('petId', petId)
+      .lte('date', today) // Only get appointments from today and before
       .order('date', { ascending: false });
       
     if (error) {
@@ -25,11 +29,4 @@ export async function GET(req: NextRequest) {
     console.error('Error fetching appointments:', err);
     return NextResponse.json({ error: 'Failed to fetch appointments' }, { status: 500 });
   }
-}
-
-export async function POST(req: NextRequest) {
-  const newAppointment = await req.json();
-  const { data, error } = await supabase.from('appointments').insert(newAppointment).select('apptId').single();
-  if (error) return NextResponse.json({ error: error.message }, { status: 400 });
-  return NextResponse.json({ apptId: data.apptId }, { status: 201 });
 }
