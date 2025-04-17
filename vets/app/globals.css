@@ -100,3 +100,12 @@
 body {
   font-family: "SF Pro Display", sans-serif;
 }
+
+
+.hide-scroll::-webkit-scrollbar {
+  display: none;
+}
+.hide-scroll {
+  -ms-overflow-style: none; /* IE */
+  scrollbar-width: none;    /* Firefox */
+}

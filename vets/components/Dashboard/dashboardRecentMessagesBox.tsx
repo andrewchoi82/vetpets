@@ -29,18 +29,12 @@ export default function DashboardRecentMessagesBox() {
     fetchConvos();
   }, []);
 
-  const formatDateTime = (date: string, time: string) => {
-    const d = new Date(`${date}T${time}`);
-    const dateStr = d.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-    const timeStr = d.toLocaleTimeString("en-US", {
-      hour: "numeric",
-      minute: "2-digit",
-    });
-    return `${dateStr}\n${timeStr}`;
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const mm = String(date.getMonth() + 1).padStart(2, "0");
+    const dd = String(date.getDate()).padStart(2, "0");
+    const yy = String(date.getFullYear()).slice(-2);
+    return `${mm}/${dd}/${yy}`;
   };
 
   return (
@@ -76,7 +70,7 @@ export default function DashboardRecentMessagesBox() {
               <div style={{ color: "#4c4c4c" }}>{message.name}</div>
             </div>
             <div style={{ color: "#4c4c4c", whiteSpace: "pre-line", textAlign: "right" }}>
-              {formatDateTime(message.recentDate, message.recentTime)}
+              {formatDate(message.recentDate)}
             </div>
           </div>
         ))}

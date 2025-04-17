@@ -44,7 +44,17 @@ export const SideBarItem = ({
         }}
       />
 
-      <p style={{ margin: 0, fontSize: "15px", flexGrow: 1 }}>{text}</p>
+      <p
+        style={{
+          margin: 0,
+          fontSize: "15px",
+          flexGrow: 1,
+          color: isSelected ? "#004D81" : "#4c4c4c",
+          fontWeight: isSelected ? 500 : 400,
+        }}
+      >
+        {text}
+      </p>
 
       {notificationCount > 0 && (
         <div

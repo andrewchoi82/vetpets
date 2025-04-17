@@ -3,6 +3,7 @@ import Image from "next/image";
 import React, { useEffect, useState } from "react";
 
 import { getAppointments } from "@/app/lib/api/appointments";
+import { getUserById } from "@/app/lib/api/users";
 
 
 
@@ -20,6 +21,8 @@ export default function DashboardAppointmentsBox() {
   
 
   const [appointmentData, setAppointmentData] = useState<Appointment | null>(null);
+  const [doctorId, setDoctorId] = useState<string | null>(null);
+  const [doctorName, setDoctorName] = useState("");
 
   // FETCH IS HARD CODED FOR FIRST ITEM CHANGE LATER
   useEffect(() => {
@@ -27,8 +30,11 @@ export default function DashboardAppointmentsBox() {
       try {
         const data = await getAppointments("1");
         if (Array.isArray(data) && data.length > 0) {
-          const sorted = data.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+          const sorted = data.sort(
+            (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+          );
           setAppointmentData(sorted[0]);
+          setDoctorId(sorted[0].doctorId);
         }
       } catch (error) {
         console.error("Failed to fetch appointments.");
@@ -37,6 +43,22 @@ export default function DashboardAppointmentsBox() {
   
     fetchAppointments();
   }, []);
+  
+  useEffect(() => {
+    const fetchDoctor = async (id: string) => {
+      try {
+        const data = await getUserById(id);
+        setDoctorName(`Dr. ${data.lastName}`);
+
+      } catch (error) {
+        console.error("Failed to fetch doctor.");
+      }
+    };
+  
+    if (doctorId) {
+      fetchDoctor(doctorId);
+    }
+  }, [doctorId]);
   
 
   return (
@@ -129,7 +151,7 @@ export default function DashboardAppointmentsBox() {
                     style={{ borderRadius: "9999px" }}
                   />
               
-                <div style={{ fontSize: "15px", color: "#6b7280" }}>{appointmentData?.name}</div>
+                <div style={{ fontSize: "15px", color: "#6b7280" }}>{doctorName}</div>
               </div>
             </div>
 
