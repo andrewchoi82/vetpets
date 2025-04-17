@@ -1,10 +1,12 @@
 "use client";
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Image from "next/image";
 import { Header } from "@/components/MainHeader/Header";
 import { SideBarContainer } from "@/components/MainSideBar/SideBarContainer";
-import { FilePond } from 'react-filepond';
+import { FilePond, registerPlugin } from 'react-filepond';
+import type { FilePondFile, FilePondErrorDescription } from 'filepond';
 
+import 'filepond/dist/filepond.min.css';
 
 export default function PDFTestPage() {
   const [file, setFile] = useState<File | null>(null);
@@ -12,6 +14,8 @@ export default function PDFTestPage() {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
   const [uploadHistory, setUploadHistory] = useState<Array<{name: string, date: string, size: string}>>([]);
+  const [filepondFiles, setFilepondFiles] = useState<any[]>([]);
+  const pondRef = useRef<FilePond>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -67,6 +71,34 @@ export default function PDFTestPage() {
       setError(err instanceof Error ? err.message : 'An unknown error occurred');
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Handle FilePond file processing
+  const handleFilePondProcessFile = (error: FilePondErrorDescription | null, file: FilePondFile) => {
+    if (error) {
+      setError(error.main || 'An error occurred while processing the file');
+      return;
+    }
+
+    try {
+      const serverId = file.serverId;
+      const response = typeof serverId === 'string' ? JSON.parse(serverId) : {};
+      setResult(response.text || '');
+      
+      // Add to history if we have file info
+      if (file.filename) {
+        const newHistoryItem = {
+          name: file.filename,
+          date: new Date().toLocaleDateString(),
+          size: file.fileSize ? `${(file.fileSize / 1024).toFixed(2)} KB` : 'Unknown'
+        };
+        
+        setUploadHistory(prev => [newHistoryItem, ...prev]);
+      }
+    } catch (err) {
+      console.error('Error parsing server response:', err);
+      setError('Failed to parse server response');
     }
   };
 
@@ -153,15 +185,8 @@ export default function PDFTestPage() {
                 )}
               </div>
               
-              <div className="bg-white rounded-lg shadow-md p-4">
+              <div className="bg-white rounded-lg shadow-md p-4 mb-6">
                 <h2 className="text-xl font-semibold mb-4">Recent Uploads</h2>
-                <FilePond
-      server={{
-        process: '/api/parse-pdf',
-        fetch: null,
-        revert: null,
-      }}
-    />
                 <div className="space-y-3 max-h-[400px] overflow-y-auto">
                   {uploadHistory.map((item, index) => (
                     <div key={index} className="flex items-center p-2 hover:bg-gray-50 rounded-md cursor-pointer">
@@ -184,6 +209,47 @@ export default function PDFTestPage() {
                     </div>
                   ))}
                 </div>
+              </div>
+              <div className="bg-white rounded-lg shadow-md p-4">
+                <h2 className="text-xl font-semibold mb-4">FilePond Uploader</h2>
+                <FilePond
+                  ref={pondRef}
+                  files={filepondFiles}
+                  onupdatefiles={setFilepondFiles}
+                  onprocessfile={handleFilePondProcessFile}
+                  allowMultiple={false}
+                  maxFiles={1}
+                  acceptedFileTypes={['application/pdf']}
+                  fileValidateTypeLabelExpectedTypes="Expects PDF"
+                  server={{
+                    process: {
+                      url: '/api/parse-pdf',
+                      method: 'POST',
+                      onload: (serverId) => {
+                        // Return JSON string as-is to store in file.serverId
+                        return serverId;
+                      },
+                      onerror: (error) => setError(error || 'Upload failed'),
+                    },
+                    fetch: null,
+                    revert: null,
+                  }}
+                  name="file"
+                  className="filepond-blue"
+                  stylePanelLayout="compact"
+                  styleButtonRemoveItemPosition="right"
+                  styleButtonProcessItemPosition="right"
+                  styleLoadIndicatorPosition="center"
+                  styleProgressIndicatorPosition="center"
+                  credits={false}
+                  labelIdle='Drag & Drop your PDF or <span class="filepond--label-action">Browse</span>'
+                  style={{
+                    border: '2px solid #3b82f6',
+                    borderRadius: '0.375rem',
+                    backgroundColor: '#eff6ff',
+                    minHeight: '150px'
+                  }}
+                />
               </div>
             </div>
             
