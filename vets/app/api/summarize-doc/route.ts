@@ -1,97 +1,125 @@
 import { NextRequest, NextResponse } from 'next/server';
-import OpenAI from "openai";
-export async function POST(request: NextRequest) {
-  const { transcript } = await request.json();
+import axios from 'axios';
+import FormData from 'form-data';
 
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY!;
+const ASSISTANT_ID = process.env.OPENAI_ASSISTANT_ID!; // set this in your .env.local
 
-  const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-  });
-  
-  const response = await openai.chat.completions.create({
-    model: "gpt-4o",
-    messages: [
+const OPENAI_BETA_HEADER = { 'OpenAI-Beta': 'assistants=v2' };
+
+export async function POST(req: NextRequest) {
+  try {
+    const { fileData } = await req.json();
+
+    if (!fileData) {
+      return NextResponse.json({ error: 'No file data provided' }, { status: 400 });
+    }
+
+    // Convert base64 data to buffer
+    const base64Data = fileData.split(',')[1];
+    const fileBuffer = Buffer.from(base64Data, 'base64');
+    const filename = 'VetLabResult.pdf';
+
+    // 1. Upload PDF file to OpenAI
+    const formData = new FormData();
+    formData.append('file', fileBuffer, {
+      filename,
+      contentType: 'application/pdf',
+    });
+    formData.append('purpose', 'assistants');
+
+    const fileUploadRes = await axios.post('https://api.openai.com/v1/files', formData, {
+      headers: {
+        Authorization: `Bearer ${OPENAI_API_KEY}`,
+        ...formData.getHeaders(),
+        ...OPENAI_BETA_HEADER,
+      },
+    });
+
+    const fileId = fileUploadRes.data.id;
+
+    // 2. Create a new thread
+    const threadRes = await axios.post(
+      'https://api.openai.com/v1/threads',
+      {},
       {
-        "role": "system",
-        "content": [
-          {
-            "type": "text",
-            "text": "You are a professional journaler. You will extract relevant info that is fun and memorable, making sure that all of the info is grounded in the user's experiences."
-          }
-        ]
+        headers: {
+          Authorization: `Bearer ${OPENAI_API_KEY}`,
+          ...OPENAI_BETA_HEADER,
+        },
+      }
+    );
+
+    const threadId = threadRes.data.id;
+
+    // 3. Add user message with file to the thread
+    await axios.post(
+      `https://api.openai.com/v1/threads/${threadId}/messages`,
+      {
+        role: 'user',
+        content: 'Please analyze this veterinary lab report and summarize it in plain English.',
+        attachments: [{
+            file_id: fileId,
+            tools: [{ type: "file_search" }]
+          }]
       },
       {
-        "role": "user",
-        "content": [
-          {
-            "type": "text",
-            "text": "Given the following transcript, extract fun and memorable comments that fit the format of the output schema. Remember all of your responses need to be grounded in the user's true experiences. Keep responses concise. Transcript: " + transcript
-          }
-        ]
+        headers: {
+          Authorization: `Bearer ${OPENAI_API_KEY}`,
+          ...OPENAI_BETA_HEADER,
+        },
       }
-    ],
-    temperature: 1,
-    max_tokens: 2048,
-    top_p: 1,
-    frequency_penalty: 0,
-    presence_penalty: 0,
-    response_format: {
-      "type": "json_schema",
-    "json_schema": {
-        "name": "artifact",
-        "strict": true,
-        "schema": {
-          "type": "object",
-          "properties": {
-            "name": {
-              "type": "string",
-              "description": "The individuals name in possesive form. Make it quirky and representative of the mood. An example name for an individual who was sleep deprived could be Jason Hasn't Slept's"
-            },
-            "event": {
-              "type": "string",
-              "description": "The event associated with the user transcript. Try to make it one word if possible. Use nicknames, abbreviations, how the user refers to the event."
-            },
-            "vibe": {
-              "type": "string",
-              "description": "The vibe or mood related to the artifact in one word. It should be a completion of the sentence, {event}'s vibe is... "
-            },
-            "backgroundColor": {
-              "type": "string",
-              "description": "The background color of the artifact. It should be one of these four: Light Beige, Off-White/ Cream, Pale Gray, Light Blue"
-            },
-            "quoteQuestion": {
-              "type": "string",
-              "description": "A question relating to the user's experience that invites curiosity, and is also directly answered by a user quote. Phrase it in the third person to an unkown audience. Mention the user by name."
-            },
-            "quote": {
-              "type": "string",
-              "description": "The quote from the user that answers the quote question. Give the exact text."
-            },
-            "additionalInfo": {
-              "type": "string",
-              "description": "Any additional information that complements the artifact and maybe jokes or pokes fun at the user's experience. Please keep this short and sweet."
-            }
-          },
-          "required": [
-            "name",
-            "event",
-            "vibe",
-            "backgroundColor",
-            "quoteQuestion",
-            "quote",
-            "additionalInfo"
-          ],
-          "additionalProperties": false
-        }
+    );
+
+
+    // 4. Run the assistant on the thread
+    const runRes = await axios.post(
+      `https://api.openai.com/v1/threads/${threadId}/runs`,
+      {
+        assistant_id: ASSISTANT_ID,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${OPENAI_API_KEY}`,
+          ...OPENAI_BETA_HEADER,
+        },
       }
-      
+    );
+
+    const runId = runRes.data.id;
+
+    // 5. Poll until the run completes
+    let status = 'queued';
+    let output = '';
+    while (status !== 'completed' && status !== 'failed') {
+      const runStatus = await axios.get(`https://api.openai.com/v1/threads/${threadId}/runs/${runId}`, {
+        headers: {
+          Authorization: `Bearer ${OPENAI_API_KEY}`,
+          ...OPENAI_BETA_HEADER,
+        },
+      });
+
+      status = runStatus.data.status;
+      if (status === 'completed') break;
+      if (status === 'failed') throw new Error('Assistant run failed');
+
+      await new Promise((r) => setTimeout(r, 1000));
     }
-  });
 
-  const content = response.choices[0].message.content
+    // 6. Get the assistant's response
+    const messagesRes = await axios.get(`https://api.openai.com/v1/threads/${threadId}/messages`, {
+      headers: {
+        Authorization: `Bearer ${OPENAI_API_KEY}`,
+        ...OPENAI_BETA_HEADER,
+      },
+    });
 
+    const messageContent = messagesRes.data.data[0]?.content[0]?.text?.value;
+    console.log(messageContent);
 
-  return NextResponse.json({
-    content: content,
-  });
+    return NextResponse.json({ component: messageContent });
+  } catch (error: any) {
+    console.error('Error:', error.response?.data || error.message);
+    return NextResponse.json({ error: error.message || 'Internal server error' }, { status: 500 });
+  }
 }

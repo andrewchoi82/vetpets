@@ -3,19 +3,26 @@
 import React from "react";
 import Image from "next/image";
 
-interface HealthRecordsHeaderProps {
+
+
+interface RecordsHeaderProps {
   selectedTab: "vaccinations" | "test results" | "medications" | "medical history";
   setSelectedTabAction: (tab: "vaccinations" | "test results" | "medications" | "medical history") => void;
+  tabChange: boolean;
+  setTabChange: (change: boolean) => void;
 }
 
-export default function RecordsHeader({ selectedTab, setSelectedTabAction }: HealthRecordsHeaderProps) {
+
+export default function RecordsHeader({selectedTab, setSelectedTabAction ,tabChange, setTabChange} : RecordsHeaderProps) {
   return (
     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", padding: "0 24px", borderBottom: "1px solid #e5e7eb" }}>
       {/* Tabs */}
       <div style= {{display: "flex", alignItems: "center"}}> 
          <div style={{ display: "flex", gap: "32px", marginTop: "25px" }}>
             <button
-               onClick={() => setSelectedTabAction("vaccinations")}
+               onClick={() => {setSelectedTabAction("vaccinations")
+                  setTabChange(!tabChange);
+               }}
                style={{
                   display: "flex",
                   alignItems: "center",
@@ -36,7 +43,10 @@ export default function RecordsHeader({ selectedTab, setSelectedTabAction }: Hea
             </button>
 
             <button
-               onClick={() => setSelectedTabAction("test results")}
+               onClick={() => {setSelectedTabAction("test results");
+                  setTabChange(!tabChange);
+
+               }}
                style={{
                   display: "flex",
                   alignItems: "center",
@@ -57,7 +67,9 @@ export default function RecordsHeader({ selectedTab, setSelectedTabAction }: Hea
             </button>
 
             <button
-               onClick={() => setSelectedTabAction("medications")}
+               onClick={() => {setSelectedTabAction("medications");
+                  setTabChange(!tabChange);}
+               }
                style={{
                   display: "flex",
                   alignItems: "center",
@@ -78,7 +90,10 @@ export default function RecordsHeader({ selectedTab, setSelectedTabAction }: Hea
             </button>
 
             <button
-               onClick={() => setSelectedTabAction("medical history")}
+               onClick={() => {setSelectedTabAction("medical history");
+                  setTabChange(!tabChange);
+               }
+               }
                style={{
                   display: "flex",
                   alignItems: "center",
