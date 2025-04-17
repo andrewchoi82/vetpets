@@ -10,6 +10,8 @@ import { useState } from "react";
 export default function HealthRecords() {
    const [selectedTab, setSelectedTab] = useState<"vaccinations" | "test results" | "medications" | "medical history">("vaccinations");
 
+   const[tabChange, setTabChange] = useState(false);
+
    return (
        <div style={{ display: "flex", height: "100vh", overflow: "hidden" }}>
          <SideBarContainer selectedPage="Health records" />
@@ -17,8 +19,8 @@ export default function HealthRecords() {
          <div style={{ flex: 1, display: "flex", flexDirection: "column", background: "#fff", overflowY: "auto" }}>
             <Header title="Health Records" />
 
-            <RecordsHeader selectedTab={selectedTab} setSelectedTabAction={setSelectedTab}/>
-            <RecordsTable selectedTab={selectedTab} setSelectedTabAction={setSelectedTab}/>
+            <RecordsHeader selectedTab={selectedTab} setSelectedTabAction={setSelectedTab} tabChange={tabChange} setTabChange={setTabChange}/>
+            <RecordsTable selectedTab={selectedTab} setSelectedTabAction={setSelectedTab} tabChange={tabChange} setTabChange={setTabChange}/>
          </div>
        </div>
    );
