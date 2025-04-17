@@ -16,3 +16,9 @@ export async function getUserById(id: string) {
    return data;
  }
  
+ export async function getPetsByDoctorId(doctorId: string) {
+  const res = await fetch(`/api/pets/petsByDoctor?doctorId=${doctorId}`);
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || "Failed to fetch pets for doctor");
+  return data;
+}
