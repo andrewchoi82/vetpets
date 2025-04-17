@@ -10,7 +10,7 @@ import { useState } from 'react'
 
 export default function Clients() {
 
-  const [selected, setSelected] = useState("profile")
+  const [selected, setSelected] = useState("table")
 
 
   return (
