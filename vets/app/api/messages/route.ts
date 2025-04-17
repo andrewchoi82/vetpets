@@ -12,7 +12,7 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   const message = await req.json();
-  const { data, error } = await supabase.from('message').insert(message).single();
+  const { data, error } = await supabase.from('message').insert(message).select('messageId').single();
   if (error) return NextResponse.json({ error: error.message }, { status: 400 });
-  return NextResponse.json(data, { status: 201 });
+  return NextResponse.json({ messageId: data.messageId }, { status: 201 });
 }
