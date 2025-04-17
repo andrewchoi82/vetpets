@@ -5,7 +5,6 @@ import { getTests } from "@/app/lib/api/tests";
 import { getImageUrl } from "@/app/lib/supabaseGetFile";
 import { Document, Page, pdfjs } from "react-pdf";
 
-pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 interface RecordsHeaderProps {
   selectedTab: "vaccinations" | "test results" | "medications" | "medical history";
   setSelectedTabAction: (tab: "vaccinations" | "test results" | "medications" | "medical history") => void;
