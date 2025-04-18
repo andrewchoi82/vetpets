@@ -7,7 +7,7 @@ import toast, { Toaster } from "react-hot-toast";
 
 export default function FileUpload() {
   const [fileResponse, setFileResponse] = useState(null);
-
+  const [matchedFields, setMatchedFields] = useState(null);
 
   const Notify = (status: string, message: string) => {
     toast.dismiss();
@@ -15,6 +15,28 @@ export default function FileUpload() {
       toast.success(message);
     } else {
       toast.error(message);
+    }
+  };
+
+  const processMatchFields = async (documentText: string) => {
+    try {
+      const response = await fetch('/api/match-fields', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ document: documentText }),
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to match fields');
+      }
+      
+      const data = await response.json();
+      setMatchedFields(data);
+    } catch (error) {
+      console.error('Error matching fields:', error);
+      Notify("error", "Failed to process document fields");
     }
   };
 
@@ -31,6 +53,12 @@ export default function FileUpload() {
               // parse the json response
               const fileResponse = JSON.parse(response);
               setFileResponse(fileResponse);
+              
+              // Process the parsed text with match-fields API
+              if (fileResponse && fileResponse.parsedText) {
+                processMatchFields(fileResponse.parsedText);
+              }
+              
               return response; // Return the response to FilePond
             },
             onerror: (response) => {
@@ -48,6 +76,18 @@ export default function FileUpload() {
             <h1 className="font-black text-xl">Text from the Pdf :-</h1>
             {/* @ts-expect-error - This is needed because it giving parsedText is not found on type never */}
             <pre className="text-wrap p-5">{fileResponse.parsedText}</pre>
+            
+            {matchedFields && (
+              <div className="mt-5">
+                <h1 className="font-black text-xl">Matched Fields :-</h1>
+                <pre className="text-wrap p-5 bg-gray-100 rounded-md overflow-auto">
+                  {matchedFields.content && typeof matchedFields.content === 'string' 
+                    ? JSON.stringify(JSON.parse(matchedFields.content), null, 2)
+                    : JSON.stringify(matchedFields, null, 2)
+                  }
+                </pre>
+              </div>
+            )}
           </div>
         ) : (
           <div className="flex flex-col gap-2 justify-center items-center">

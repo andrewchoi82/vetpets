@@ -4,15 +4,60 @@ import Image from "next/image";
 import { Header } from "@/components/MainHeader/Header";
 import { useRouter } from 'next/navigation';
 import { SideBarContainerVets } from '@/components/MainSideBar/SideBarContainerVets';
+import { FilePond } from "react-filepond";
+import "filepond/dist/filepond.min.css";
+import toast, { Toaster } from "react-hot-toast";
 
 export default function PDFTestPage() {
   const router = useRouter();
   const [file, setFile] = useState<File | null>(null);
-  const [result, setResult] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
   const [uploadHistory, setUploadHistory] = useState<Array<{name: string, date: string, size: string}>>([]);
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
+  const [fileResponse, setFileResponse] = useState<any>(null);
+  const [matchedFields, setMatchedFields] = useState<any>(null);
+  const [editableJson, setEditableJson] = useState<string>('');
+
+  const Notify = (status: string, message: string) => {
+    toast.dismiss();
+    if (status === "success") {
+      toast.success(message);
+    } else {
+      toast.error(message);
+    }
+  };
+
+  const processMatchFields = async (documentText: string) => {
+    try {
+      const response = await fetch('/api/match-fields', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ document: documentText }),
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to match fields');
+      }
+      
+      const data = await response.json();
+      setMatchedFields(data);
+      
+      // Set the editable JSON string
+      if (data && typeof data === 'object') {
+        if (data.content && typeof data.content === 'string') {
+          setEditableJson(JSON.stringify(JSON.parse(data.content), null, 2));
+        } else {
+          setEditableJson(JSON.stringify(data, null, 2));
+        }
+      }
+    } catch (error) {
+      console.error('Error matching fields:', error);
+      Notify("error", "Failed to process document fields");
+    }
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -26,25 +71,19 @@ export default function PDFTestPage() {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!file) {
-      setError('Please select a PDF file first');
-      return;
-    }
+  const handleJsonChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setEditableJson(e.target.value);
+  };
 
-    if (file.type !== 'application/pdf') {
-      setError('Please upload a PDF file');
-      return;
+  const handleSaveJson = () => {
+    try {
+      // Validate JSON
+      const parsedJson = JSON.parse(editableJson);
+      setMatchedFields({ content: JSON.stringify(parsedJson) });
+      Notify("success", "JSON updated successfully");
+    } catch (error) {
+      Notify("error", "Invalid JSON format");
     }
-
-    setLoading(true);
-    
-    // Wait 2 seconds then redirect to home page
-    setTimeout(() => {
-      router.push('/');
-    }, 2000);
   };
 
   // Clean up object URLs when component unmounts or when file changes
@@ -77,6 +116,7 @@ export default function PDFTestPage() {
 
       <div style={{ flex: 1, display: "flex", flexDirection: "column", background: "#fff", overflowY: "auto" }}>
         <Header title="Vet Portal" />
+        <Toaster />
         
         <main className="w-full bg-white h-full overflow-hidden p-6">
           <div className="flex h-full">
@@ -84,62 +124,37 @@ export default function PDFTestPage() {
               <div className="bg-white rounded-lg shadow-md p-4 mb-6">
                 <h2 className="text-xl font-semibold mb-4">Upload PDF</h2>
                 
-                <form onSubmit={handleSubmit}>
-                  <div className="mb-4">
-                    <label className="block text-gray-700 mb-2 font-medium">Select PDF File</label>
-                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:bg-gray-50 cursor-pointer">
-                      <input
-                        type="file"
-                        accept="application/pdf"
-                        onChange={handleFileChange}
-                        className="hidden"
-                        id="pdf-upload"
-                      />
-                      <label htmlFor="pdf-upload" className="cursor-pointer">
-                        <Image
-                          src="/img/message/create.svg"
-                          alt="Upload"
-                          width={40}
-                          height={40}
-                          className="mx-auto mb-2"
-                        />
-                        <p className="text-gray-500">Click to browse files</p>
-                      </label>
-                    </div>
-                    
-                    {file && (
-                      <div className="mt-3 p-3 bg-blue-50 rounded-md flex items-center">
-                        <div className="mr-3">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-500">
-                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                            <polyline points="14 2 14 8 20 8"></polyline>
-                            <line x1="16" y1="13" x2="8" y2="13"></line>
-                            <line x1="16" y1="17" x2="8" y2="17"></line>
-                            <polyline points="10 9 9 9 8 9"></polyline>
-                          </svg>
-                        </div>
-                        <div className="flex-1 truncate">
-                          <p className="font-medium text-sm">{file.name}</p>
-                          <p className="text-xs text-gray-500">{(file.size / 1024).toFixed(2)} KB</p>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                  
-                  <button
-                    type="submit"
-                    disabled={loading || !file}
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md disabled:bg-blue-300 transition duration-200"
-                  >
-                    {loading ? 'Processing...' : 'Parse PDF'}
-                  </button>
-                </form>
-                
-                {error && (
-                  <div className="mt-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-                    <p>{error}</p>
-                  </div>
-                )}
+                <div className="mb-4">
+                  <label className="block text-gray-700 mb-2 font-medium">Select PDF File</label>
+                  <FilePond
+                    server={{
+                      process: {
+                        url: "/api/parse-pdf",
+                        method: "POST",
+                        withCredentials: false,
+                        onload: (response) => {
+                          // parse the json response
+                          const parsedResponse = JSON.parse(response);
+                          setFileResponse(parsedResponse);
+                          
+                          // Process the parsed text with match-fields API
+                          if (parsedResponse && parsedResponse.parsedText) {
+                            processMatchFields(parsedResponse.parsedText);
+                          }
+                          
+                          Notify("success", "PDF successfully processed");
+                          return response; // Return the response to FilePond
+                        },
+                        onerror: (response) => {
+                          Notify("error", "Failed to process PDF");
+                          return response; // Return the error to FilePond
+                        },
+                      },
+                      fetch: null,
+                      revert: null,
+                    }}
+                  />
+                </div>
               </div>
               
               <div className="bg-white rounded-lg shadow-md p-4">
@@ -170,16 +185,35 @@ export default function PDFTestPage() {
             </div>
             
             <div className="w-2/3 pl-4">
-              {result ? (
+              {matchedFields ? (
                 <div className="bg-white rounded-lg shadow-md p-4 h-full">
                   <div className="flex justify-between items-center mb-4">
-                    <h2 className="text-xl font-semibold">Parsed Result</h2>
-                    <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">
-                      Copy to clipboard
-                    </button>
+                    <h2 className="text-xl font-semibold">Matched Fields</h2>
+                    <div className="flex gap-2">
+                      <button 
+                        className="text-blue-600 hover:text-blue-800 text-sm font-medium px-3 py-1 border border-blue-600 rounded"
+                        onClick={handleSaveJson}
+                      >
+                        Save Changes
+                      </button>
+                      <button 
+                        className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                        onClick={() => {
+                          navigator.clipboard.writeText(editableJson);
+                          Notify("success", "Copied to clipboard");
+                        }}
+                      >
+                        Copy to clipboard
+                      </button>
+                    </div>
                   </div>
-                  <div className="bg-gray-50 p-4 rounded-md h-[calc(100%-3rem)] overflow-y-auto whitespace-pre-wrap text-gray-700">
-                    {result}
+                  <div className="bg-gray-50 p-4 rounded-md h-[calc(100%-3rem)] overflow-y-auto">
+                    <textarea
+                      className="w-full h-full p-2 font-mono text-sm bg-gray-50 border border-gray-200 rounded focus:outline-none focus:border-blue-500"
+                      value={editableJson}
+                      onChange={handleJsonChange}
+                      spellCheck="false"
+                    />
                   </div>
                 </div>
               ) : pdfUrl ? (
@@ -205,10 +239,15 @@ export default function PDFTestPage() {
                     height={80}
                     className="mb-4 opacity-50"
                   />
-                  <h3 className="text-xl font-medium text-gray-700 mb-2">No PDF Parsed Yet</h3>
+                  <h3 className="text-xl font-medium text-gray-700 mb-2">No PDF Processed Yet</h3>
                   <p className="text-gray-500 max-w-md">
-                    Upload a PDF file and click "Parse PDF" to extract and view the text content here.
+                    Upload a PDF file using FilePond to extract and analyze document fields automatically.
                   </p>
+                  <div 
+                    className="h-[260px] w-[260px] flex items-center justify-center mt-4"
+                    onClick={() => Notify("success", "Upload a PDF to see matched fields")}
+                  >
+                  </div>
                 </div>
               )}
             </div>

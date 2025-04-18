@@ -9,10 +9,13 @@ interface ClientTableProps {
 
 export default function ClientsTable({selected, setSelected} : ClientTableProps) {
   type Pet = {
-    lastName: string;
-    firstName: string;
+
     name: string;
     petId: number;
+    users: {
+      lastName: string;
+      firstName: string;
+    }
   };
 
   const [vetPetData, setVetPetData] = useState<Pet[]>([]);
@@ -27,6 +30,8 @@ export default function ClientsTable({selected, setSelected} : ClientTableProps)
         console.error("Failed to fetch doctor.");
       }
     };
+
+
 
     fetchPets("6");
   
@@ -48,10 +53,10 @@ export default function ClientsTable({selected, setSelected} : ClientTableProps)
              </tr>
            </thead>
            <tbody>
-             {vetPetData.map(({lastName, firstName, name, petId}, index) => (
+             {vetPetData.map(({users, name, petId}, index) => (
                <tr key={index} style={{ height: "64px", borderBottom: "1px solid #e5e5e5" }}>
-                 <td style={{ paddingLeft: 40, color: "#111827" }}>{lastName}</td>
-                 <td style={{ paddingLeft: 24, color: "#111827" }}>{firstName}</td>
+                 <td style={{ paddingLeft: 40, color: "#111827" }}>{users.lastName}</td>
+                 <td style={{ paddingLeft: 24, color: "#111827" }}>{users.firstName}</td>
                  <td style={{ paddingLeft: 24, color: "#111827" }}>{name}</td>
                  <td style={{ paddingLeft: 24, color: "#111827" }}>{petId}</td>
                  <td style={{ paddingLeft: 24 }}>
