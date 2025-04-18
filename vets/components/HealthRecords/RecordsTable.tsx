@@ -640,8 +640,6 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction, tabCha
                   <li>Age-related changes (especially in senior dogs)</li>
                   <li>Possibly diet or medications (especially if on steroids or high-protein food)</li>
                 </ul>
-                <p>Rechecking these values in a few weeks or during a future wellness exam is a good idea.</p>
-                <p>Ensure hydration (especially after fasting or stressful events).</p>
               </div>
             </div>
 
