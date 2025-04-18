@@ -15,7 +15,7 @@ export default function Appointments() {
          <SideBarContainerClient selectedPage="Appointments" />
    
          <div style={{ flex: 1, display: "flex", flexDirection: "column", background: "#fff", overflowY: "auto" }}>
-            <Header title="Appointments" />
+            <Header title="Appointments" showSearchBar={true}/>
            
             <AppointmentsHeader selectedTab={selectedTab} setSelectedTab={setSelectedTab}/>
             <AppointmentsTable/>

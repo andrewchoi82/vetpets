@@ -17,7 +17,7 @@ export default function Settings() {
          <SideBarContainerVets selectedPage="Settings"/>
    
          <div style={{ flex: 1, display: "flex", flexDirection: "column", background: "#fff", overflowY: "auto" }}>
-            <Header title="Settings" />
+            <Header title="Settings" showSearchBar={true}/>
             <BasicInfoContainer style={{marginTop: "20px", marginLeft: "20px"}} profileImg="/img/header/doge.png" fullName="Jane Doe" birthday="Janurary 01, 2000" gender="Female"></BasicInfoContainer>
             <PersonalInfoContainer style={{marginTop: "20px", marginLeft: "20px"}} phoneNumber="424-628-3290" email="janedoe@gmail.com" contactPref="Text" address="3201 Hoover St, Los Angeles, CA 90007"/>
             <AccountInfo style={{marginTop: "20px", marginBottom: "20px", marginLeft: "20px"}} username="janedoe@gmail.com" password="**********"/>

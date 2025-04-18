@@ -15,7 +15,7 @@ export default function HealthRecords() {
          <SideBarContainerClient selectedPage="Health records" />
    
          <div style={{ flex: 1, display: "flex", flexDirection: "column", background: "#fff", overflowY: "auto" }}>
-            <Header title="Health Records" />
+            <Header title="Health Records" showSearchBar={true}/>
 
             <RecordsHeader selectedTab={selectedTab} setSelectedTabAction={setSelectedTab} tabChange={false} setTabChange={function (change: boolean): void {
                throw new Error("Function not implemented.");

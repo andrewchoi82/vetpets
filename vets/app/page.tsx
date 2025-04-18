@@ -8,7 +8,7 @@ export default function Home() {
       <SideBarContainerClient selectedPage="Dashboard" />
 
       <div style={{ flex: 1, display: "flex", flexDirection: "column", background: "#fff", overflowY: "auto" }}>
-        <Header title="Dashboard" />
+        <Header title="Dashboard" showSearchBar={true}/>
         <MainContent />
       </div>
     </div>

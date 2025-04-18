@@ -149,7 +149,7 @@ export default function PDFTestPage() {
       <SideBarContainerVets selectedPage="PDF Tests" />
 
       <div style={{ flex: 1, display: "flex", flexDirection: "column", background: "#fff", overflowY: "auto" }}>
-        <Header title="Vet Portal" />
+        <Header title="Vet Portal" showSearchBar={true}/>
         <Toaster />
         
         <main className="w-full bg-white h-full overflow-hidden p-6">

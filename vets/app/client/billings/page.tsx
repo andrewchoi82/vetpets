@@ -15,7 +15,7 @@ export default function Billings() {
          <SideBarContainerClient selectedPage="Billings"/>
    
          <div style={{ flex: 1, display: "flex", flexDirection: "column", background: "#fff", overflowY: "auto" }}>
-            <Header title="Billings" />
+            <Header title="Billings" showSearchBar={true}/>
 
             <BillingsHeader selectedTab={selectedTab} setSelectedTabAction={setSelectedTab}/>
             <BillingsTable selectedTab={selectedTab} setSelectedTabAction={setSelectedTab}/>

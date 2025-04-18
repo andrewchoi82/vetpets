@@ -26,7 +26,7 @@ export default function Message() {
       <SideBarContainerVets selectedPage="Messages" />
 
       <div style={{ flex: 1, display: "flex", flexDirection: "column", background: "#fff", overflow: "hidden" }}>
-        <Header title="Messages" />
+        <Header title="Messages" showSearchBar={true}/>
         <div style={{ flex: 1, overflow: "hidden" }}>
         {pageState.view === 'overview' && (
             <MessagesSide setPageState={setPageState} />

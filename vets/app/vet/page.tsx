@@ -18,7 +18,7 @@ export default function Clients() {
       <SideBarContainerVets selectedPage="Clients" />
 
       <div style={{ flex: 1, display: "flex", flexDirection: "column", background: "#fff", overflowY: "auto" }}>
-        <Header title="Clients" />
+        <Header title="Clients" showSearchBar={false}/>
 
         <ClientsHeader/>
         {selected === "profile" ? <ClientsProfile/> : <ClientsTable selected={selected} setSelected={setSelected}/>}
