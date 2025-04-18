@@ -3,9 +3,10 @@ import { SearchBar } from "./SearchBar";
 
 interface HeaderProps {
   title: string;
+  showSearchBar: boolean;
 }
 
-export const Header = ({ title }: HeaderProps) => {
+export const Header = ({ title, showSearchBar }: HeaderProps) => {
   return (
     <header
       style={{
@@ -24,7 +25,7 @@ export const Header = ({ title }: HeaderProps) => {
       <h1 style={{ fontSize: "30px", fontWeight: "500" }}>{title}</h1>
 
       <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
-        <SearchBar />
+        {showSearchBar && <SearchBar />}
 
         <Image
           src="/img/header/reminder-icon.svg"
