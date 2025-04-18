@@ -18,6 +18,11 @@ export default function PDFTestPage() {
   const [fileResponse, setFileResponse] = useState<any>(null);
   const [matchedFields, setMatchedFields] = useState<any>(null);
   const [editableJson, setEditableJson] = useState<string>('');
+  const [confirmationResult, setConfirmationResult] = useState<string>('');
+
+
+  const [doctorId, setDoctorId] = useState(6);
+
 
   const Notify = (status: string, message: string) => {
     toast.dismiss();
@@ -83,6 +88,35 @@ export default function PDFTestPage() {
       Notify("success", "JSON updated successfully");
     } catch (error) {
       Notify("error", "Invalid JSON format");
+    }
+  };
+
+  const handleConfirmInformation = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('/api/requests', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          doctorId: doctorId,
+          content: JSON.stringify(editableJson)
+        }),
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to confirm information');
+      }
+      
+      const data = await response.json();
+      setConfirmationResult(data.requestId);
+      Notify("success", "Information confirmed successfully");
+    } catch (error) {
+      console.error('Error confirming information:', error);
+      Notify("error", "Failed to confirm information");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -155,8 +189,28 @@ export default function PDFTestPage() {
                     }}
                   />
                 </div>
+                
+                <div className="mt-4">
+                  <div className="flex items-center gap-2">
+                    <button 
+                      className={`px-4 py-2 rounded-md text-white ${editableJson ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-400 cursor-not-allowed'}`}
+                      onClick={handleConfirmInformation}
+                      disabled={!editableJson || loading}
+                    >
+                      {loading ? 'Processing...' : 'Get Pet ID'}
+                    </button>
+                  </div>
+                  <div className="mt-2">
+                    <p className="text-sm font-medium text-gray-700 mb-1">Give this ID to client:</p>
+                    <textarea
+                      className="w-full p-2 text-sm bg-gray-50 border border-gray-200 rounded h-18 focus:outline-none focus:border-blue-500"
+                      value={confirmationResult}
+                      readOnly
+                      placeholder="ID will be generated here. Give to client"
+                    />
+                  </div>
+                </div>
               </div>
-              
               <div className="bg-white rounded-lg shadow-md p-4">
                 <h2 className="text-xl font-semibold mb-4">Recent Uploads</h2>
                 <div className="space-y-3 max-h-[400px] overflow-y-auto">
