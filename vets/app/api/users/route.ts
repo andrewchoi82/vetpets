@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
   // Insert user with hashed password stored under "password"
   const { data, error } = await supabase
     .from('users')
-    .insert({ email, password: hashedPassword, ...rest })
+    .insert({ email, password_hash: hashedPassword, ...rest })
     .select('id')
     .single();
 

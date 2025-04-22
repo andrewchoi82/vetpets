@@ -15,11 +15,13 @@ export default function Login() {
     });
   
     const result = await res.json();
+
+    console.log(result)
   
     if (!result.success || !result.userId) {
       alert("Invalid email or password");
       return;
-    }
+    } 
   
     const userRes = await fetch(`/api/users/${result.userId}`, {
       credentials: 'include',  
