@@ -7,7 +7,7 @@ import { SearchBar } from "@/components/MainHeader/SearchBar";
 
 export default function ClientsHeader() {
   return (
-    <div>   
+    <div style={{ marginLeft: 40, marginTop: 20, marginBottom: 10 }}>   
       <SearchBar/>
     </div>
   );
