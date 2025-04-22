@@ -27,7 +27,7 @@ export default function Login() {
     if (user?.userType === 2) {
       router.push("/vet");
     } else {
-      router.push("/");
+      router.push("/getpet");
     }
   };
   
