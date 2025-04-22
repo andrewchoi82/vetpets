@@ -9,7 +9,7 @@ interface HeaderProps {
   showSearchBar: boolean;
 }
 
-export const Header = ({ title }: HeaderProps) => {
+export const Header = ({ title, showSearchBar }: HeaderProps) => {
   const [showProfilePopup, setShowProfilePopup] = useState(false);
   const popupRef = useRef<HTMLDivElement>(null);
   const profileRef = useRef<HTMLDivElement>(null);
