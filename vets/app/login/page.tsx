@@ -11,6 +11,7 @@ export default function Login() {
     const res = await fetch("/api/auth/login", {
       method: "POST",
       body: JSON.stringify({ email, password }),
+      headers: { "Content-Type": "application/json" },
     });
   
     const result = await res.json();
@@ -20,8 +21,9 @@ export default function Login() {
       return;
     }
   
-    // 🔁 Step 2: Get the user data using the userId
-    const userRes = await fetch(`/api/users/${result.userId}`);
+    const userRes = await fetch(`/api/users/${result.userId}`, {
+      credentials: 'include',  
+    });
     const user = await userRes.json();
   
     if (user?.userType === 2) {
@@ -30,7 +32,6 @@ export default function Login() {
       router.push("/getpet");
     }
   };
-  
   
 
   return (
