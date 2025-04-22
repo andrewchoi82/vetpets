@@ -144,6 +144,49 @@ export default function PDFTestPage() {
     router.push(href);
   };
 
+  // Function to render JSON in a formatted way
+  const renderFormattedJson = () => {
+    try {
+      const parsedJson = JSON.parse(editableJson);
+      return (
+        <div className="space-y-3">
+          {Object.entries(parsedJson).map(([key, value], index) => (
+            <div key={index} className="border-b border-gray-200 pb-2">
+              <div className="font-medium text-gray-700">{key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</div>
+              <div className="text-gray-600 pl-2">
+                {typeof value === 'object' ? (
+                  <div className="pl-2">
+                    {Object.entries(value as object).map(([subKey, subValue], subIndex) => (
+                      <div key={subIndex} className="flex flex-col mb-1">
+                        <span className="text-gray-500 font-medium">{subKey.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}:</span>
+                        <div className="pl-3">
+                          {typeof subValue === 'object' ? (
+                            Object.entries(subValue as object).map(([nestedKey, nestedValue], nestedIndex) => (
+                              <div key={nestedIndex} className="flex">
+                                <span className="text-gray-500 min-w-[120px]">{nestedKey.replace(/_/g, ' ')}:</span>
+                                <span>{String(nestedValue)}</span>
+                              </div>
+                            ))
+                          ) : (
+                            <span>{String(subValue)}</span>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  String(value)
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      );
+    } catch (error) {
+      return <div className="text-red-500">Invalid JSON format</div>;
+    }
+  };
+
   return (
     <div style={{ display: "flex", height: "100vh", overflow: "hidden" }}>
       <SideBarContainerVets selectedPage="PDF Tests" />
@@ -262,12 +305,19 @@ export default function PDFTestPage() {
                     </div>
                   </div>
                   <div className="bg-gray-50 p-4 rounded-md h-[calc(100%-3rem)] overflow-y-auto">
-                    <textarea
-                      className="w-full h-full p-2 font-mono text-sm bg-gray-50 border border-gray-200 rounded focus:outline-none focus:border-blue-500"
-                      value={editableJson}
-                      onChange={handleJsonChange}
-                      spellCheck="false"
-                    />
+                    <div className="flex flex-col h-full">
+                      <div className="flex-1 overflow-y-auto mb-4">
+                        {renderFormattedJson()}
+                      </div>
+                      <div className="hidden">
+                        <textarea
+                          className="w-full h-full p-2 font-mono text-sm bg-gray-50 border border-gray-200 rounded focus:outline-none focus:border-blue-500"
+                          value={editableJson}
+                          onChange={handleJsonChange}
+                          spellCheck="false"
+                        />
+                      </div>
+                    </div>
                   </div>
                 </div>
               ) : pdfUrl ? (
