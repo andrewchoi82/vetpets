@@ -1,26 +1,20 @@
-"use client"
+import { getUserFromToken } from "@/app/api/auth/route";
+import { redirect } from "next/navigation";
+import SettingsClient from "@/components/Settings/SettingsClient";
+import SettingsVet from "@/components/Settings/SettingsVet";
 
-import { Header } from "@/components/MainHeader/Header";
-import { SideBarContainerClient } from "@/components/MainSideBar/SideBarContainerClient";
-import { useState } from "react";
-import BasicInfoContainer from "@/components/Settings/BasicInfoContainer";
-import { Basic } from "next/font/google";
-import PersonalInfoContainer from "@/components/Settings/PersonalInfoContainer";
-import AccountInfo from "@/components/Settings/AccountInfo";
+export default async function SettingsPage() {
+  const session = await getUserFromToken();
 
+  if (!session) {
+    redirect("/login"); // If not logged in, bounce to login
+  }
 
-export default function Settings() {
-
-   return (
-       <div style={{ display: "flex", height: "100vh", overflow: "hidden" }}>
-         <SideBarContainerClient selectedPage="Settings"/>
-   
-         <div style={{ flex: 1, display: "flex", flexDirection: "column", background: "#fff", overflowY: "auto" }}>
-            <Header title="Settings" showSearchBar={true}/>
-            <BasicInfoContainer style={{marginTop: "20px", marginLeft: "20px"}} profileImg="/img/header/doge.png" fullName="Jane Doe" birthday="Janurary 01, 2000" gender="Female"></BasicInfoContainer>
-            <PersonalInfoContainer style={{marginTop: "20px", marginLeft: "20px"}} phoneNumber="424-628-3290" email="janedoe@gmail.com" contactPref="Text" address="3201 Hoover St, Los Angeles, CA 90007"/>
-            <AccountInfo style={{marginTop: "20px", marginBottom: "20px", marginLeft: "20px"}} username="janedoe@gmail.com" password="**********"/>
-         </div>
-       </div>
-   );
+  if (session.userType === 1) {
+    return <SettingsClient />; 
+  } else if (session.userType === 2) {
+    return <SettingsVet />;   
+  } else {
+    return <div>Unauthorized access.</div>;
+  }
 }

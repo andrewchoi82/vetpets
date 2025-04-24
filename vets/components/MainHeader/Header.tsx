@@ -42,10 +42,25 @@ export const Header = ({ title, showSearchBar }: HeaderProps) => {
     setShowProfilePopup(false);
   };
 
-  const handleLogout = () => {
-    console.log("Log out clicked");
-    setShowProfilePopup(false);
+  const handleLogout = async () => {
+    try {
+      const res = await fetch("/api/auth/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+  
+      if (res.ok) {
+        window.location.href = "/login"; // ✅ Only redirect after clearing the cookie
+      } else {
+        alert("Failed to log out.");
+      }
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
+  
+    setShowProfilePopup(false); // Close the popup
   };
+  
 
 
   return (
@@ -158,7 +173,7 @@ export const Header = ({ title, showSearchBar }: HeaderProps) => {
                   gap: "12px",
                   cursor: "pointer"
                 }}
-                onClick={() => window.location.href = '/login'}
+                onClick={handleLogout}
               >
                 <div style={{ fontSize: "16px", color: "#374151" }}>Log out</div>
               </div>
