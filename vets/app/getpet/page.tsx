@@ -1,24 +1,57 @@
 "use client";
-import { useState } from "react";
+import React, { useEffect, useState, KeyboardEvent, useRef } from 'react'
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import Cookies from 'js-cookie';
+
+
+
 export default function GetPet() {
   const [showPetIdField, setShowPetIdField] = useState(false);
   const [petId, setPetId] = useState("");
   const router = useRouter();
 
-  const pets = [
-    { id: 1, name: "Bruce" },
-    { id: 2, name: "Jerry" },
-    { id: 3, name: "Joey" }
-  ];
+  const currId = Cookies.get('userId');
+
+  interface Pet {
+    petId: number;
+    pet_picture: string;
+    breed: string;
+    age: string;
+    weight: number;
+    gender: string;
+    sterilized: boolean;
+    birthdate: string;
+    name: string;
+    userId: string;
+    doctorId: string;
+  }
+
+  const [pets, setPets] = useState<Pet[]>([]);
+
+  useEffect(() => {
+    if (currId) {
+      fetch(`/api/pets/petsByUser?userId=${currId}`)
+        .then(response => response.json())
+        .then(data => {
+          setPets(data);
+        })
+        .catch(error => {
+          console.error("Error fetching pets:", error);
+        });
+    }
+  }, [currId]);
 
   const handlePetSelection = (petId: number) => {
     // Find the selected pet
-    const selectedPet = pets.find(pet => pet.id === petId);
+    const selectedPet = pets.find(pet => pet.petId === petId);
     if (selectedPet) {
       console.log(`Selected pet: ${selectedPet.name}`);
+      Cookies.set('petId', selectedPet.petId.toString(), { expires: 7 }); // Expires in 7 days
+
     }
+
+
     router.push("/");
   };
 
@@ -57,8 +90,8 @@ export default function GetPet() {
           {
             pets.map(pet => (
               <div 
-                key={pet.id}
-                onClick={() => handlePetSelection(pet.id)}
+                key={pet.petId}
+                onClick={() => handlePetSelection(pet.petId)}
                 className="w-[120px] h-[120px] bg-sky-100 rounded-[10px] flex items-center justify-center cursor-pointer hover:bg-sky-200"
               >
                 <div className="text-center text-sky-800 text-xl font-normal font-['SF_Pro']">
