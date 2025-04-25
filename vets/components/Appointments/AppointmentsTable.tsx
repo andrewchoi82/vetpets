@@ -50,7 +50,7 @@ export default function AppointmentsTable({ appointments }: { appointments: any[
                 </td>
 
                 <td>{appt.name}</td>
-                <td>{`Dr. ${appt.doctorId}`}</td> {/* Replace with actual doctor name if available */}
+                <td>{`Dr. ${appt.doctorId}`}</td> 
                 <td style={{ paddingRight: "32px" }}>{appt.status}</td>
               </tr>
             ))

@@ -10,7 +10,7 @@ export default function Appointments() {
   const [selectedTab, setSelectedTab] = useState<"upcoming" | "past">("upcoming");
   const [appointments, setAppointments] = useState<any[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const petId = 1; // Replace with your actual pet ID logic
+  const petId = 1; 
 
   useEffect(() => {
     fetchAppointmentData();
@@ -49,7 +49,7 @@ export default function Appointments() {
         <AppointmentsHeader
           selectedTab={selectedTab}
           setSelectedTab={setSelectedTab}
-          onScheduleClick={() => setIsModalOpen(true)} // ✅ Here!
+          onScheduleClick={() => setIsModalOpen(true)}
         />
         <ScheduleAppointmentBox
           isOpen={isModalOpen}

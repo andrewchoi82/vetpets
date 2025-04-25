@@ -62,7 +62,6 @@ export default function AppointmentsHeader({
         </div>
       </div>
 
-      {/* ✅ Use onScheduleClick here */}
       <button
         onClick={onScheduleClick}
         style={{
