@@ -41,7 +41,14 @@ export default function AppointmentsTable({ appointments }: { appointments: any[
                   })}
                 </td>
 
-                <td>{appt.time}</td>
+                <td>
+                  {new Date(`1970-01-01T${appt.time}`).toLocaleTimeString("en-US", {
+                    hour: "numeric",
+                    minute: "2-digit",
+                    hour12: true,
+                  })}
+                </td>
+
                 <td>{appt.name}</td>
                 <td>{`Dr. ${appt.doctorId}`}</td> {/* Replace with actual doctor name if available */}
                 <td style={{ paddingRight: "32px" }}>{appt.status}</td>

@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 interface BillingsTableProps {
   selectedTab: "current bills" | "payment history";
@@ -7,23 +7,30 @@ interface BillingsTableProps {
 }
 
 export default function RecordsTable({ selectedTab, setSelectedTabAction }: BillingsTableProps) {
-  const currentBillsData = [
-    ["March 16, 2025", "Annual check-up", "$185.00", "Unpaid"],
-    ["March 14, 2025", "Annual check-up", "$185.00", "Unpaid"],
-    ["February 12, 2025", "Annual check-up", "$185.00", "Unpaid"],
-    ["January 05, 2025", "Annual check-up", "$185.00", "Unpaid"],
-    ["January 05, 2024", "Annual check-up", "$185.00", "Unpaid"],
-    ["December 13, 2023", "Annual check-up", "$185.00", "Unpaid"],
-    ["May 21, 2023", "Annual check-up", "$185.00", "Unpaid"],
-    ["January 05, 2023", "Annual check-up", "$185.00", "Unpaid"],
-    ["June 12, 2022", "Annual check-up", "$185.00", "Unpaid"],
-    ["May 19, 2022", "Annual check-up", "$185.00", "Unpaid"],
-    ["March 16, 2022", "Annual check-up", "$185.00", "Unpaid"],
-  ];
+  const [billings, setBillings] = useState<any[]>([]);
+  const petId = 1; // Replace with dynamic petId logic if needed
 
-  const paidBillsData = currentBillsData.map(([date, reason, amount]) => [date, reason, amount, "Paid"]);
+  useEffect(() => {
+    const fetchBillings = async () => {
+      try {
+        const res = await fetch(`/api/billings?petId=${petId}`);
+        const data = await res.json();
+        setBillings(data);
+      } catch (error) {
+        console.error("Failed to fetch billings:", error);
+      }
+    };
 
-  const renderTable = (data: string[][], statusColor: "red" | "green") => (
+    fetchBillings();
+  }, []);
+
+  const filteredBillings = billings.filter(
+    (bill) =>
+      (selectedTab === "current bills" && bill.status.toLowerCase() === "unpaid") ||
+      (selectedTab === "payment history" && bill.status.toLowerCase() === "paid")
+  );
+
+  const renderTable = (data: any[], statusColor: "red" | "green") => (
     <div style={{ width: "100%" }}>
       <table style={{ width: "100%", borderCollapse: "collapse" }}>
         <thead>
@@ -36,20 +43,29 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction }: Bill
           </tr>
         </thead>
         <tbody>
-          {data.map(([date, reason, amount, status], index) => {
-            const iconSrc = status === "Unpaid"
-              ? "/img/general/red-circle-icon.svg"
-              : "/img/general/green-circle-icon.svg";
+          {data.map((bill, index) => {
+            const iconSrc =
+              bill.status.toLowerCase() === "unpaid"
+                ? "/img/general/red-circle-icon.svg"
+                : "/img/general/green-circle-icon.svg";
 
             return (
               <tr key={index} style={{ height: "64px", borderBottom: "1px solid #e5e5e5" }}>
-                <td style={{ paddingLeft: 40, fontSize: "17px", color: "#111827" }}>{date}</td>
-                <td style={{ paddingLeft: 24, fontSize: "17px", color: "#111827" }}>{reason}</td>
-                <td style={{ paddingLeft: 24, fontSize: "17px", color: "#111827" }}>{amount}</td>
+                <td style={{ paddingLeft: 40, fontSize: "17px", color: "#111827" }}>
+                  {new Date(bill.date).toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })}
+                </td>
+                <td style={{ paddingLeft: 24, fontSize: "17px", color: "#111827" }}>{bill.name}</td>
+                <td style={{ paddingLeft: 24, fontSize: "17px", color: "#111827" }}>
+                  {`$${bill.cost.toFixed(2)}`}
+                </td>
                 <td style={{ paddingLeft: 24 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "17px", color: "#111827" }}>
-                    <img src={iconSrc} alt={`${status} Icon`} style={{ width: "16px", height: "16px", marginTop: "1px" }} />
-                    {status}
+                    <img src={iconSrc} alt={`${bill.status} Icon`} style={{ width: "16px", height: "16px", marginTop: "1px" }} />
+                    {bill.status.charAt(0).toUpperCase() + bill.status.slice(1)}
                   </div>
                 </td>
                 <td style={{ paddingLeft: 24 }}>
@@ -65,7 +81,7 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction }: Bill
                       cursor: "pointer",
                       padding: 0,
                     }}
-                    onClick={() => alert("Download statement")}
+                    onClick={() => window.open(bill.statement, "_blank")}
                   >
                     <img
                       src="/img/health-records/details-icon.svg"
@@ -83,7 +99,7 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction }: Bill
     </div>
   );
 
-  return <>{selectedTab === "current bills" ? renderTable(currentBillsData, "red") : renderTable(paidBillsData, "green")}</>;
+  return <>{selectedTab === "current bills" ? renderTable(filteredBillings, "red") : renderTable(filteredBillings, "green")}</>;
 }
 
 const baseThStyle = {
