@@ -21,7 +21,7 @@ export default function Appointments() {
   console.log(appointments);
 
   const fetchAppointmentData = async () => {
-    const today = new Date().toISOString().split('T')[0]; // get YYYY-MM-DD
+    const today = new Date().toISOString().split('T')[0]; // Format: YYYY-MM-DD
   
     let query = supabase
       .from('appointments')
@@ -40,14 +40,17 @@ export default function Appointments() {
           )
         )
       `)
-      .eq('petId', petId);  // keep your petId filter
+      .eq('petId', petId);  // Filter by petId
   
-    // Add the date filter depending on the selectedTab
+    // Apply upcoming or past filter
     if (selectedTab === "upcoming") {
-      query = query.gte('date', today);  // upcoming = today or future
+      query = query.gte('date', today);
     } else {
-      query = query.lt('date', today);   // past = before today
+      query = query.lt('date', today);
     }
+  
+    // ✅ Sort by date DESC (most recent first)
+    query = query.order('date', { ascending: false });
   
     const { data, error } = await query;
   
@@ -57,6 +60,7 @@ export default function Appointments() {
       setAppointments(data);
     }
   };
+  
   
   
 
