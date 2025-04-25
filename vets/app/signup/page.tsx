@@ -11,6 +11,7 @@ export default function SignUp() {
     phoneNumber: "",
     address: "",
     sex: "Male",
+    contactPreference: "Phone Call",
     email: "",
     username: "",
     password: "",
@@ -27,7 +28,13 @@ export default function SignUp() {
     setStep((prev) => prev + 1);
   };
 
-  const handleBack = () => setStep((prev) => prev - 1);
+  const handleBack = () => {
+    if (step === 1) {
+      router.push("/login");
+    } else {
+      setStep((prev) => prev - 1);
+    }
+  };
 
   const handleChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -38,7 +45,12 @@ export default function SignUp() {
       return formData.firstName && formData.lastName && formData.birthdate;
     }
     if (step === 2) {
-      return formData.phoneNumber && formData.address && formData.sex;
+      return (
+        formData.phoneNumber &&
+        formData.address &&
+        formData.sex &&
+        formData.contactPreference
+      );
     }
     if (step === 3) {
       return (
@@ -113,19 +125,46 @@ export default function SignUp() {
 
         {step === 2 && (
           <>
-            <InputField placeholder="Phone Number" value={formData.phoneNumber} onChange={(e) => handleChange("phoneNumber", e.target.value)} />
-            <InputField placeholder="Address" value={formData.address} onChange={(e) => handleChange("address", e.target.value)} />
-            <select
-              value={formData.sex}
-              onChange={(e) => handleChange("sex", e.target.value)}
-              className="w-full h-12 px-4 text-base text-Hoover-grey font-['SF_Pro'] bg-transparent outline outline-1 rounded-[10px] outline-Hoover-grey"
-              required
-            >
-              <option value="Male">Male</option>
-              <option value="Female">Female</option>
-            </select>
+            <InputField
+              placeholder="Phone Number"
+              value={formData.phoneNumber}
+              onChange={(e) => handleChange("phoneNumber", e.target.value)}
+            />
+            <InputField
+              placeholder="Address"
+              value={formData.address}
+              onChange={(e) => handleChange("address", e.target.value)}
+            />
+            <div className="w-full flex flex-col gap-2">
+              <label className="text-black text-base font-['SF_Pro'] mb-1">Sex</label>
+              <select
+                value={formData.sex}
+                onChange={(e) => handleChange("sex", e.target.value)}
+                className="w-full h-12 px-4 text-base text-Hoover-grey font-['SF_Pro'] bg-transparent outline outline-1 rounded-[10px] outline-Hoover-grey"
+                required
+              >
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Prefer not to say">Prefer not to say</option>
+              </select>
+            </div>
+            <div className="w-full flex flex-col gap-2">
+              <label className="text-black text-base font-['SF_Pro'] mb-1">Contact Preference</label>
+              <select
+                value={formData.contactPreference}
+                onChange={(e) => handleChange("contactPreference", e.target.value)}
+                className="w-full h-12 px-4 text-base text-Hoover-grey font-['SF_Pro'] bg-transparent outline outline-1 rounded-[10px] outline-Hoover-grey"
+                required
+              >
+                <option value="Phone Call">Phone Call</option>
+                <option value="Text Message">Text Message</option>
+                <option value="Email">Email</option>
+                <option value="No Preference">No Preference</option>
+              </select>
+            </div>
           </>
         )}
+
 
         {step === 3 && (
           <>
@@ -143,24 +182,19 @@ export default function SignUp() {
             <p><strong>Phone Number:</strong> {formData.phoneNumber}</p>
             <p><strong>Address:</strong> {formData.address}</p>
             <p><strong>Sex:</strong> {formData.sex}</p>
+            <p><strong>Contact Preference:</strong> {formData.contactPreference}</p>
             <p><strong>Email:</strong> {formData.email}</p>
             <p><strong>Username:</strong> {formData.username}</p>
           </div>
         )}
 
         <div className="w-full flex justify-between mt-4">
-        <button
-          onClick={() => {
-            if (step === 1) {
-              router.push("/login");
-            } else {
-              handleBack();
-            }
-          }}
-          className="h-12 bg-gray-300 rounded-[10px] text-white text-xl px-6"
-        >
-          Back
-        </button>
+          <button
+            onClick={handleBack}
+            className="h-12 rounded-[10px] text-white text-xl px-6 bg-Hoover-grey"
+          >
+            {step === 1 ? "Back to Sign In" : "Back"}
+          </button>
 
           {step < 4 && (
             <button
