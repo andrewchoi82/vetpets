@@ -7,6 +7,21 @@ const nextConfig: NextConfig = {
 
   },
 
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'xyjhjcgojsrwopmwxmiy.supabase.co',
+        pathname: '/storage/v1/object/public/images/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'xyjhjcgojsrwopmwxmiy.supabase.co',
+        pathname: '/storage/v1/object/public/files/**',
+      },
+    ],
+  },
+
   webpack: (config, { isServer }) => {
     if (isServer) {
       // Mark the Adobe SDK as external on the server

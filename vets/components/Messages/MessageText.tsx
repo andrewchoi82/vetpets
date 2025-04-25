@@ -1,15 +1,11 @@
 "use client";
 import Image from "next/image";
-import React, { useEffect, useState, KeyboardEvent } from 'react'
+import React, { useEffect, useState, KeyboardEvent, useRef } from 'react'
+import { supabase } from '@/app/lib/supabaseClient';
+import { getImageUrl as getStorageImageUrl } from '@/app/lib/supabaseGetImage';
+import { getFileUrl as getStorageFileUrl } from '@/app/lib/supabaseGetFile';
+import { uploadImage, uploadDocument } from '@/app/lib/supabaseUpload';
 
-import { SideBarContainerClient } from "@/components/MainSideBar/SideBarContainerClient";
-import DashboardRecentTestBox from "@/components/Dashboard/dashboardRecentTestBox"
-import DashboardBillingBox from "@/components/Dashboard/dashboardBillingBox"
-import DashboardMessagesBox from "@/components/Dashboard/dashboardRecentMessagesBox"
-import DashboardAppointmentsBox from "@/components/Dashboard/dashboardAppointmentsBox"
-import DashboardSmallBox from "@/components/Dashboard/dashboardSmallBox"
-import { MessageHeaderBox } from "./MessageHeaderBox";
-import { MessageMain } from "./MessageMain";
 
 interface MessageTextProp {
     convoID: number;
@@ -18,272 +14,86 @@ interface MessageTextProp {
 //takes in prop of the setpagestate from page.tsx of message to change which modal is rendered
 export default function MessageText({ convoID }: MessageTextProp) {
 
-
     interface Message {
-        messageId: number; // unique ID
-        chatId: number; // which conversation this belongs to
-        senderId: number;
-        receiverId: number;
-        type: "text" | "image" | "file";
-        content: string; // actual message (text OR file URL)
-        fileName?: string; // for files/images
-        fileType?: string; // e.g., 'image/png', 'application/pdf'
-        createdAt: string;
+        messageId: number;
+        convoId: number;
+        senderId: string;
+        receiverId: string;
+        type: string;
+        content: string | null;
+        filename: string | null;
+        filetype: string | null;
+        createdAt: string; // Format: 2025-04-01 12:05:00+00
     };
 
-    const sampMessage1: Message[] = [
-        {
-            messageId: 1,
-            chatId: 1,
-            senderId: 2,
-            receiverId: 1,
-            type: "text",
-            content: "Hi What do you need help with",
-            fileName: "",
-            fileType: "",
-            createdAt: "2025-04-01T05:38:15"
-        },
-        {
-            messageId: 2,
-            chatId: 1,
-            senderId: 1,
-            receiverId: 2,
-            type: "text",
-            content: "I think my dog is sick",
-            fileName: "",
-            fileType: "",
-            createdAt: "2025-04-01T05:38:15"
-        },
-        {
-            messageId: 3,
-            chatId: 1,
-            senderId: 2,
-            receiverId: 1,
-            type: "text",
-            content: "What symptoms is your dog showing?",
-            fileName: "",
-            fileType: "",
-            createdAt: "2025-04-01T05:38:15"
-        },
-        {
-            messageId: 4,
-            chatId: 1,
-            senderId: 1,
-            receiverId: 2,
-            type: "text",
-            content: "He's not eating and seems lethargic",
-            fileName: "",
-            fileType: "",
-            createdAt: "2025-04-01T05:38:15"
-        }
-    ];
-
-    const sampMessage2: Message[] = [
-        {
-            messageId: 1,
-            chatId: 2,
-            senderId: 2,
-            receiverId: 1,
-            type: "text",
-            content: "Hello, how can I assist you today?",
-            fileName: "",
-            fileType: "",
-            createdAt: "2025-04-01T05:38:15"
-        },
-        {
-            messageId: 2,
-            chatId: 2,
-            senderId: 1,
-            receiverId: 2,
-            type: "text",
-            content: "My cat has been coughing a lot",
-            fileName: "",
-            fileType: "",
-            createdAt: "2025-04-01T05:38:15"
-        },
-        {
-            messageId: 3,
-            chatId: 2,
-            senderId: 2,
-            receiverId: 1,
-            type: "text",
-            content: "How long has this been happening?",
-            fileName: "",
-            fileType: "",
-            createdAt: "2025-04-01T05:38:15"
-        },
-        {
-            messageId: 4,
-            chatId: 2,
-            senderId: 1,
-            receiverId: 2,
-            type: "text",
-            content: "About three days now",
-            fileName: "",
-            fileType: "",
-            createdAt: "2025-04-01T05:38:15"
-        }
-    ];
-
-    const sampMessage3: Message[] = [
-        {
-            messageId: 1,
-            chatId: 3,
-            senderId: 2,
-            receiverId: 1,
-            type: "text",
-            content: "Good morning, what brings you here today?",
-            fileName: "",
-            fileType: "",
-            createdAt: "2025-04-01T05:38:15"
-        },
-        {
-            messageId: 2,
-            chatId: 3,
-            senderId: 1,
-            receiverId: 2,
-            type: "text",
-            content: "I need to schedule a vaccination for my puppy",
-            fileName: "",
-            fileType: "",
-            createdAt: "2025-04-01T05:38:15"
-        },
-        {
-            messageId: 3,
-            chatId: 3,
-            senderId: 2,
-            receiverId: 1,
-            type: "text",
-            content: "How old is your puppy and what vaccines has it received so far?",
-            fileName: "",
-            fileType: "",
-            createdAt: "2025-04-01T05:38:15"
-        },
-        {
-            messageId: 4,
-            chatId: 3,
-            senderId: 1,
-            receiverId: 2,
-            type: "text",
-            content: "She's 12 weeks old and has had her first round of shots",
-            fileName: "",
-            fileType: "",
-            createdAt: "2025-04-01T05:38:15"
-        }
-    ];
-
-    const sampMessage4: Message[] = [
-        {
-            messageId: 1,
-            chatId: 4,
-            senderId: 2,
-            receiverId: 1,
-            type: "text",
-            content: "Hi there, how may I help you?",
-            fileName: "",
-            fileType: "",
-            createdAt: "2025-04-01T05:38:15"
-        },
-        {
-            messageId: 2,
-            chatId: 4,
-            senderId: 1,
-            receiverId: 2,
-            type: "text",
-            content: "My rabbit isn't drinking water",
-            fileName: "",
-            fileType: "",
-            createdAt: "2025-04-01T05:38:15"
-        },
-        {
-            messageId: 3,
-            chatId: 4,
-            senderId: 2,
-            receiverId: 1,
-            type: "text",
-            content: "That's concerning. When did you first notice this?",
-            fileName: "",
-            fileType: "",
-            createdAt: "2025-04-01T05:38:15"
-        },
-        {
-            messageId: 4,
-            chatId: 4,
-            senderId: 1,
-            receiverId: 2,
-            type: "text",
-            content: "Since yesterday morning",
-            fileName: "",
-            fileType: "",
-            createdAt: "2025-04-01T05:38:15"
-        }
-    ];
-
-    const randomData: Message[] = [
-        {
-            messageId: 7,
-            chatId: 1,
-            senderId: 2,
-            receiverId: 1,
-            type: "text",
-            content: "Based on the symptoms you described, it's possible that Snowball has an ear infection or irritation. I recommend bringing them in for an exam so we can properly assess the ear and determine if medication is needed.",
-            fileName: "",
-            fileType: "",
-            createdAt: "2025-04-01T05:38:15"
-        },
-        
-        {
-            messageId: 9,
-            chatId: 1,
-            senderId: 2,
-            receiverId: 1,
-            type: "text",
-            content: "Can you explain it in more details please?",
-            fileName: "",
-            fileType: "",
-            createdAt: "2025-04-01T05:38:15"
-        },
-        {
-            messageId: 10,
-            chatId: 1,
-            senderId: 2,
-            receiverId: 1,
-            type: "text",
-            content: "Sorry Im not following",
-            fileName: "",
-            fileType: "",
-            createdAt: "2025-04-01T05:38:15"
-        },
-        
-    ];
-
-
-
     const [messageData, setMessageData] = useState<Message[]>([]);
-
     const [sendingMessage, setSendingMessage] = useState("");
     const [pendingFiles, setPendingFiles] = useState<File[]>([]);
     const [pendingImages, setPendingImages] = useState<File[]>([]);
+    const [isUploading, setIsUploading] = useState(false);
+    const messagesEndRef = useRef<HTMLDivElement>(null);
 
+    const currId = "81eab4bc-c6eb-4218-9eeb-617e3f8d3f99";
+    const chattingToId = "38c27395-28f5-4b0b-b823-05f0952a5402";
+    
 
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    };
 
-    //this currently sets the sample appointment data to the state
-    //change this later to add API to get real data
+    // Fetch initial messages
     useEffect(() => {
-        if(convoID === -2) {
+        const fetchMessages = async () => {
+            try {
+                const response = await fetch(`/api/messages?convoId=${convoID}`);
+                const data = await response.json();
+                if (Array.isArray(data)) {
+                    setMessageData(data);
+                    setTimeout(scrollToBottom, 100);
+                }
+            } catch (error) {
+                console.error('Error fetching messages:', error);
+                // Fallback to sample data
+                setMessageData([]);
+            }
+        };
+
+        if (convoID === -2) {
             setMessageData([]);
-        } else if(convoID === 1) {
-            setMessageData(sampMessage1);
-        } else if(convoID === 2) {
-            setMessageData(sampMessage2);
-        } else if(convoID === 3) {
-            setMessageData(sampMessage3);
-        } else if(convoID === 4) {
-            setMessageData(sampMessage4);
         } else {
-            setMessageData(sampMessage1);
+            fetchMessages();
         }
     }, [convoID]);
+
+    // Set up realtime subscription
+    useEffect(() => {
+        if (convoID === -2) return;
+
+        const channel = supabase
+            .channel(`messages_${convoID}`)
+            .on(
+                'postgres_changes',
+                {
+                    event: 'INSERT',
+                    schema: 'public',
+                    table: 'message',
+                    filter: `convoId=eq.${convoID}`
+                },
+                (payload) => {
+                    setMessageData(prev => [...prev, payload.new as Message]);
+                }
+            )
+            .subscribe();
+
+        return () => {
+            supabase.removeChannel(channel);
+        };
+    }, [convoID]);
+
+    // Add this useEffect to scroll on new messages
+    useEffect(() => {
+        scrollToBottom();
+    }, [messageData]);
 
     const handleChangeFile = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
@@ -297,74 +107,89 @@ export default function MessageText({ convoID }: MessageTextProp) {
         }
     };
 
-    const handleSubmit = () => {
-        const newMessages: Message[] = [];
-        const lastId = messageData.length > 0 ? Math.max(...messageData.map(m => m.messageId)) : 0;
-        let currentId = lastId + 1;
+    const handleSubmit = async () => {
+        if (!sendingMessage.trim() && pendingFiles.length === 0 && pendingImages.length === 0) return;
 
-        // Add text message if exists
-        if (sendingMessage.trim()) {
-            newMessages.push({
-                messageId: currentId++,
-                chatId: 1,
-                senderId: 1,
-                receiverId: 2,
-                type: "text",
-                content: sendingMessage,
-                fileName: "",
-                fileType: "",
-                createdAt: new Date().toISOString()
-            });
-        }
-
-        // Add image messages
-        pendingImages.forEach(image => {
-            newMessages.push({
-                messageId: currentId++,
-                chatId: 1,
-                senderId: 1,
-                receiverId: 2,
-                type: "image",
-                content: "",
-                fileName: `/img/message/${image.name}`, // Store with proper path
-                fileType: image.type,
-                createdAt: new Date().toISOString()
-            });
-        });
-
-        // Add file messages
-        pendingFiles.forEach(file => {
-            newMessages.push({
-                messageId: currentId++,
-                chatId: 1,
-                senderId: 1,
-                receiverId: 2,
-                type: "file",
-                content: "",
-                fileName: file.name,
-                fileType: file.type,
-                createdAt: new Date().toISOString()
-            });
-        });
-
-        // Update state with user messages
-        setMessageData(prev => [...prev, ...newMessages]);
-
-        // Add random response from randomData after 2 seconds
-        if (newMessages.length > 0) {
-            setTimeout(() => {
-                const randomIndex = Math.floor(Math.random() * randomData.length);
-                const randomResponse = {
-                    ...randomData[randomIndex],
-                    messageId: currentId + 1
-                };
-                setMessageData(prev => [...prev, randomResponse]);
-            }, 2000);
-        }
+        const messageToSend = sendingMessage;
+        const imagesToUpload = [...pendingImages];
+        const filesToUpload = [...pendingFiles];
 
         setSendingMessage("");
         setPendingFiles([]);
         setPendingImages([]);
+        setIsUploading(true);
+
+        try {
+            // Handle text message
+            if (messageToSend.trim()) {
+                const textMessage = {
+                    convoId: convoID,
+                    senderId: currId,
+                    receiverId: chattingToId,
+                    type: "text",
+                    content: messageToSend,
+                    filename: null,
+                    filetype: null,
+                    createdAt: new Date().toISOString().replace('T', ' ').substring(0, 19) + '+00'
+                };
+
+                await fetch('/api/messages', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(textMessage)
+                });
+            }
+
+            // Handle pending images using uploadImage
+            for (const image of imagesToUpload) {
+                const fileName = await uploadImage(image);
+                if (fileName) {
+                    const imageMessage = {
+                        convoId: convoID,
+                        senderId: currId,
+                        receiverId: chattingToId,
+                        type: "image",
+                        content: image.name,
+                        filename: fileName,
+                        filetype: image.type,
+                        createdAt: new Date().toISOString().replace('T', ' ').substring(0, 19) + '+00'
+                    };
+
+                    await fetch('/api/messages', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(imageMessage)
+                    });
+                }
+            }
+
+            // Handle pending files using uploadDocument
+            for (const file of filesToUpload) {
+                const fileName = await uploadDocument(file);
+                if (fileName) {
+                    const fileMessage = {
+                        convoId: convoID,
+                        senderId: currId,
+                        receiverId: chattingToId,
+                        type: "file",
+                        content: file.name,
+                        filename: fileName,
+                        filetype: file.type,
+                        createdAt: new Date().toISOString().replace('T', ' ').substring(0, 19) + '+00'
+                    };
+
+                    await fetch('/api/messages', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(fileMessage)
+                    });
+                }
+            }
+        } catch (error) {
+            console.error('Error sending message:', error);
+        } finally {
+            setIsUploading(false);
+        }
     };
 
     const handleKeyPress = (e: KeyboardEvent<HTMLInputElement>) => {
@@ -372,6 +197,40 @@ export default function MessageText({ convoID }: MessageTextProp) {
             e.preventDefault();
             handleSubmit();
         }
+    };
+
+    // Format date for timestamp display
+    const formatMessageDate = (dateString: string) => {
+        const messageDate = new Date(dateString);
+        const now = new Date();
+        const isToday = messageDate.toDateString() === now.toDateString();
+        const isYesterday = new Date(now.setDate(now.getDate() - 1)).toDateString() === messageDate.toDateString();
+        
+        // Format time (e.g., "2:30 PM")
+        const timeOptions: Intl.DateTimeFormatOptions = { hour: 'numeric', minute: '2-digit', hour12: true };
+        const timeStr = messageDate.toLocaleTimeString(undefined, timeOptions);
+        
+        if (isToday) {
+            return timeStr;
+        } else if (isYesterday) {
+            return `Yesterday, ${timeStr}`;
+        } else {
+            // Format date (e.g., "Jan 15, 2:30 PM")
+            const dateOptions: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric' };
+            const dateStr = messageDate.toLocaleDateString(undefined, dateOptions);
+            return `${dateStr}, ${timeStr}`;
+        }
+    };
+
+    // Check if we should show timestamp between messages
+    const shouldShowTimestamp = (currentMsg: Message, prevMsg: Message | null) => {
+        if (!prevMsg) return true; // Always show for first message
+        
+        const currentTime = new Date(currentMsg.createdAt).getTime();
+        const prevTime = new Date(prevMsg.createdAt).getTime();
+        
+        // Show timestamp if messages are more than 30 minutes apart
+        return (currentTime - prevTime) > 30 * 60 * 1000;
     };
 
     return (
@@ -395,51 +254,87 @@ export default function MessageText({ convoID }: MessageTextProp) {
                 />
             </div>
 
-            <div className="flex-1 overflow-y-auto px-3 relative">
+            <div className="flex-1 overflow-y-auto px-3 relative scroll-smooth">
                 <div className="flex flex-col gap-4 pb-[80px] pt-2">
-                    {messageData.map((message, index) => (
-                        <div
-                            key={`${message.messageId}-${index}`}
-                            className={`flex ${message.senderId === 1 ? 'justify-end pr-2' : 'justify-start pl-2'}`}
-                        >
-                            <div
-                                className={`max-w-[90%] md:max-w-[70%] rounded-lg p-3 ${message.senderId === 1
-                                    ? message.type === 'text' ? 'bg-[#004D81] text-white' : ''
-                                    : message.type === 'text' ? 'bg-[#DFDFDF] text-[##4C4C4C]' : ''
-                                    }`}
-                            >
-                                {message.type === 'text' && (
-                                    <p className="break-words text-sm md:text-base">{message.content}</p>
-                                )}
-                                {message.type === 'image' && (
-                                    <div className={`${message.senderId === 1 ? 'flex justify-end' : ''}`}>
-                                        <Image
-                                            src={message.fileName || ""}
-                                            alt="Message image"
-                                            width={300}
-                                            height={200}
-                                            className="rounded-lg w-full h-auto max-w-[300px]"
-                                        />
+                    {messageData.map((message, index) => {
+                        const prevMessage = index > 0 ? messageData[index - 1] : null;
+                        const showTimestamp = shouldShowTimestamp(message, prevMessage);
+                        
+                        return (
+                            <React.Fragment key={`${message.messageId}-${index}`}>
+                                {showTimestamp && (
+                                    <div className="flex justify-center my-2">
+                                        <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+                                            {formatMessageDate(message.createdAt)}
+                                        </span>
                                     </div>
                                 )}
-                                {message.type === 'file' && (
-                                    <div className="flex items-center gap-2">
-                                        <Image
-                                            src="/img/message/messageAttach.svg"
-                                            alt="File attachment"
-                                            width={20}
-                                            height={20}
-                                        />
-                                        <span className="text-sm md:text-base truncate">{message.fileName}</span>
+                                <div
+                                    className={`flex ${message.senderId === currId ? 'justify-end pr-2' : 'justify-start pl-2'}`}
+                                >
+                                    <div
+                                        className={`max-w-[90%] md:max-w-[70%] rounded-lg p-3 ${
+                                            message.senderId === currId
+                                                ? message.type === 'text' ? 'bg-[#004D81] text-white' : ''
+                                                : message.type === 'text' ? 'bg-[#DFDFDF] text-[#4C4C4C]' : ''
+                                        }`}
+                                    >
+                                        {message.type === 'text' && (
+                                            <p className="break-words text-sm md:text-base">{message.content}</p>
+                                        )}
+                                        {message.type === 'image' && (
+                                            <div className={`${message.senderId === currId ? 'flex justify-end' : ''}`}>
+                                                <Image
+                                                    src={message.filename ? getStorageImageUrl(message.filename) : "https://xyjhjcgojsrwopmwxmiy.supabase.co/storage/v1/object/public/images//bear"}
+                                                    alt="Message image"
+                                                    width={300}
+                                                    height={200}
+                                                    className="rounded-lg w-full h-auto max-w-[300px]"
+                                                />
+                                            </div>
+                                        )}
+                                        {message.type === 'file' && (
+                                            <div className={`flex items-center gap-2 p-3 rounded-lg ${message.senderId === currId ? 'bg-[#EBF5FF] border border-[#CCEAFF]' : 'bg-[#F5F5F5] border border-[#E0E0E0]'}`}>
+                                                <div className="flex-shrink-0">
+                                                    <Image
+                                                        src="/img/message/messageAttach.svg"
+                                                        alt="File attachment"
+                                                        width={24}
+                                                        height={24}
+                                                        className="object-contain"
+                                                    />
+                                                </div>
+                                                <div className="flex flex-col flex-1 min-w-0">
+                                                    <a 
+                                                        href={message.filename ? getStorageFileUrl(message.filename) : "#"} 
+                                                        target="_blank" 
+                                                        rel="noopener noreferrer"
+                                                        className={`text-sm md:text-base font-medium truncate hover:underline transition-colors ${message.senderId === currId ? "text-[#004D81] hover:text-blue-700" : "text-[#4C4C4C] hover:text-blue-600"}`}
+                                                    >
+                                                        {message.content || message.filename}
+                                                    </a>
+                                                    <span className="text-xs text-gray-500 truncate">
+                                                        {message.filetype && `${message.filetype.toUpperCase()} file`}
+                                                    </span>
+                                                </div>
+                                                
+                                            </div>
+                                        )}
                                     </div>
-                                )}
-                            </div>
-                        </div>
-                    ))}
+                                </div>
+                            </React.Fragment>
+                        );
+                    })}
+                    <div ref={messagesEndRef} />
                 </div>
             </div>
             
             <div className="w-full bg-white border-t border-gray-100 pt-2 px-2">
+                {isUploading && (
+                    <div className="text-right text-sm text-gray-500 pr-4 pb-2">
+                        Sending...
+                    </div>
+                )}
                 {(pendingImages.length > 0 || pendingFiles.length > 0) && (
                     <div className="flex flex-wrap gap-2 p-2 bg-gray-50 rounded-lg mb-2">
                         {pendingImages.map((img, idx) => (
@@ -481,7 +376,7 @@ export default function MessageText({ convoID }: MessageTextProp) {
                                 alt="Add image"
                                 width={20}
                                 height={20}
-                                className="w-4 md:w-5 h-4 md:h-5"
+                                className="w-4 md:w-5 h-4 md:h-5 cursor-pointer"
                             />
                         </div>
                     </div>
@@ -510,7 +405,7 @@ export default function MessageText({ convoID }: MessageTextProp) {
                                 alt="Add file"
                                 width={20}
                                 height={20}
-                                className="w-4 md:w-5 h-4 md:h-5"
+                                className="w-4 md:w-5 h-4 md:h-5 cursor-pointer"
                             />
                         </div>
                     </div>
