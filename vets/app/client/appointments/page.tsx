@@ -1,10 +1,12 @@
 "use client";
-import AppointmentsHeader from "@/components/Appointments/AppointmentsHeader";
-import AppointmentsTable from "@/components/Appointments/AppointmentsTable";
-import ScheduleAppointmentBox from "@/components/Appointments/ScheduleAppointmentBox";
-import { Header } from "@/components/MainHeader/Header";
-import { SideBarContainerClient } from "@/components/MainSideBar/SideBarContainerClient";
+import AppointmentsHeader from "../../../components/Appointments/AppointmentsHeader";
+import AppointmentsTable from "../../../components/Appointments/AppointmentsTable";
+import ScheduleAppointmentBox from "../../../components/Appointments/ScheduleAppointmentBox";
+import { Header } from "../../../components/MainHeader/Header";
+import { supabase } from "@/app/lib/supabaseClient";
 import { useEffect, useState } from "react";
+import { SideBarContainerClient } from "../../../components/MainSideBar/SideBarContainerClient";
+
 
 export default function Appointments() {
   const [selectedTab, setSelectedTab] = useState<"upcoming" | "past">("upcoming");
@@ -16,16 +18,51 @@ export default function Appointments() {
     fetchAppointmentData();
   }, [selectedTab]);
 
+  console.log(appointments);
+
   const fetchAppointmentData = async () => {
-    try {
-      const response = await fetch(`/api/appointments?petId=${petId}&filter=${selectedTab}`);
-      if (!response.ok) throw new Error("Failed to fetch appointments");
-      const data = await response.json();
+    const today = new Date().toISOString().split('T')[0]; // Format: YYYY-MM-DD
+  
+    let query = supabase
+      .from('appointments')
+      .select(`
+        apptId,
+        date,
+        time,
+        name,
+        status,
+        pets (
+          petId,
+          doctorId,
+          users!pets_doctorId_fkey (
+            firstName,
+            lastName
+          )
+        )
+      `)
+      .eq('petId', petId);  // Filter by petId
+  
+    // Apply upcoming or past filter
+    if (selectedTab === "upcoming") {
+      query = query.gte('date', today);
+    } else {
+      query = query.lt('date', today);
+    }
+  
+    // ✅ Sort by date DESC (most recent first)
+    query = query.order('date', { ascending: false });
+  
+    const { data, error } = await query;
+  
+    if (error) {
+      console.error("Error fetching pets with doctor names:", error);
+    } else {
       setAppointments(data);
-    } catch (error) {
-      console.log(`Error fetching appointments: ${error}`);
     }
   };
+  
+  
+  
 
   const handleSchedule = async (newAppointment: any) => {
     try {
