@@ -46,7 +46,7 @@ export default function MessageText({ convoID }: MessageTextProp) {
         firstName: string | null;
         lastName: string | null;
         birthdate: string | null;  // date will come as string
-        gender: string | null;
+        sex: string | null;
         phoneNumber: number | null;  // bigint type
         email: string | null;
         contactPreference: string | null;

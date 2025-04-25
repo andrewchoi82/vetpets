@@ -13,7 +13,7 @@ export async function createNewPet(requestId: string, userId: number) {
         breed: contentParsed.petInfo.breed,
         age: contentParsed.petInfo.age,
         weight: contentParsed.petInfo.weight,
-        gender: contentParsed.petInfo.gender.toLowerCase(),
+        sex: contentParsed.petInfo.sex.toLowerCase(),
         sterilized: contentParsed.petInfo.sterilized,
         birthdate: contentParsed.petInfo.birthdate,
         name: contentParsed.petInfo.name

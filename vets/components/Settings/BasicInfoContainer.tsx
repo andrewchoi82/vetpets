@@ -7,7 +7,7 @@ type SidebarProps = {
   profileImg: string;
   fullName: string;
   birthday: string;
-  gender: string;
+  sex: string;
 };
 
 export default function BasicInfoContainer({
@@ -15,7 +15,7 @@ export default function BasicInfoContainer({
   profileImg,
   fullName,
   birthday,
-  gender,
+  sex,
 }: SidebarProps) {
   return (
     <div
@@ -100,7 +100,7 @@ export default function BasicInfoContainer({
             <div style={{ color: "#9CA3AF", fontSize: "18px" }}>{">"}</div>
           </div>
 
-          {/* Row: Gender */}
+          {/* Row: Sex */}
           <div
             style={{
               display: "flex",
@@ -109,8 +109,8 @@ export default function BasicInfoContainer({
             }}
           >
             <div style={{ display: "flex", alignItems: "center" }}>
-              <p style={{ width: "150px" }}>Gender</p>
-              <p style={{ color: "#4C4C4C" }}>{gender}</p>
+              <p style={{ width: "150px" }}>Sex</p>
+              <p style={{ color: "#4C4C4C" }}>{sex}</p>
             </div>
             <div style={{ color: "#9CA3AF", fontSize: "18px" }}>{">"}</div>
           </div>

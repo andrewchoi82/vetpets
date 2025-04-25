@@ -15,7 +15,6 @@ interface RecordsHeaderProps {
 
 export default function RecordsTable({ selectedTab, setSelectedTabAction, tabChange, setTabChange }: RecordsHeaderProps) {
 
-
   type TestResult = {
     testId: number;
     petId: number;
