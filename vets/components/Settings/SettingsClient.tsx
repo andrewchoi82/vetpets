@@ -53,7 +53,7 @@ export default function SettingsClient() {
             month: "long",
             day: "numeric",
           })}
-          gender={userData.gender}
+          sex={userData.sex}
         />
         <PersonalInfoContainer
           style={{ marginTop: "20px", marginLeft: "20px" }}

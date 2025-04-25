@@ -63,9 +63,9 @@ export async function POST(request: NextRequest) {
                                     "type": "number",
                                     "description": "The weight of the pet"
                                 },
-                                "gender": {
+                                "sex": {
                                     "type": "string",
-                                    "description": "The gender of the pet"
+                                    "description": "The sex of the pet"
                                 },
                                 "sterilized": {
                                     "type": "boolean",
@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
                                     "type": "string",
                                     "description": "Birthdate of the pet in YYYY-MM-DD format"
                                 }
-                            },"required": ["name", "breed", "age", "weight", "gender", "birthdate", "sterilized"],
+                            },"required": ["name", "breed", "age", "weight", "sex", "birthdate", "sterilized"],
                             "additionalProperties": false
                         },
                         "userInfo": {
@@ -94,9 +94,9 @@ export async function POST(request: NextRequest) {
                                     "type": "string",
                                     "description": "Birthdate of the pet owner in YYYY-MM-DD format"
                                 },
-                                "gender": {
+                                "sex": {
                                     "type": "string",
-                                    "description": "Gender of the pet owner"
+                                    "description": "Sex of the pet owner"
                                 },
                                 "phoneNumber": {
                                     "type": "integer",
@@ -122,7 +122,7 @@ export async function POST(request: NextRequest) {
                                     "type": "string",
                                     "description": "Last name of the pet owner"
                                 }
-                            },"required": ["email", "firstName", "lastName", "phoneNumber", "address", "userType", "birthdate", "gender", "contactPreference", "username"],
+                            },"required": ["email", "firstName", "lastName", "phoneNumber", "address", "userType", "birthdate", "sex", "contactPreference", "username"],
                             "additionalProperties": false
                         },
                         "billing": {

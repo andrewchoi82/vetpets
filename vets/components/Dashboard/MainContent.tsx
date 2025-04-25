@@ -14,7 +14,7 @@ export default function MainContent() {
     breed: string;
     age: string;
     weight: string;
-    gender: string;
+    sex: string;
     sterilized: string;
   };  
 
@@ -55,9 +55,9 @@ export default function MainContent() {
             image="/img/dashboard/dashboardWeight.svg"
           />
           <DashboardSmallBox
-            label="Gender"
-            value={pet.gender}
-            image="/img/dashboard/gender-icon.svg"
+            label="Sex"
+            value={pet.sex}
+            image="/img/dashboard/sex-icon.svg"
           />
           <DashboardSmallBox
             label="Sterilized"
