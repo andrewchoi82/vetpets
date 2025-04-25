@@ -1,59 +1,50 @@
 import { NextRequest, NextResponse } from 'next/server';
-import axios from 'axios';
+import OpenAI from "openai";
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY!;
+const client = new OpenAI({ apiKey: OPENAI_API_KEY });
 
 export async function POST(req: NextRequest) {
   try {
-    const { fileData } = await req.json();
+    const { url } = await req.json()
 
-    if (!fileData) {
+    if(!url){
       return NextResponse.json({ error: 'No file data provided' }, { status: 400 });
     }
 
-    // Extract the base64 data
-    const base64Data = fileData.split(',')[1];
-    
-    // Use GPT-4 Vision to analyze the image-based PDF
-    const gptResponse = await axios.post(
-      'https://api.openai.com/v1/chat/completions',
-      {
-        model: 'gpt-4-vision-preview',
-        messages: [
-          {
-            role: 'system',
-            content: 'You are a helpful veterinary assistant analyzing lab results. Create a concise summary of the lab report, highlighting key findings, abnormal values, and their potential implications for the pet\'s health.'
-          },
-          {
-            role: 'user',
-            content: [
-              {
-                type: 'text',
-                text: 'This is a veterinary lab report. Please provide a summary of the key findings and their significance.'
-              },
-              {
-                type: 'image_url',
-                image_url: {
-                  url: `data:application/pdf;base64,${base64Data}`
-                }
-              }
-            ]
-          }
-        ],
-        max_tokens: 4000
-      },
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${OPENAI_API_KEY}`
-        }
-      }
-    );
+    const res = await fetch(url);
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
+    const blob = await res.blob();
+    const fileObj = new File([blob], "vettrail.pdf", { type: 'application/pdf' });
 
-    const summary = gptResponse.data.choices[0].message.content;
-    console.log("Lab report summary:", summary);
+    const file = await client.files.create({
+        file: fileObj,
+        purpose: "user_data",
+    });
     
-    return NextResponse.json({ summary });
+    const response = await client.responses.create({
+        model: "gpt-4.1",
+        input: [
+            {
+                role: "user",
+                content: [
+                    {
+                        type: "input_file",
+                        file_id: file.id,
+                    },
+                    {
+                        type: "input_text",
+                        text: "You are the best vet in the United States. Give me a summary of the pdf content.",
+                    },
+                ],
+            },
+        ],
+    });
+    console.log(response.output_text);
+
+    return NextResponse.json({ summary: response.output_text });
   } catch (error: any) {
     console.error('Error:', error.response?.data || error.message);
     return NextResponse.json({ error: error.message || 'Internal server error' }, { status: 500 });
