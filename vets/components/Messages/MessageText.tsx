@@ -5,6 +5,7 @@ import { supabase } from '@/app/lib/supabaseClient';
 import { getImageUrl as getStorageImageUrl } from '@/app/lib/supabaseGetImage';
 import { getFileUrl as getStorageFileUrl } from '@/app/lib/supabaseGetFile';
 import { uploadImage, uploadDocument } from '@/app/lib/supabaseUpload';
+import Cookies from 'js-cookie';
 
 
 interface MessageTextProp {
@@ -13,6 +14,19 @@ interface MessageTextProp {
 
 //takes in prop of the setpagestate from page.tsx of message to change which modal is rendered
 export default function MessageText({ convoID }: MessageTextProp) {
+
+
+    interface Conversation {
+        convoId: number;
+        name: string;
+        lastMessageTime: string;
+        petId: number;
+        numUnreadMessages: number | null;
+        numUnreadDoctor: number | null;
+        doctorId: string;
+        userId: string;
+
+    }
 
     interface Message {
         messageId: number;
@@ -26,6 +40,23 @@ export default function MessageText({ convoID }: MessageTextProp) {
         createdAt: string; // Format: 2025-04-01 12:05:00+00
     };
 
+    interface User {
+        id: string;  // uuid type
+        userType: number;  // smallint type
+        firstName: string | null;
+        lastName: string | null;
+        birthdate: string | null;  // date will come as string
+        gender: string | null;
+        phoneNumber: number | null;  // bigint type
+        email: string | null;
+        contactPreference: string | null;
+        address: string | null;
+        username: string | null;
+        profilePic: string | null;
+    }
+
+    const [convoData, setConvoData] = useState<Conversation | null>(null);
+
     const [messageData, setMessageData] = useState<Message[]>([]);
     const [sendingMessage, setSendingMessage] = useState("");
     const [pendingFiles, setPendingFiles] = useState<File[]>([]);
@@ -33,8 +64,10 @@ export default function MessageText({ convoID }: MessageTextProp) {
     const [isUploading, setIsUploading] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
-    const currId = "81eab4bc-c6eb-4218-9eeb-617e3f8d3f99";
-    const chattingToId = "38c27395-28f5-4b0b-b823-05f0952a5402";
+    const currId = Cookies.get('userId');
+    const petId = Cookies.get('petId');
+    const [chattingToId, setChattingToId] = useState("");
+    const [otherEndUserData, setOtherEndUserData] = useState<User | null>(null);
     
 
     const scrollToBottom = () => {
@@ -43,6 +76,48 @@ export default function MessageText({ convoID }: MessageTextProp) {
 
     // Fetch initial messages
     useEffect(() => {
+        const fetchConvoAndID = async () => {
+            try {
+                const res = await fetch(`/api/conversations/byId?convoId=${convoID}`);
+                const data = await res.json();
+                setConvoData(data);
+
+                let otherEndId;
+                if(data.userId === currId){
+                    otherEndId = data.doctorId;
+                }
+                else{
+                    otherEndId = data.userId;
+                }
+                setChattingToId(otherEndId);
+
+                const res1 = await fetch(`/api/me?userId=${otherEndId}`, {
+                    method: 'GET',
+                });
+                const user = await res1.json();
+                setOtherEndUserData(user);
+
+                if (user) {
+                    await fetch('/api/conversations/clearNotification', {
+                        method: 'PATCH',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ 
+                            convoId: convoID,
+                            sentByUser: user.userType === 1
+                        }),
+                    });
+                }
+            }
+            catch (error) {
+                console.error('Error fetching messages:', error);
+                setConvoData(null);
+                setOtherEndUserData(null);
+            }
+        };
+        fetchConvoAndID();
+
+
+
         const fetchMessages = async () => {
             try {
                 const response = await fetch(`/api/messages?convoId=${convoID}`);
@@ -138,6 +213,17 @@ export default function MessageText({ convoID }: MessageTextProp) {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(textMessage)
                 });
+
+                if (otherEndUserData) {
+                    await fetch('/api/conversations/addNotification', {
+                        method: 'PATCH',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ 
+                            convoId: convoID,
+                            sentByUser: otherEndUserData.userType === 1
+                        }),
+                    });
+                }
             }
 
             // Handle pending images using uploadImage
@@ -160,6 +246,17 @@ export default function MessageText({ convoID }: MessageTextProp) {
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(imageMessage)
                     });
+
+                    if (otherEndUserData) {
+                        await fetch('/api/conversations/addNotification', {
+                            method: 'PATCH',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ 
+                                convoId: convoID,
+                                sentByUser: otherEndUserData.userType === 1
+                            }),
+                        });
+                    }
                 }
             }
 
@@ -183,6 +280,17 @@ export default function MessageText({ convoID }: MessageTextProp) {
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(fileMessage)
                     });
+
+                    if (otherEndUserData) {
+                        await fetch('/api/conversations/addNotification', {
+                            method: 'PATCH',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ 
+                                convoId: convoID,
+                                sentByUser: otherEndUserData.userType === 1
+                            }),
+                        });
+                    }
                 }
             }
         } catch (error) {
@@ -238,10 +346,16 @@ export default function MessageText({ convoID }: MessageTextProp) {
             <div className="w-full flex flex-row justify-between items-center h-[60px] border-b-[1px] border-solid border-[#DFDFDF] px-4 flex-shrink-0">
                 <div className="ml-3 flex flex-col w-[200px]">
                     <div className="text-[#919191]">
-                    To: Dr. Sarah
+                        To: {otherEndUserData && (
+                            otherEndUserData.userType === 1 
+                                ? `${otherEndUserData.firstName} ${otherEndUserData.lastName}`
+                                : otherEndUserData.userType === 2 
+                                    ? `Dr. ${otherEndUserData.lastName}`
+                                    : otherEndUserData.lastName
+                        )}
                     </div>
                     <div className="text-[#4C4C4C]">
-                        Subject: Pontential
+                        {"Subject: " + convoData?.name}
                     </div>
                 </div>
 

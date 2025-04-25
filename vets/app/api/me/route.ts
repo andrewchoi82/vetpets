@@ -1,17 +1,19 @@
-import { getUserFromToken } from "../auth/route";
 import { NextResponse } from "next/server";
 import { supabase } from "@/app/lib/supabaseClient";
+import { NextRequest } from "next/server";
 
-export async function GET() {
-  const session = await getUserFromToken();
-  if (!session) {
-    return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+export async function GET(req: NextRequest) {
+  const { searchParams } = new URL(req.url);
+  const userId = searchParams.get("userId");
+
+  if (!userId) {
+    return NextResponse.json({ error: "Missing userId" }, { status: 400 });
   }
 
   const { data, error } = await supabase
     .from("users")
     .select("id, userType, firstName, lastName, birthdate, gender, phoneNumber, email, contactPreference, address, username, profilePic")
-    .eq("id", session.userId)
+    .eq("id", userId)
     .single();
 
   if (error || !data) {

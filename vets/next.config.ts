@@ -20,6 +20,8 @@ const nextConfig: NextConfig = {
         pathname: '/storage/v1/object/public/files/**',
       },
     ],
+    dangerouslyAllowSVG: true,
+
   },
 
   webpack: (config, { isServer }) => {

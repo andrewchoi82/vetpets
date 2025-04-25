@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Cookies from 'js-cookie';
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -21,19 +22,26 @@ export default function Login() {
       alert("Invalid email or password");
       return;
     } 
+    
+    // Save userId to cookie
+    Cookies.set('userId', result.userId, { expires: 7 }); // Expires in 7 days
   
-    const userRes = await fetch("/api/me", {
-      credentials: "include",                  
-    });
-    const user = await userRes.json();
-  
-    if (user?.userType === 2) {
-      router.push("/vet");
-    } else if (user?.userType === 1) {
-      router.push("/getpet");
-    } else {
-      alert("Unknown user type.");
-    }
+    try {
+      const res = await fetch(`/api/me?userId=${result.userId}`, {
+          method: 'GET',
+        });
+      const user = await res.json();
+      if (user?.userType === 2) {
+        router.push("/vet");
+      } else if (user?.userType === 1) {
+        router.push("/getpet");
+      } else {
+        alert("Unknown user type.");
+      }
+  }
+  catch (error) {
+      console.error('Error fetching user:', error);
+  } 
   };
   
 
