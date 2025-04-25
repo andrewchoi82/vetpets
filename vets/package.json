@@ -12,6 +12,7 @@
     "@adobe/pdfservices-node-sdk": "^4.1.0",
     "@supabase/supabase-js": "^2.49.4",
     "bcrypt": "^5.1.1",
+    "bcryptjs": "^3.0.2",
     "formidable": "^3.5.2",
     "js-cookie": "^3.0.5",
     "jsonwebtoken": "^9.0.2",

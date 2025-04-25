@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { getTests } from "@/app/lib/api/tests";
 import { getFileUrl } from "@/app/lib/supabaseGetFile";
 import { Document, Page, pdfjs } from "react-pdf";
+import { getImageUrl } from "@/app/lib/supabaseGetImage";
 
 interface RecordsHeaderProps {
   selectedTab: "vaccinations" | "test results" | "medications" | "medical history";

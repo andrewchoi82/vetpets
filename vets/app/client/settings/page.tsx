@@ -1,4 +1,4 @@
-import { getUserFromToken } from "@/app/api/auth/route";
+import { getUserFromToken } from "@/app/lib/api/auth";
 import { redirect } from "next/navigation";
 import SettingsClient from "@/components/Settings/SettingsClient";
 import SettingsVet from "@/components/Settings/SettingsVet";
