@@ -2,7 +2,7 @@
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { getTests } from "@/app/lib/api/tests";
-import { getImageUrl } from "@/app/lib/supabaseGetFile";
+import { getFileUrl } from "@/app/lib/supabaseGetFile";
 import { Document, Page, pdfjs } from "react-pdf";
 
 interface RecordsHeaderProps {
