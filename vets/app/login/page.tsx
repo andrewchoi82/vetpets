@@ -12,8 +12,9 @@ export default function Login() {
       method: "POST",
       body: JSON.stringify({ email, password }),
       headers: { "Content-Type": "application/json" },
+      credentials: "include",                    
     });
-  
+    
     const result = await res.json();
   
     if (!result.success || !result.userId) {
@@ -22,7 +23,7 @@ export default function Login() {
     } 
   
     const userRes = await fetch("/api/me", {
-      credentials: 'include',
+      credentials: "include",                  
     });
     const user = await userRes.json();
   

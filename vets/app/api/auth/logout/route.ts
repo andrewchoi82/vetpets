@@ -5,7 +5,9 @@ export async function POST() {
   const cookie = serialize('token', '', {
     httpOnly: true,
     path: '/',
-    maxAge: 0,  // Immediately expire cookie
+    maxAge: 0,                        // ✅ Expire immediately
+    sameSite: 'lax',                  // ✅ Prevent CSRF issues
+    secure: process.env.NODE_ENV === 'production',  // ✅ Secure in production only
   });
 
   const response = NextResponse.json({ success: true });
