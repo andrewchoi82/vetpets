@@ -12,26 +12,27 @@ export default function Login() {
       method: "POST",
       body: JSON.stringify({ email, password }),
       headers: { "Content-Type": "application/json" },
+      credentials: "include",                    
     });
-  
+    
     const result = await res.json();
-
-    console.log(result)
   
     if (!result.success || !result.userId) {
       alert("Invalid email or password");
       return;
     } 
   
-    const userRes = await fetch(`/api/users/${result.userId}`, {
-      credentials: 'include',  
+    const userRes = await fetch("/api/me", {
+      credentials: "include",                  
     });
     const user = await userRes.json();
   
     if (user?.userType === 2) {
       router.push("/vet");
-    } else {
+    } else if (user?.userType === 1) {
       router.push("/getpet");
+    } else {
+      alert("Unknown user type.");
     }
   };
   
