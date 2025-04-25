@@ -42,10 +42,25 @@ export const Header = ({ title, showSearchBar }: HeaderProps) => {
     setShowProfilePopup(false);
   };
 
-  const handleLogout = () => {
-    console.log("Log out clicked");
-    setShowProfilePopup(false);
+  const handleLogout = async () => {
+    try {
+      const res = await fetch("/api/auth/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+  
+      if (res.ok) {
+        window.location.href = "/login"; // ✅ Only redirect after clearing the cookie
+      } else {
+        alert("Failed to log out.");
+      }
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
+  
+    setShowProfilePopup(false); // Close the popup
   };
+  
 
 
   return (
@@ -109,16 +124,8 @@ export const Header = ({ title, showSearchBar }: HeaderProps) => {
               }}
             >
               <div style={{ padding: "16px", display: "flex", alignItems: "center", gap: "12px" }}>
-                <div style={{ 
-                  width: "40px", 
-                  height: "40px", 
-                  borderRadius: "50%", 
-                  backgroundColor: "#E5E5E5" 
-                }}></div>
-                <div>
                   <div style={{ fontSize: "16px", color: "#374151", fontWeight: "500" }}>Jane Doe</div>
                   <div style={{ fontSize: "14px", color: "#6B7280" }}>Snowball</div>
-                </div>
               </div>
               
               <div style={{ height: "1px", width: "100%", backgroundColor: "#E5E5E5" }} />
@@ -131,34 +138,7 @@ export const Header = ({ title, showSearchBar }: HeaderProps) => {
                   gap: "12px",
                   cursor: "pointer"
                 }}
-                onClick={handleSwitchPet}
-              >
-                <div style={{ fontSize: "16px", color: "#374151" }}>Switch pet profile</div>
-              </div>
-              
-              <div 
-                style={{ 
-                  padding: "12px 16px", 
-                  display: "flex", 
-                  alignItems: "center", 
-                  gap: "12px",
-                  backgroundColor: "rgba(0,0,0,0.03)",
-                  cursor: "pointer"
-                }}
-                onClick={handleAddNewPet}
-              >
-                <div style={{ fontSize: "16px", color: "#374151" }}>Add new pet</div>
-              </div>
-              
-              <div 
-                style={{ 
-                  padding: "12px 16px", 
-                  display: "flex", 
-                  alignItems: "center", 
-                  gap: "12px",
-                  cursor: "pointer"
-                }}
-                onClick={() => window.location.href = '/login'}
+                onClick={handleLogout}
               >
                 <div style={{ fontSize: "16px", color: "#374151" }}>Log out</div>
               </div>
