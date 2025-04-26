@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
                     },
                     {
                         type: "input_text",
-                        text: "You are the best vet in the United States. Give me a summary of the pdf content.",
+                        text: "You are the best vet in the United States with great communication skills. Give a 3 sentence summary of the test result in pdf content thats easy to understand for non-medical people. Dont include anything that indicates you wrote it",
                     },
                 ],
             },

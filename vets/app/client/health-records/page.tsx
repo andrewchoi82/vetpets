@@ -9,6 +9,7 @@ import { useState } from "react";
 
 export default function HealthRecords() {
    const [selectedTab, setSelectedTab] = useState<"vaccinations" | "test results" | "medications" | "medical history">("vaccinations");
+  const [tabChange, setTabChange] = useState(false);
 
    return (
        <div style={{ display: "flex", height: "100vh", overflow: "hidden" }}>
@@ -17,12 +18,8 @@ export default function HealthRecords() {
          <div style={{ flex: 1, display: "flex", flexDirection: "column", background: "#fff", overflowY: "auto" }}>
             <Header title="Health Records" showSearchBar={true}/>
 
-            <RecordsHeader selectedTab={selectedTab} setSelectedTabAction={setSelectedTab} tabChange={false} setTabChange={function (change: boolean): void {
-               throw new Error("Function not implemented.");
-            } }/>
-            <RecordsTable selectedTab={selectedTab} setSelectedTabAction={setSelectedTab} tabChange={false} setTabChange={function (change: boolean): void {
-               throw new Error("Function not implemented.");
-            } }/>
+            <RecordsHeader selectedTab={selectedTab} setSelectedTabAction={setSelectedTab} tabChange={tabChange} setTabChange={setTabChange}/>
+            <RecordsTable selectedTab={selectedTab} setSelectedTabAction={setSelectedTab} tabChange={tabChange} setTabChange={setTabChange}/>
          </div>
        </div>
    );
