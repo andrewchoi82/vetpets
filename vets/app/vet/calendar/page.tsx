@@ -20,7 +20,7 @@ export default function Clients() {
         <Header title="Clients" showSearchBar={false}/>
 
         <ClientsHeader/>
-        <Calendar selected={selected} setSelected={setSelected}/>
+        <Calendar />
       </div>
     </div>
   );

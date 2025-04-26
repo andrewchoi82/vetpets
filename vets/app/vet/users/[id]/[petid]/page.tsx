@@ -9,6 +9,7 @@ import PetTable from "@/components/vet/Pets/PetTable";
 
 import { ClientsProfile } from "@/components/vet/Clients/ClientsProfile";
 import { useState } from 'react'
+import PetDetailTables from "@/components/vet/Pets/PetDetailTables";
 
 export default function Clients() {
 
@@ -20,10 +21,11 @@ export default function Clients() {
       <SideBarContainerVets selectedPage="Clients" />
 
       <div style={{ flex: 1, display: "flex", flexDirection: "column", background: "#fff", overflowY: "auto" }}>
-        <Header title="Pets" showSearchBar={false}/>
+        <Header title="Pet Details" showSearchBar={false}/>
 
         <ClientsHeader/>
-        {selected === "profile" ? <ClientsProfile/> : <PetTable selected={selected} setSelected={setSelected}/>}
+        {selected === "profile" ? <ClientsProfile/> : <PetDetailTables
+         selected={selected} setSelected={setSelected}/>}
       </div>
     </div>
   );

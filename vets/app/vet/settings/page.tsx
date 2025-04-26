@@ -11,11 +11,7 @@ export default async function SettingsPage() {
     redirect("/login"); // If not logged in, bounce to login
   }
 
-  if (session.userType === 1) {
-    return <SettingsClient />; 
-  } else if (session.userType === 2) {
-    return <SettingsVet />;   
-  } else {
-    return <div>Unauthorized access.</div>;
-  }
+
+  return <SettingsVet />;   
+  
 }
