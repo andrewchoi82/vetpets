@@ -56,6 +56,8 @@ export default function MessagesSide({ setPageState }: MessageOverviewProps) {
     const currId = Cookies.get('userId');
     const petId = Cookies.get('petId');
 
+    
+
 
     //this currently sets the sample appointment data to the state
     //change this later to add API to get real data
@@ -90,7 +92,7 @@ export default function MessagesSide({ setPageState }: MessageOverviewProps) {
                         otherEndId = data[0].userId;
                     }
                     setChattingToId(otherEndId);
-                    const res1 = await fetch(`/api/me?userId=${otherEndId}`, {
+                    const res1 = await fetch(`/api/me?userId=${otherEndId}`, {  // THIS IS THE LINE THAT DOESN'T FETCH
                         method: 'GET',
                     });
                     const user = await res1.json();
