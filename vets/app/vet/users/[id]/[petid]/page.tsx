@@ -4,7 +4,10 @@ import { Header } from "@/components/MainHeader/Header";
 import MainContent from "@/components/Dashboard/MainContent";
 import { SideBarContainerVets } from "@/components/MainSideBar/SideBarContainerVets";
 import ClientsHeader from "@/components/vet/Clients/ClientsHeader";
-import Calendar from "@/components/vet/Calendar";
+import ClientsTable from "@/components/vet/Clients/ClientsTable";
+import PetTable from "@/components/vet/Pets/PetTable";
+
+import { ClientsProfile } from "@/components/vet/Clients/ClientsProfile";
 import { useState } from 'react'
 
 export default function Clients() {
@@ -14,13 +17,13 @@ export default function Clients() {
 
   return (
     <div style={{ display: "flex", height: "100vh", overflow: "hidden" }}>
-      <SideBarContainerVets selectedPage="Calendar" />
+      <SideBarContainerVets selectedPage="Clients" />
 
       <div style={{ flex: 1, display: "flex", flexDirection: "column", background: "#fff", overflowY: "auto" }}>
-        <Header title="Clients" showSearchBar={false}/>
+        <Header title="Pets" showSearchBar={false}/>
 
         <ClientsHeader/>
-        <Calendar selected={selected} setSelected={setSelected}/>
+        {selected === "profile" ? <ClientsProfile/> : <PetTable selected={selected} setSelected={setSelected}/>}
       </div>
     </div>
   );
