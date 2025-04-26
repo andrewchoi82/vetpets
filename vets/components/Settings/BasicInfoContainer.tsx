@@ -17,6 +17,7 @@ export default function BasicInfoContainer({
   birthday,
   sex,
 }: SidebarProps) {
+
   return (
     <div
       style={{

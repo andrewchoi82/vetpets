@@ -125,16 +125,8 @@ export default function SignUp() {
 
         {step === 2 && (
           <>
-            <InputField
-              placeholder="Phone Number"
-              value={formData.phoneNumber}
-              onChange={(e) => handleChange("phoneNumber", e.target.value)}
-            />
-            <InputField
-              placeholder="Address"
-              value={formData.address}
-              onChange={(e) => handleChange("address", e.target.value)}
-            />
+            <InputField placeholder="Phone Number" value={formData.phoneNumber} onChange={(e) => handleChange("phoneNumber", e.target.value)} />
+            <InputField placeholder="Address" value={formData.address} onChange={(e) => handleChange("address", e.target.value)} />
             <div className="w-full flex flex-col gap-2">
               <label className="text-black text-base font-['SF_Pro'] mb-1">Sex</label>
               <select
@@ -165,7 +157,6 @@ export default function SignUp() {
           </>
         )}
 
-
         {step === 3 && (
           <>
             <InputField placeholder="Email" value={formData.email} onChange={(e) => handleChange("email", e.target.value)} />
@@ -191,7 +182,9 @@ export default function SignUp() {
         <div className="w-full flex justify-between mt-4">
           <button
             onClick={handleBack}
-            className="h-12 rounded-[10px] text-white text-xl px-6 bg-Hoover-grey"
+            className={`h-12 rounded-[10px] text-white text-xl px-6 ${
+              step === 1 ? "bg-gray-400" : "bg-sky-800"
+            }`}
           >
             {step === 1 ? "Back to Sign In" : "Back"}
           </button>
