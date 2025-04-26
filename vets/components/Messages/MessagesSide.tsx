@@ -53,15 +53,12 @@ export default function MessagesSide({ setPageState }: MessageOverviewProps) {
     const [otherEndUserData, setOtherEndUserData] = useState<User | null>(null);
 
     const currId = Cookies.get('userId');
-    // const petId = Cookies.get('petId');
-    const petId = "1";
+    const petId = Cookies.get('petId');
 
 
     //this currently sets the sample appointment data to the state
     //change this later to add API to get real data
     useEffect(() => {
-
-
         const fetchMessages = async () => {
             try {
                 const res = await fetch(`/api/conversations?petId=${petId}`);
@@ -70,20 +67,20 @@ export default function MessagesSide({ setPageState }: MessageOverviewProps) {
                 let otherEndId;
 
                 //we just get the opposing texter info from the first item
-                if (data[0].userId === currId) {
-                    otherEndId = data[0].doctorId;
+                if (data && data.length > 0) {
+                    if (data[0].userId === currId) {
+                        otherEndId = data[0].doctorId;
+                    }
+                    else {
+                        otherEndId = data[0].userId;
+                    }
+                    setChattingToId(otherEndId);
+                    const res1 = await fetch(`/api/me?userId=${otherEndId}`, {
+                        method: 'GET',
+                    });
+                    const user = await res1.json();
+                    setOtherEndUserData(user);
                 }
-                else {
-                    otherEndId = data[0].userId;
-                }
-                setChattingToId(otherEndId);
-                const res1 = await fetch(`/api/me?userId=${otherEndId}`, {
-                    method: 'GET',
-                });
-                const user = await res1.json();
-                setOtherEndUserData(user);
-
-
             }
             catch (error) {
                 console.error('Error fetching messages:', error);

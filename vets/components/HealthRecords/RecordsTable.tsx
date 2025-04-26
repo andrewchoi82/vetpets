@@ -257,7 +257,7 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction, tabCha
                             testData[index].result :
                             testResult.result;
 
-                          const fileUrl = getImageUrl(fileToDownload);
+                          const fileUrl = getFileUrl(fileToDownload);
                           setPdfUrl(fileUrl);
                           handleAnalysis(fileUrl);
                           setOnDocumentDetail(true);

@@ -21,8 +21,14 @@ export async function PATCH(req: NextRequest) {
 
   // Update the appropriate field
   const updates = sentByUser
-    ? { numUnreadDoctor: (convo.numUnreadDoctor || 0) + 1 }
-    : { numUnreadMessages: (convo.numUnreadMessages || 0) + 1 };
+    ? { 
+        numUnreadDoctor: (convo.numUnreadDoctor || 0) + 1,
+        lastMessageTime: new Date().toISOString().replace('T', ' ').replace('Z', '+00')
+      }
+    : { 
+        numUnreadMessages: (convo.numUnreadMessages || 0) + 1,
+        lastMessageTime: new Date().toISOString().replace('T', ' ').replace('Z', '+00')
+      };
 
   const { error: updateError } = await supabase
     .from('conversations')

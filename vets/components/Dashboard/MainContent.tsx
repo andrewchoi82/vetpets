@@ -6,6 +6,7 @@ import DashboardMessagesBox from "@/components/Dashboard/dashboardRecentMessages
 import DashboardAppointmentsBox from "@/components/Dashboard/dashboardAppointmentsBox";
 import DashboardSmallBox from "@/components/Dashboard/dashboardSmallBox";
 import { useState, useEffect } from "react";
+import Cookies from 'js-cookie';
 
 import { getPetById } from "@/app/lib/api/pets";
 
@@ -19,11 +20,13 @@ export default function MainContent() {
   };  
 
   const [pet, setPet] = useState<Pet | null>(null);
+  const petId = Cookies.get('petId');
+
 
   useEffect(() => {
     const fetchPet = async () => {
       try {
-        const data = await getPetById("1"); 
+        const data = await getPetById(petId || ''); 
         setPet(data);
       } catch (err) {
         console.error("Failed to fetch pet data", err);

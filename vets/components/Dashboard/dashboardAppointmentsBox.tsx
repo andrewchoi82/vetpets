@@ -1,13 +1,20 @@
 "use client";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 import { getAppointments } from "@/app/lib/api/appointments";
 import { getUserById } from "@/app/lib/api/users";
 
+import Cookies from 'js-cookie';
+
+ 
+
 
 
 export default function DashboardAppointmentsBox() {
+  const router = useRouter();
+  
   type Appointment = {
     apptId: number;
     petId: number;
@@ -18,6 +25,16 @@ export default function DashboardAppointmentsBox() {
     location: string;
     status: string;
   };
+  type Pet = {
+    breed: string;
+    age: string;
+    weight: string;
+    sex: string;
+    sterilized: string;
+  };  
+
+  const [pet, setPet] = useState<Pet | null>(null);
+  const petId = Cookies.get('petId') || '';
   
 
   const [appointmentData, setAppointmentData] = useState<Appointment | null>(null);
@@ -28,7 +45,9 @@ export default function DashboardAppointmentsBox() {
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
-        const data = await getAppointments("1");
+        if (!petId) return;
+        
+        const data = await getAppointments(petId);
         if (Array.isArray(data) && data.length > 0) {
           const sorted = data.sort(
             (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
@@ -47,9 +66,11 @@ export default function DashboardAppointmentsBox() {
   useEffect(() => {
     const fetchDoctor = async (id: string) => {
       try {
-        const data = await getUserById(id);
-        setDoctorName(`Dr. ${data.lastName}`);
-
+        const res = await fetch(`/api/me?userId=${id}`, {
+          method: 'GET',
+        });
+        const user = await res.json();
+        setDoctorName(`Dr. ${user.lastName}`);
       } catch (error) {
         console.error("Failed to fetch doctor.");
       }
@@ -60,6 +81,9 @@ export default function DashboardAppointmentsBox() {
     }
   }, [doctorId]);
   
+  const handleAppointmentAction = () => {
+    router.push('/client/appointments');
+  };
 
   return (
     <div
@@ -89,12 +113,12 @@ export default function DashboardAppointmentsBox() {
           </div>
         </div>
 
-        {/* Main Info Box */}
-        { appointmentData && (
+        {/* Main Content */}
+        {appointmentData ? (
           <>
             <div
               style={{
-                backgroundColor: "#f4f4f4",             // lighter gray
+                backgroundColor: "#f4f4f4",
                 padding: "16px 20px",
                 display: "flex",
                 justifyContent: "space-between",
@@ -192,46 +216,84 @@ export default function DashboardAppointmentsBox() {
               </span>
 
             </div>
+
+            {/* Actions */}
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "flex-end",
+                gap: "16px",
+                fontSize: "17px",
+                marginBottom: "15px",
+              }}
+            >
+              <button
+                style={{
+                  fontSize: "15px",
+                  color: "#1e3a8a",
+                  textDecoration: "underline",
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                }}
+                onClick={handleAppointmentAction}
+              >
+                Cancel
+              </button>
+
+              <button
+                style={{
+                  fontSize: "15px",
+                  backgroundColor: "#004d81",
+                  color: "white",
+                  padding: "4px 10px",
+                  borderRadius: "5px",
+                  border: "none",
+                  cursor: "pointer",
+                }}
+                onClick={handleAppointmentAction}
+              >
+                Reschedule
+              </button>
+            </div>
+          </>
+        ) : (
+          <>
+            <div
+              style={{
+                backgroundColor: "#f4f4f4",
+                padding: "16px 20px",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                marginLeft: "-16px",
+                marginRight: "-16px",
+                color: "#4c4c4c",
+                flex: 1,
+                gap: "16px"
+              }}
+            >
+              <div style={{ fontSize: "17px", color: "#919191" }}>
+                No appointments scheduled
+              </div>
+              <button
+                style={{
+                  fontSize: "15px",
+                  backgroundColor: "#004d81",
+                  color: "white",
+                  padding: "8px 16px",
+                  borderRadius: "5px",
+                  border: "none",
+                  cursor: "pointer",
+                }}
+                onClick={handleAppointmentAction}
+              >
+                Schedule
+              </button>
+            </div>
           </>
         )}
-
-        {/* Actions */}
-        <div
-          style={{
-              display: "flex",
-              justifyContent: "flex-end",
-              gap: "16px",
-              fontSize: "17px",
-              marginBottom: "15px",
-          }}
-          >
-          <button
-              style={{
-              fontSize: "15px",
-              color: "#1e3a8a",
-              textDecoration: "underline",
-              background: "none",
-              border: "none",
-              cursor: "pointer",
-              }}
-          >
-              Cancel
-          </button>
-
-          <button
-              style={{
-              fontSize: "15px",
-              backgroundColor: "#004d81",
-              color: "white",
-              padding: "4px 10px",
-              borderRadius: "5px",
-              border: "none",
-              cursor: "pointer",
-              }}
-          >
-              Reschedule
-          </button>
-          </div>
       </div>
 
   );
