@@ -4,7 +4,7 @@ import { parse } from 'cookie';
 import { verifyJWT } from '@/app/lib/jwt';
 
 export async function GET(request: NextRequest, context: { params: { id: string } }) {
-  // Await the params to fix the error
+
   const { params } = context;
   const id = params.id;
 
