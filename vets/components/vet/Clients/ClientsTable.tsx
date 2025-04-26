@@ -90,7 +90,7 @@ export default function ClientsTable({selected, setSelected} : ClientTableProps)
                    <button
                      onClick={(e) => {
                        e.stopPropagation();
-                       router.push(`/vet/users/${client.userId}/pets`);
+                       router.push(`/vet/users/${client.userId}`);
                      }}
                      style={{
                        backgroundColor: "#004d81",
@@ -102,7 +102,7 @@ export default function ClientsTable({selected, setSelected} : ClientTableProps)
                        fontSize: "14px"
                      }}
                    >
-                     See Pet Details
+                     See All Pets
                    </button>
                  </td>
                </tr>
