@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
                     },
                     {
                         type: "input_text",
-                        text: "You are the best vet in the United States. Give me a summary of the pdf content.",
+                        text: "you are the best vet in the us. i want you to give me a thorough explanation of the pdf which can be images inside pdf too. format the response nicely with next lines and spacing so that if i put this in to a website div as a text, it can still look nicely.  Dont include anything that indicates you wrote it",
                     },
                 ],
             },
