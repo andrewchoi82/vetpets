@@ -30,6 +30,7 @@ interface User {
   firstName: string;
   lastName: string;
   profilePic: string | null;
+  userType: number;
 }
 
 export const Header = ({ title, showSearchBar }: HeaderProps) => {
@@ -203,25 +204,31 @@ export const Header = ({ title, showSearchBar }: HeaderProps) => {
                     {user ? `${user.firstName} ${user.lastName}` : 'Loading...'}
                   </div>
                   <div style={{ fontSize: "14px", color: "#6B7280" }}>
-                    {pets.find(pet => pet.petId.toString() === Cookies.get('petId'))?.name || 'No pet selected'}
+                    {user?.userType === 2 
+                      ? "Veterinarian" 
+                      : pets.find(pet => pet.petId.toString() === Cookies.get('petId'))?.name || 'No pet selected'}
                   </div>
               </div>
               <div style={{ height: "1px", width: "100%", backgroundColor: "#E5E5E5" }} />
               
-              <div 
-                style={{ 
-                  padding: "12px 16px", 
-                  display: "flex", 
-                  alignItems: "center", 
-                  gap: "12px",
-                  cursor: "pointer"
-                }}
-                onClick={handleSwitchPet}
-              >
-                <div style={{ fontSize: "16px", color: "#374151" }}>Switch Pets</div>
-              </div>
+              {user?.userType !== 2 && (
+                <>
+                  <div 
+                    style={{ 
+                      padding: "12px 16px", 
+                      display: "flex", 
+                      alignItems: "center", 
+                      gap: "12px",
+                      cursor: "pointer"
+                    }}
+                    onClick={handleSwitchPet}
+                  >
+                    <div style={{ fontSize: "16px", color: "#374151" }}>Switch Pets</div>
+                  </div>
 
-              <div style={{ height: "1px", width: "100%", backgroundColor: "#E5E5E5" }} />
+                  <div style={{ height: "1px", width: "100%", backgroundColor: "#E5E5E5" }} />
+                </>
+              )}
               
               <div 
                 style={{ 

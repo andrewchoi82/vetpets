@@ -49,6 +49,7 @@ export default function MessagesSide({ setPageState }: MessageOverviewProps) {
     const [convoNum, setConvoNum] = useState(-1);
     const [onMessage, setOnMessage] = useState(false);
     const [chattingToId, setChattingToId] = useState("");
+    const [currUserData, setCurrUserData] = useState<User | null>(null);
 
     const [otherEndUserData, setOtherEndUserData] = useState<User | null>(null);
 
@@ -61,9 +62,23 @@ export default function MessagesSide({ setPageState }: MessageOverviewProps) {
     useEffect(() => {
         const fetchMessages = async () => {
             try {
-                const res = await fetch(`/api/conversations?petId=${petId}`);
-                const data = await res.json();
-                setMessageData(data);
+                const res2 = await fetch(`/api/me?userId=${currId}`, {
+                    method: 'GET',
+                });
+                const userCurr = await res2.json();
+                setCurrUserData(userCurr);
+
+                let data;
+                if (userCurr && userCurr.userType == 1) {
+                    const res = await fetch(`/api/conversations?petId=${petId}`);
+                     data = await res.json();
+                    setMessageData(data);
+                }
+                else if (userCurr && userCurr.userType == 2) {
+                    const res = await fetch(`/api/conversations/doctor?doctorId=${currId}`);
+                    data = await res.json();
+                    setMessageData(data);
+                }
                 let otherEndId;
 
                 //we just get the opposing texter info from the first item
@@ -185,9 +200,9 @@ export default function MessagesSide({ setPageState }: MessageOverviewProps) {
                                     </div>
                                     <div className="text-[#4C4C4C]">
                                         {otherEndUserData && (
-                                            otherEndUserData.userType === 1 
+                                            otherEndUserData.userType === 1
                                                 ? `${otherEndUserData.firstName} ${otherEndUserData.lastName}`
-                                                : otherEndUserData.userType === 2 
+                                                : otherEndUserData.userType === 2
                                                     ? `Dr. ${otherEndUserData.lastName}`
                                                     : otherEndUserData.lastName
                                         )}
