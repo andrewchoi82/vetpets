@@ -189,7 +189,7 @@ export default function PDFTestPage() {
 
   return (
     <div style={{ display: "flex", height: "100vh", overflow: "hidden" }}>
-      <SideBarContainerVets selectedPage="PDF Tests" />
+      <SideBarContainerVets selectedPage="Create Pet" />
 
       <div style={{ flex: 1, display: "flex", flexDirection: "column", background: "#fff", overflowY: "auto" }}>
         <Header title="Vet Portal" showSearchBar={true}/>

@@ -1,6 +1,8 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { getPetsByDoctorId, getUserById } from "@/app/lib/api/users";
+import Cookies from 'js-cookie';
+import { useRouter } from 'next/navigation';
 
 interface ClientTableProps {
   selected: string,
@@ -9,7 +11,6 @@ interface ClientTableProps {
 
 export default function ClientsTable({selected, setSelected} : ClientTableProps) {
   type Pet = {
-
     name: string;
     petId: number;
     users: {
@@ -17,26 +18,46 @@ export default function ClientsTable({selected, setSelected} : ClientTableProps)
       firstName: string;
     }
   };
-
-  const [vetPetData, setVetPetData] = useState<Pet[]>([]);
   
-  useEffect(() => {
-    const fetchPets = async (id: string) => {
-      try {
-        const data = await getPetsByDoctorId("6");
-        setVetPetData(data);
+  interface Client {
+    sex: string;
+    email: string;
+    address: string;
+    lastName: string;
+    userType: number;
+    username: string;
+    birthdate: string;
+    firstName: string;
+    profilePic: string;
+    phoneNumber: number;
+    contactPreference: string;
+    userId: string;
+    numOfPets: number;
+  }
+  const [vetClientData, setVetClientData] = useState<Client[]>([]);
+  const [vetPetData, setVetPetData] = useState<Pet[]>([]);
+  const currId = Cookies.get('userId');
+  const router = useRouter();
 
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const res1 = await fetch(`/api/users/byDoctor?doctorId=${currId}`, {
+          method: 'GET',
+      });
+      const users = await res1.json();
+      setVetClientData(users);
       } catch (error) {
-        console.error("Failed to fetch doctor.");
+        console.error("Error fetching user data:", error);
       }
     };
 
-
-
-    fetchPets("6");
-  
+    fetchUserData();
   }, []);
 
+  const handleRowClick = (userId: string) => {
+    router.push(`/vet/users/${userId}`);
+  };
   
   return (
    <>
@@ -47,38 +68,41 @@ export default function ClientsTable({selected, setSelected} : ClientTableProps)
              <tr style={{ borderBottom: "1px solid #d1d5db" }}>
                <th style={{ ...baseThStyle, paddingLeft: 40, width: "170px" }}>Last name</th>
                <th style={{ ...baseThStyle, paddingLeft: 24, width: "170px" }}>First name</th>
-               <th style={{ ...baseThStyle, paddingLeft: 24, width: "170px" }}>Pet name</th>
-               <th style={{ ...baseThStyle, paddingLeft: 24, width: "170px" }}>Pet ID</th>
+               <th style={{ ...baseThStyle, paddingLeft: 24, width: "170px" }}>Number of pets</th>
                <th style={{ ...baseThStyle, paddingLeft: 24, width: "120px" }}></th>
              </tr>
            </thead>
            <tbody>
-             {vetPetData.map(({users, name, petId}, index) => (
-               <tr key={index} style={{ height: "64px", borderBottom: "1px solid #e5e5e5" }}>
-                 <td style={{ paddingLeft: 40, color: "#111827" }}>{users.lastName}</td>
-                 <td style={{ paddingLeft: 24, color: "#111827" }}>{users.firstName}</td>
-                 <td style={{ paddingLeft: 24, color: "#111827" }}>{name}</td>
-                 <td style={{ paddingLeft: 24, color: "#111827" }}>{petId}</td>
+             {vetClientData.map((client, index) => (
+               <tr 
+                 key={client.userId || index} 
+                 style={{ 
+                   height: "64px", 
+                   borderBottom: "1px solid #e5e5e5",
+                   cursor: "pointer"
+                 }}
+                 onClick={() => handleRowClick(client.userId)}
+               >
+                 <td style={{ paddingLeft: 40, color: "#111827" }}>{client.lastName}</td>
+                 <td style={{ paddingLeft: 24, color: "#111827" }}>{client.firstName}</td>
+                 <td style={{ paddingLeft: 24, color: "#111827" }}>{client.numOfPets}</td>
                  <td style={{ paddingLeft: 24 }}>
                    <button
-                     style={{
-                       display: "flex",
-                       alignItems: "center",
-                       gap: "6px",
-                       border: "none",
-                       background: "transparent",
-                       color: "#374151",
-                       cursor: "pointer",
-                       padding: 0,
+                     onClick={(e) => {
+                       e.stopPropagation();
+                       router.push(`/vet/users/${client.userId}/pets`);
                      }}
-                     onClick={() => alert("Details clicked")}
+                     style={{
+                       backgroundColor: "#004d81",
+                       color: "white",
+                       padding: "6px 12px",
+                       borderRadius: "4px",
+                       border: "none",
+                       cursor: "pointer",
+                       fontSize: "14px"
+                     }}
                    >
-                     <img
-                       src="/img/health-records/details-icon.svg"
-                       alt="Details Icon"
-                       style={{ width: "17px", height: "17px" }}
-                     />
-                     <span style={{ textDecoration: "underline", marginLeft: "17px", fontSize: 17 }}>Details</span>
+                     See Pet Details
                    </button>
                  </td>
                </tr>
