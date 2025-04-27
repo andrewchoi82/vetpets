@@ -59,11 +59,46 @@ export default function GetPet() {
     setShowPetIdField(true);
   };
 
-  const handleSubmitPetId = () => {
-    if (petId.trim()) {
-      router.push("/");
-    } else {
+  const handleSubmitPetId = async () => {
+    if (!petId.trim()) {
       alert("Please enter a valid Pet ID");
+      return;
+    }
+
+    try {
+      console.log('Attempting to create pet with:', {
+        requestId: petId,
+        userId: currId
+      });
+
+      const response = await fetch(`/api/pet-creation?requestId=${petId}&userId=${currId}`);
+      const data = await response.json();
+
+      if (!response.ok) {
+        console.error('Pet creation failed:', {
+          status: response.status,
+          statusText: response.statusText,
+          error: data
+        });
+        throw new Error(data.error || 'Failed to create pet');
+      }
+
+      if (data.petId) {
+        console.log('Pet created successfully with ID:', data.petId);
+        Cookies.set('petId', data.petId.toString(), { expires: 7 }); // Expires in 7 days
+        router.push("/");
+      } else {
+        console.error('No petId in response:', data);
+        throw new Error('No petId received from server');
+      }
+    } catch (error: any) {
+      console.error('Error in handleSubmitPetId:', {
+        message: error.message,
+        stack: error.stack,
+        petId,
+        currId
+      });
+      alert(`Failed to create pet: ${error.message}`);
     }
   };
 

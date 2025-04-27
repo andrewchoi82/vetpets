@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import Cookies from 'js-cookie';
 
 interface BillingsTableProps {
   selectedTab: "current bills" | "payment history";
@@ -8,7 +9,7 @@ interface BillingsTableProps {
 
 export default function RecordsTable({ selectedTab, setSelectedTabAction }: BillingsTableProps) {
   const [billings, setBillings] = useState<any[]>([]);
-  const petId = 1; // Replace with dynamic petId logic if needed
+  const petId = "1";
 
   useEffect(() => {
     const fetchBillings = async () => {

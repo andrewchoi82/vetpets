@@ -98,6 +98,7 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction, tabCha
   const handleFullAnalysis = async (fileURL: string) => {
     try {
       setAnalysisLoading(true);
+      setError('');
       setAnalysisContent('');
 
       const res = await fetch('/api/testing-analysis', {
@@ -113,8 +114,8 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction, tabCha
       }
 
       const data = await res.json();
-      if (data.analysis) {
-        setAnalysisContent(data.analysis);
+      if (data.summary) {
+        setAnalysisContent(data.summary);
       } else {
         throw new Error('No analysis data received');
       }
@@ -162,7 +163,7 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction, tabCha
           const data = await response.json();
           setMedicationsData(data);
         } else if (selectedTab === "medical history") {
-          const response = await fetch(`/api/medical-history?petId=${petId}`);
+          const response = await fetch(`/api/history?petId=${petId}`);
           const data = await response.json();
           setMedicalHistoryData(data);
         }
@@ -220,6 +221,16 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction, tabCha
                         height: '100%'
                       }}>
                         <p>Loading summary...</p>
+                      </div>
+                    ) : error ? (
+                      <div style={{ 
+                        display: 'flex', 
+                        justifyContent: 'center', 
+                        alignItems: 'center',
+                        height: '100%',
+                        color: 'red'
+                      }}>
+                        <p>{error}</p>
                       </div>
                     ) : (
                       htmlComponent
@@ -322,8 +333,8 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction, tabCha
 
                 <tbody>
                   {testData.map((testResult, index) => {
-                    const isPending = testResult.status === "Pending";
-                    const isCompleted = testResult.status === "Completed";
+                    const isPending = testResult.result === "";
+                    const isCompleted = testResult.result !== "";
                     const iconSrc = isPending
                       ? "/img/general/yellow-circle-icon.svg"
                       : "/img/general/green-circle-icon.svg";
@@ -593,7 +604,9 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction, tabCha
                   <p>{error}</p>
                 </div>
               ) : (
-                <div dangerouslySetInnerHTML={{ __html: analysisContent }} />
+                <div className="text-side-text text-base font-normal leading-9">
+                  {analysisContent}
+                </div>
               )}
             </div>
           </div>

@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { getBillings } from "@/app/lib/api/billings"; // make sure the path is correct
+import Cookies from 'js-cookie';
 
 interface Billing {
   billingId: number;
@@ -8,6 +9,10 @@ interface Billing {
   date: string;
   cost: number;
 }
+
+const petId = Cookies.get('petId');
+
+
 
 export default function DashboardBillingBox() {
   const [billingData, setBillingData] = useState<Billing[]>([]);
