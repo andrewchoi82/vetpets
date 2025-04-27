@@ -1,146 +1,222 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import { useRouter } from 'next/navigation';
-import { useParams } from 'next/navigation';
+import React, { useEffect, useState } from "react";
+import { getFileUrl } from "@/app/lib/supabaseGetFile";
+import Cookies from "js-cookie";
 
-interface PetTableProps {
-  selected: string,
-  setSelected: Function,
-  userId?: string // Make userId optional as it can come from props or URL params
+interface RecordsHeaderProps {
+  selectedTab: "vaccinations" | "test results" | "medications" | "medical history";
+  setSelectedTabAction: (tab: "vaccinations" | "test results" | "medications" | "medical history") => void;
+  tabChange: boolean;
+  setTabChange: (change: boolean) => void;
 }
 
-export default function PetDetailTables({selected, setSelected, userId: propUserId} : PetTableProps) {
-  interface Pet {
-    petId: number;
-    name: string;
-    age: string;
-    sex: string;
-    weight: number;
-    breed: string;
-    sterilized: boolean;
-  }
-  
-  const [petData, setPetData] = useState<Pet[]>([]);
-  const router = useRouter();
-  const params = useParams();
+interface Vaccination {
+  vaccineId: number;
+  name: string;
+  manufacturer: string;
+  dosage: number;
+  administeredBy: string;
+  details: string;
+  petId: number;
+}
+
+interface Medication {
+  medicationId: number;
+  petId: number;
+  date: string;
+  medication: string;
+  frequency: string;
+  status: string;
+  details: string;
+}
+
+interface MedicalHistory {
+  historyId: number;
+  date: string;
+  petId: number;
+  category: string;
+  details: string;
+}
+
+type TestResult = {
+  testId: number;
+  petId: number;
+  name: string;
+  dateOrdered: string;
+  dateExpected: string;
+  status: string;
+  result: string;
+};
+
+export default function RecordsTable({
+  selectedTab,
+  setSelectedTabAction,
+  tabChange,
+  setTabChange,
+}: RecordsHeaderProps) {
+  const [testData, setTestData] = useState<TestResult[]>([]);
+  const [vaccinationsData, setVaccinationsData] = useState<Vaccination[]>([]);
+  const [medicationsData, setMedicationsData] = useState<Medication[]>([]);
+  const [medicalHistoryData, setMedicalHistoryData] = useState<MedicalHistory[]>([]);
+  const [loading, setLoading] = useState(false);
+  const petId = Cookies.get("petId");
 
   useEffect(() => {
-    const fetchPetData = async () => {
+    setLoading(true);
+    const fetchData = async () => {
+      if (!petId) return;
       try {
-        // Get userId from props, URL params, or from the selected state
-        let userId = propUserId;
-        
-        if (!userId && params.id) {
-          userId = params.id as string;
-        }
-        
-        if (!userId && selected.includes('/')) {
-          userId = selected.split('/').pop(); // Get userId from the URL in selected
-        }
-        
-        console.log("Using userId:", userId);
-        
-        if (userId) {
-          const res = await fetch(`/api/pets/petsByUser?userId=${userId}`, {
-            method: 'GET',
-          });
+        if (selectedTab === "vaccinations") {
+          const res = await fetch(`/api/vaccinations?petId=${petId}`);
           const data = await res.json();
-          setPetData(data);
+          setVaccinationsData(data);
+        } else if (selectedTab === "medications") {
+          const res = await fetch(`/api/medications?petId=${petId}`);
+          const data = await res.json();
+          setMedicationsData(data);
+        } else if (selectedTab === "medical history") {
+          const res = await fetch(`/api/medical-history?petId=${petId}`);
+          const data = await res.json();
+          setMedicalHistoryData(data);
+        } else if (selectedTab === "test results") {
+          const res = await fetch(`/api/tests?petId=${petId}`);
+          const data = await res.json();
+          setTestData(data);
         }
       } catch (error) {
-        console.error("Error fetching pet data:", error);
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchPetData();
-  }, [selected, propUserId, params]);
+    fetchData();
+  }, [selectedTab, tabChange]);
 
-  const handleRowClick = (petId: number) => {
-    // Get the current URL parts
-    const pathParts = window.location.pathname.split('/');
-    
-    // Find the userId in the URL
-    let userId = propUserId;
-    
-    if (!userId && params.id) {
-      userId = params.id as string;
+  const renderLoadingOrNoData = (dataLength: number, colSpan: number, message: string) => {
+    if (loading) {
+      return (
+        <tr>
+          <td colSpan={colSpan} style={{ textAlign: "center", padding: "20px" }}>
+            Loading...
+          </td>
+        </tr>
+      );
+    } else if (dataLength === 0) {
+      return (
+        <tr>
+          <td colSpan={colSpan} style={{ textAlign: "center", padding: "20px" }}>
+            {message}
+          </td>
+        </tr>
+      );
     }
-    
-    if (!userId && pathParts.length >= 2) {
-      // Look for the userId in the URL parts
-      for (let i = 0; i < pathParts.length; i++) {
-        if (pathParts[i] === 'users' && i + 1 < pathParts.length) {
-          userId = pathParts[i + 1];
-          break;
-        }
-      }
-    }
-    
-    if (userId) {
-      // Navigate to the pet details page
-      router.push(`/vet/users/${userId}/${petId}`);
-    } else {
-      console.error("UserId not found, cannot navigate to pet details");
-    }
+    return null;
   };
-  
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString();
+  };
+
   return (
-    <div style={{ width: "100%" }}>
-      <table style={{ width: "100%", borderCollapse: "collapse" }}>
-        <thead>
-          <tr style={{ borderBottom: "1px solid #d1d5db" }}>
-            <th style={{ ...baseThStyle, paddingLeft: 40, width: "150px" }}>Name</th>
-            <th style={{ ...baseThStyle, paddingLeft: 24, width: "100px" }}>Pet ID</th>
-            <th style={{ ...baseThStyle, paddingLeft: 24, width: "100px" }}>Age</th>
-            <th style={{ ...baseThStyle, paddingLeft: 24, width: "100px" }}>Sex</th>
-            <th style={{ ...baseThStyle, paddingLeft: 24, width: "100px" }}>Weight</th>
-            <th style={{ ...baseThStyle, paddingLeft: 24, width: "150px" }}>Breed</th>
-            <th style={{ ...baseThStyle, paddingLeft: 24, width: "100px" }}>Sterilized</th>
-            <th style={{ ...baseThStyle, paddingLeft: 24, width: "120px" }}></th>
-          </tr>
-        </thead>
-        <tbody>
-          {petData.map((pet, index) => (
-            <tr 
-              key={pet.petId || index} 
-              style={{ 
-                height: "64px", 
-                borderBottom: "1px solid #e5e5e5",
-                cursor: "pointer"
-              }}
-              onClick={() => handleRowClick(pet.petId)}
-            >
-              <td style={{ paddingLeft: 40, color: "#111827" }}>{pet.name}</td>
-              <td style={{ paddingLeft: 24, color: "#111827" }}>{pet.petId}</td>
-              <td style={{ paddingLeft: 24, color: "#111827" }}>{pet.age}</td>
-              <td style={{ paddingLeft: 24, color: "#111827" }}>{pet.sex}</td>
-              <td style={{ paddingLeft: 24, color: "#111827" }}>{pet.weight}</td>
-              <td style={{ paddingLeft: 24, color: "#111827" }}>{pet.breed}</td>
-              <td style={{ paddingLeft: 24, color: "#111827" }}>{pet.sterilized ? "Yes" : "No"}</td>
-              <td style={{ paddingLeft: 24 }}>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleRowClick(pet.petId);
-                  }}
-                  style={{
-                    backgroundColor: "#004d81",
-                    color: "white",
-                    padding: "6px 12px",
-                    borderRadius: "4px",
-                    border: "none",
-                    cursor: "pointer",
-                    fontSize: "14px"
-                  }}
-                >
-                  See Pet Details
-                </button>
-              </td>
+    <>
+      {selectedTab === "vaccinations" && (
+        <table style={{ width: "100%", borderCollapse: "collapse" }}>
+          <thead>
+            <tr style={{ borderBottom: "1px solid #d1d5db" }}>
+              <th style={{ ...baseThStyle, paddingLeft: 40 }}>Date</th>
+              <th style={{ ...baseThStyle, paddingLeft: 24 }}>Vaccine</th>
+              <th style={{ ...baseThStyle, paddingLeft: 24 }}>Manufacturer</th>
+              <th style={{ ...baseThStyle, paddingLeft: 24 }}>Dosage</th>
+              <th style={{ ...baseThStyle, paddingLeft: 24 }}>Administered By</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+          </thead>
+          <tbody>
+            {renderLoadingOrNoData(vaccinationsData.length, 5, "No vaccinations found.")}
+            {!loading &&
+              vaccinationsData.map((vaccination) => (
+                <tr key={vaccination.vaccineId} style={{ height: "64px", borderBottom: "1px solid #e5e5e5" }}>
+                  <td style={{ paddingLeft: 40 }}>{new Date().toLocaleDateString()}</td>
+                  <td style={{ paddingLeft: 24 }}>{vaccination.name}</td>
+                  <td style={{ paddingLeft: 24 }}>{vaccination.manufacturer}</td>
+                  <td style={{ paddingLeft: 24 }}>{vaccination.dosage}</td>
+                  <td style={{ paddingLeft: 24 }}>{vaccination.administeredBy}</td>
+                </tr>
+              ))}
+          </tbody>
+        </table>
+      )}
+
+      {selectedTab === "test results" && (
+        <table style={{ width: "100%", borderCollapse: "collapse" }}>
+          <thead>
+            <tr style={{ borderBottom: "1px solid #d1d5db" }}>
+              <th style={{ ...baseThStyle, paddingLeft: 40 }}>Date</th>
+              <th style={{ ...baseThStyle, paddingLeft: 24 }}>Test</th>
+              <th style={{ ...baseThStyle, paddingLeft: 24 }}>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {renderLoadingOrNoData(testData.length, 3, "No test results found.")}
+            {!loading &&
+              testData.map((testResult) => (
+                <tr key={testResult.testId} style={{ height: "64px", borderBottom: "1px solid #e5e5e5" }}>
+                  <td style={{ paddingLeft: 40 }}>{formatDate(testResult.dateOrdered)}</td>
+                  <td style={{ paddingLeft: 24 }}>{testResult.name}</td>
+                  <td style={{ paddingLeft: 24 }}>{testResult.status}</td>
+                </tr>
+              ))}
+          </tbody>
+        </table>
+      )}
+
+      {selectedTab === "medications" && (
+        <table style={{ width: "100%", borderCollapse: "collapse" }}>
+          <thead>
+            <tr style={{ borderBottom: "1px solid #d1d5db" }}>
+              <th style={{ ...baseThStyle, paddingLeft: 40 }}>Date</th>
+              <th style={{ ...baseThStyle, paddingLeft: 24 }}>Medication</th>
+              <th style={{ ...baseThStyle, paddingLeft: 24 }}>Frequency</th>
+              <th style={{ ...baseThStyle, paddingLeft: 24 }}>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {renderLoadingOrNoData(medicationsData.length, 4, "No medications found.")}
+            {!loading &&
+              medicationsData.map((medication) => (
+                <tr key={medication.medicationId} style={{ height: "64px", borderBottom: "1px solid #e5e5e5" }}>
+                  <td style={{ paddingLeft: 40 }}>{formatDate(medication.date)}</td>
+                  <td style={{ paddingLeft: 24 }}>{medication.medication}</td>
+                  <td style={{ paddingLeft: 24 }}>{medication.frequency}</td>
+                  <td style={{ paddingLeft: 24 }}>{medication.status}</td>
+                </tr>
+              ))}
+          </tbody>
+        </table>
+      )}
+
+      {selectedTab === "medical history" && (
+        <table style={{ width: "100%", borderCollapse: "collapse" }}>
+          <thead>
+            <tr style={{ borderBottom: "1px solid #d1d5db" }}>
+              <th style={{ ...baseThStyle, paddingLeft: 40 }}>Date</th>
+              <th style={{ ...baseThStyle, paddingLeft: 24 }}>Category</th>
+            </tr>
+          </thead>
+          <tbody>
+            {renderLoadingOrNoData(medicalHistoryData.length, 2, "No medical history found.")}
+            {!loading &&
+              medicalHistoryData.map((history) => (
+                <tr key={history.historyId} style={{ height: "64px", borderBottom: "1px solid #e5e5e5" }}>
+                  <td style={{ paddingLeft: 40 }}>{formatDate(history.date)}</td>
+                  <td style={{ paddingLeft: 24 }}>{history.category}</td>
+                </tr>
+              ))}
+          </tbody>
+        </table>
+      )}
+    </>
   );
 }
 

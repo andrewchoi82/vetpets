@@ -14,7 +14,10 @@ export const SideBarContainerVets = ({ selectedPage }: SideBarContainerProps) =>
   const menuItems = [
     { path: "/img/vet/sidebar-options/nonSelectedVersion/clients.svg", text: "Clients", href: "/vet/" },
     { path: "/img/vet/sidebar-options/nonSelectedVersion/messages.svg", text: "Messages", href: "/vet/messages", notificationCount: 2 },
-    { path: "/img/vet/sidebar-options/nonSelectedVersion/health-records.svg", text: "PDF Tests", href: "/vet/pdf-test" },
+    { path: "/img/vet/sidebar-options/nonSelectedVersion/calendar.svg", text: "Calendar", href: "/vet/calendar" },
+
+    { path: "/img/vet/sidebar-options/nonSelectedVersion/health-records.svg", text: "Create Pet", href: "/vet/create-pet" },
+
     { path: "/img/sidebar-options/nonSelectedVersion/settings.svg", text: "Settings", href: "/vet/settings" },
   ];
 
