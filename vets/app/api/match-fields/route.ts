@@ -202,13 +202,9 @@ export async function POST(request: NextRequest) {
                                     "status": {
                                         "type": "string",
                                         "description": "Status of the test"
-                                    },
-                                    "result": {
-                                        "type": "string",
-                                        "description": "Result of the test"
                                     }
                                 },
-                                "required": ["name", "dateOrdered", "dateExpected", "status", "result"],
+                                "required": ["name", "dateOrdered", "dateExpected", "status"],
                                 "additionalProperties": false
                             }
                         },
