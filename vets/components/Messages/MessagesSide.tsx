@@ -85,6 +85,7 @@ export default function MessagesSide({ setPageState }: MessageOverviewProps) {
 
                 //we just get the opposing texter info from the first item
                 if (data && data.length > 0) {
+                    console.log(data[0].userId);
                     if (data[0].userId === currId) {
                         otherEndId = data[0].doctorId;
                     }
