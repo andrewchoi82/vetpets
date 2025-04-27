@@ -4,8 +4,14 @@ import { parse } from 'cookie';
 import { verifyJWT } from '@/app/lib/jwt';
 import bcrypt from 'bcrypt';
 
-export async function GET(request: NextRequest, context: { params: { id: string } }) {
-  const { params } = context;
+type Props = {
+  params: { id: string }
+}
+
+export async function GET(
+  request: NextRequest,
+  { params }: Props
+): Promise<NextResponse> {
   const id = params.id;
 
   const cookieHeader = request.headers.get('cookie') || '';
@@ -41,8 +47,10 @@ export async function GET(request: NextRequest, context: { params: { id: string 
   return NextResponse.json(data);
 }
 
-export async function PUT(request: NextRequest, context: { params: { id: string } }) {
-  const { params } = context;
+export async function PUT(
+  request: NextRequest,
+  { params }: Props
+): Promise<NextResponse> {
   const id = params.id;
   
   // Authentication check (similar to GET)

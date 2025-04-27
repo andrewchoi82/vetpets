@@ -1,11 +1,15 @@
 import { supabase } from '@/app/lib/supabaseClient';
 import { NextRequest, NextResponse } from 'next/server';
 
+type Props = {
+  params: { id: string }
+}
+
 export async function GET(
   request: NextRequest,
-  context: { params: { id: string } }
+  { params }: Props
 ): Promise<NextResponse> {
-  const petId = Number(context.params.id);
+  const petId = Number(params.id);
 
   if (isNaN(petId)) {
     return NextResponse.json({ error: 'Invalid petId format' }, { status: 400 });
