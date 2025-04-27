@@ -27,6 +27,7 @@ export async function GET(req: NextRequest) {
       doctorId: conversation.doctorId,
       numUnreadMessages: conversation.numUnreadMessages,
       lastMessageTime: conversation.lastMessageTime,
+      userId: conversation.userId,
 
       // Format the date and time as expected by the frontend
       recentDate: lastMessageTime.toISOString().split('T')[0], // YYYY-MM-DD format

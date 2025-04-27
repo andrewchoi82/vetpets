@@ -75,7 +75,8 @@ export async function POST(request: NextRequest) {
                                     "type": "string",
                                     "description": "Birthdate of the pet in YYYY-MM-DD format"
                                 }
-                            },"required": ["name", "breed", "age", "weight", "sex", "birthdate", "sterilized"],
+                            },
+                            "required": ["name", "breed", "age", "weight", "sex", "birthdate", "sterilized"],
                             "additionalProperties": false
                         },
                         "userInfo": {
@@ -122,83 +123,126 @@ export async function POST(request: NextRequest) {
                                     "type": "string",
                                     "description": "Last name of the pet owner"
                                 }
-                            },"required": ["email", "firstName", "lastName", "phoneNumber", "address", "userType", "birthdate", "sex", "contactPreference", "username"],
+                            },
+                            "required": ["email", "firstName", "lastName", "phoneNumber", "address", "userType", "birthdate", "sex", "contactPreference", "username"],
                             "additionalProperties": false
                         },
-                        "billing": {
+                        "vaccinations": {
                             "type": "array",
-                            "description": "Billing information for pet services",
+                            "description": "Vaccination records for the pet",
                             "items": {
                                 "type": "object",
                                 "properties": {
                                     "name": {
                                         "type": "string",
-                                        "description": "Name of the service"
+                                        "description": "Name of the vaccine"
                                     },
-                                    "date": {
+                                    "manufacturer": {
                                         "type": "string",
-                                        "description": "Date of the service in YYYY-MM-DD format"
+                                        "description": "Manufacturer of the vaccine"
                                     },
-                                    "cost": {
+                                    "dosage": {
                                         "type": "number",
-                                        "description": "Cost of the service"
+                                        "description": "Dosage of the vaccine"
+                                    },
+                                    "administeredBy": {
+                                        "type": "string",
+                                        "description": "Who administered the vaccine"
+                                    }
+                                },
+                                "required": ["name", "manufacturer", "dosage", "administeredBy"],
+                                "additionalProperties": false
+                            }
+                        },
+                        "medications": {
+                            "type": "array",
+                            "description": "Medication records for the pet",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "date": {
+                                        "type": "string",
+                                        "description": "Date of medication in YYYY-MM-DD format"
+                                    },
+                                    "medication": {
+                                        "type": "string",
+                                        "description": "Name of the medication"
+                                    },
+                                    "frequency": {
+                                        "type": "string",
+                                        "description": "Frequency of medication"
                                     },
                                     "status": {
                                         "type": "string",
-                                        "description": "Payment status of the service"
+                                        "description": "Status of the medication"
                                     }
                                 },
-                                "required": ["name", "date", "cost", "status"],
-                                
-                            "additionalProperties": false
-                            }, "required": [],
-                            "additionalProperties": false
+                                "required": ["date", "medication", "frequency", "status"],
+                                "additionalProperties": false
+                            }
                         },
-                        "appointments": {
+                        "tests": {
                             "type": "array",
-                            "description": "Appointment information for pets",
+                            "description": "Test records for the pet",
                             "items": {
                                 "type": "object",
                                 "properties": {
                                     "name": {
                                         "type": "string",
-                                        "description": "Name of the appointment"
+                                        "description": "Name of the test"
                                     },
-                                    "date": {
+                                    "dateOrdered": {
                                         "type": "string",
-                                        "description": "Date of the appointment in YYYY-MM-DD format"
+                                        "description": "Date test was ordered in YYYY-MM-DD format"
                                     },
-                                    "time": {
+                                    "dateExpected": {
                                         "type": "string",
-                                        "description": "Time of the appointment in HH:MM:SS format"
-                                    },
-                                    "location": {
-                                        "type": "string",
-                                        "description": "Location of the appointment"
+                                        "description": "Expected date of results in YYYY-MM-DD format"
                                     },
                                     "status": {
                                         "type": "string",
-                                        "description": "Status of the appointment"
+                                        "description": "Status of the test"
+                                    },
+                                    "result": {
+                                        "type": "string",
+                                        "description": "Result of the test"
                                     }
                                 },
-                                "required": ["name", "date", "time", "location", "status"],
+                                "required": ["name", "dateOrdered", "dateExpected", "status", "result"],
                                 "additionalProperties": false
-
                             }
-                            , "required": [],
-                            "additionalProperties": false
+                        },
+                        "medicalHistory": {
+                            "type": "array",
+                            "description": "Medical history records for the pet",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "date": {
+                                        "type": "string",
+                                        "description": "Date of medical history entry in YYYY-MM-DD format"
+                                    },
+                                    "category": {
+                                        "type": "string",
+                                        "description": "Category of the medical history entry"
+                                    }
+                                },
+                                "required": ["date", "category"],
+                                "additionalProperties": false
+                            }
                         }
                     },
                     "required": [
                         "petInfo",
                         "userInfo",
-                        "billing",
-                        "appointments"
+                        "vaccinations",
+                        "medications",
+                        "tests",
+                        "medicalHistory"
                     ],
                     "additionalProperties": false
                 }
             }
-
         }
     });
 
