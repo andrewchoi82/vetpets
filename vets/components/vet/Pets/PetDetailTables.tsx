@@ -56,8 +56,32 @@ export default function PetDetailTables({selected, setSelected, userId: propUser
   }, [selected, propUserId, params]);
 
   const handleRowClick = (petId: number) => {
-    const currentUrl = window.location.pathname;
-    router.push(`${currentUrl}/${petId}`);
+    // Get the current URL parts
+    const pathParts = window.location.pathname.split('/');
+    
+    // Find the userId in the URL
+    let userId = propUserId;
+    
+    if (!userId && params.id) {
+      userId = params.id as string;
+    }
+    
+    if (!userId && pathParts.length >= 2) {
+      // Look for the userId in the URL parts
+      for (let i = 0; i < pathParts.length; i++) {
+        if (pathParts[i] === 'users' && i + 1 < pathParts.length) {
+          userId = pathParts[i + 1];
+          break;
+        }
+      }
+    }
+    
+    if (userId) {
+      // Navigate to the pet details page
+      router.push(`/vet/users/${userId}/${petId}`);
+    } else {
+      console.error("UserId not found, cannot navigate to pet details");
+    }
   };
   
   return (
@@ -97,8 +121,7 @@ export default function PetDetailTables({selected, setSelected, userId: propUser
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    const currentUrl = window.location.pathname;
-                    router.push(`${currentUrl}/${pet.petId}`);
+                    handleRowClick(pet.petId);
                   }}
                   style={{
                     backgroundColor: "#004d81",
