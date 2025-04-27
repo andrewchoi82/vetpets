@@ -3,7 +3,7 @@
 import { Header } from "@/components/MainHeader/Header";
 import { SideBarContainerVets } from "@/components/MainSideBar/SideBarContainerVets";
 import RecordsHeader from "@/components/HealthRecords/RecordsHeader";
-import RecordsTable from "@/components/HealthRecords/RecordsTable";
+import PetTableDetails from "@/components/vet/Pets/PetDetailTables";
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import Cookies from 'js-cookie';
@@ -57,7 +57,7 @@ export default function PetHealthRecords() {
           tabChange={tabChange} 
           setTabChange={setTabChange}
         />
-        <RecordsTable 
+        <PetTableDetails 
           selectedTab={selectedTab} 
           setSelectedTabAction={setSelectedTab} 
           tabChange={tabChange} 
