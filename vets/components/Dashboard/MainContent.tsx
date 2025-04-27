@@ -6,6 +6,7 @@ import DashboardMessagesBox from "@/components/Dashboard/dashboardRecentMessages
 import DashboardAppointmentsBox from "@/components/Dashboard/dashboardAppointmentsBox";
 import DashboardSmallBox from "@/components/Dashboard/dashboardSmallBox";
 import { useState, useEffect } from "react";
+import Cookies from 'js-cookie';
 
 import { getPetById } from "@/app/lib/api/pets";
 
@@ -14,16 +15,18 @@ export default function MainContent() {
     breed: string;
     age: string;
     weight: string;
-    gender: string;
+    sex: string;
     sterilized: string;
   };  
 
   const [pet, setPet] = useState<Pet | null>(null);
+  const petId = Cookies.get('petId');
+
 
   useEffect(() => {
     const fetchPet = async () => {
       try {
-        const data = await getPetById("1"); 
+        const data = await getPetById(petId || ''); 
         setPet(data);
       } catch (err) {
         console.error("Failed to fetch pet data", err);
@@ -55,9 +58,9 @@ export default function MainContent() {
             image="/img/dashboard/dashboardWeight.svg"
           />
           <DashboardSmallBox
-            label="Gender"
-            value={pet.gender}
-            image="/img/dashboard/gender-icon.svg"
+            label="Sex"
+            value={pet.sex}
+            image="/img/dashboard/sex-icon.svg"
           />
           <DashboardSmallBox
             label="Sterilized"

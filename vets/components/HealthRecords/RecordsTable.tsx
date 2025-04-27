@@ -5,6 +5,7 @@ import { getTests } from "@/app/lib/api/tests";
 import { getFileUrl } from "@/app/lib/supabaseGetFile";
 import { Document, Page, pdfjs } from "react-pdf";
 import { getImageUrl } from "@/app/lib/supabaseGetImage";
+import Cookies from 'js-cookie';
 
 interface RecordsHeaderProps {
   selectedTab: "vaccinations" | "test results" | "medications" | "medical history";
@@ -13,8 +14,35 @@ interface RecordsHeaderProps {
   setTabChange: (change: boolean) => void;
 }
 
-export default function RecordsTable({ selectedTab, setSelectedTabAction, tabChange, setTabChange }: RecordsHeaderProps) {
+interface Vaccination {
+  vaccineId: number;
+  name: string;
+  manufacturer: string;
+  dosage: number;
+  administeredBy: string;
+  details: string;
+  petId: number;
+}
 
+interface Medication {
+  medicationId: number;
+  petId: number;
+  date: string;
+  medication: string;
+  frequency: string;
+  status: string;
+  details: string;
+}
+
+interface MedicalHistory {
+  historyId: number;
+  date: string;
+  petId: number;
+  category: string;
+  details: string;
+}
+
+export default function RecordsTable({ selectedTab, setSelectedTabAction, tabChange, setTabChange }: RecordsHeaderProps) {
 
   type TestResult = {
     testId: number;
@@ -35,37 +63,77 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction, tabCha
   const [loading, setLoading] = useState(false);
   const [htmlComponent, setHtmlComponent] = useState('');
   const [error, setError] = useState('');
+  const [analysisLoading, setAnalysisLoading] = useState(false);
+  const [analysisContent, setAnalysisContent] = useState('');
+
+  const [vaccinationsData, setVaccinationsData] = useState<Vaccination[]>([]);
+  const [medicationsData, setMedicationsData] = useState<Medication[]>([]);
+  const [medicalHistoryData, setMedicalHistoryData] = useState<MedicalHistory[]>([]);
+  const petId = Cookies.get('petId');
 
   const handleAnalysis = async (fileURL: string) => {
-  // const handleAnalysis = async (blob: Blob) => {
     try {
       setLoading(true);
       setError('');
       setHtmlComponent('');
 
-      const res = await fetch('/api/summarize-doc',{
+      const res = await fetch('/api/summarize-doc', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ url: fileURL }),
-      })
+      });
 
-      const data = await res.json()
-
+      const data = await res.json();
       setHtmlComponent(data.summary);
-      setLoading(false);
     } catch (err: any) {
       console.error('Error:', err.message);
       setError(err.message);
+    } finally {
       setLoading(false);
+    }
+  };
+
+  const handleFullAnalysis = async (fileURL: string) => {
+    try {
+      setAnalysisLoading(true);
+      setError('');
+      setAnalysisContent('');
+
+      const res = await fetch('/api/testing-analysis', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ url: fileURL }),
+      });
+
+      if (!res.ok) {
+        throw new Error('Failed to fetch analysis');
+      }
+
+      const data = await res.json();
+      if (data.summary) {
+        setAnalysisContent(data.summary);
+      } else {
+        throw new Error('No analysis data received');
+      }
+    } catch (err: any) {
+      console.error('Error:', err.message);
+      setError(err.message);
+      setAnalysisContent('Failed to load analysis. Please try again.');
+    } finally {
+      setAnalysisLoading(false);
     }
   };
 
   useEffect(() => {
     const fetchTests = async () => {
+      if (!petId) return;
       try {
-        const data = await getTests("1"); // Hardcoded petId for now
+        const response = await fetch(`/api/tests?petId=${petId}`);
+        const data = await response.json();
         setTestData(data);
       } catch (error) {
         console.error("Failed to fetch test data");
@@ -73,57 +141,60 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction, tabCha
     };
 
     fetchTests();
-  }, []);
-
+  }, [petId]);
 
   useEffect(() => {
     setOnDocumentDetail(false);
     setItemNumber(-1);
   }, [tabChange]);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!petId) return;
 
-  const vaccinationsData = [
-    ["March 16, 2025", "12:00 pm", "Parainfluenza", "Boehringer Ingelheim", "1 mL", "Dr. Sarah Davis"],
-    ["March 14, 2025", "12:00 pm", "Parainfluenza", "Boehringer Ingelheim", "1 mL", "Dr. Sarah Davis"],
-    ["February 12, 2025", "12:00 pm", "Parainfluenza", "Boehringer Ingelheim", "1 mL", "Dr. Sarah Davis"],
-    ["January 05, 2025", "12:00 pm", "Parainfluenza", "Boehringer Ingelheim", "1 mL", "Dr. Sarah Davis"],
-    ["January 05, 2024", "12:00 pm", "Parainfluenza", "Boehringer Ingelheim", "1 mL", "Dr. Sarah Davis"],
-    ["December 13, 2023", "12:00 pm", "Parainfluenza", "Boehringer Ingelheim", "1 mL", "Dr. Sarah Davis"],
-    ["May 21, 2023", "12:00 pm", "Parainfluenza", "Boehringer Ingelheim", "1 mL", "Dr. Sarah Davis"],
-    ["January 05, 2023", "12:00 pm", "Parainfluenza", "Boehringer Ingelheim", "1 mL", "Dr. Sarah Davis"],
-    ["June 12, 2022", "12:00 pm", "Parainfluenza", "Boehringer Ingelheim", "1 mL", "Dr. Sarah Davis"],
-    ["May 19, 2022", "12:00 pm", "Parainfluenza", "Boehringer Ingelheim", "1 mL", "Dr. Sarah Davis"],
-    ["March 16, 2022", "12:00 pm", "Parainfluenza", "Boehringer Ingelheim", "1 mL", "Dr. Sarah Davis"],
-  ];
+      setLoading(true);
+      try {
+        if (selectedTab === "vaccinations") {
+          const response = await fetch(`/api/vaccinations?petId=${petId}`);
+          const data = await response.json();
+          setVaccinationsData(data);
+        } else if (selectedTab === "medications") {
+          const response = await fetch(`/api/medications?petId=${petId}`);
+          const data = await response.json();
+          setMedicationsData(data);
+        } else if (selectedTab === "medical history") {
+          const response = await fetch(`/api/history?petId=${petId}`);
+          const data = await response.json();
+          setMedicalHistoryData(data);
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
+    fetchData();
+  }, [selectedTab]);
 
-  const medicationsData = [
-    ["March 16, 2025", "Metronidazole", "1 pill per day", "Active"],
-    ["March 14, 2025", "Metronidazole", "1 pill per day", "Active"],
-    ["February 12, 2025", "Metronidazole", "1 pill per day", "Completed"],
-    ["January 05, 2025", "Metronidazole", "1 pill per day", "Completed"],
-    ["January 05, 2024", "Metronidazole", "1 pill per day", "Completed"],
-    ["December 13, 2023", "Metronidazole", "1 pill per day", "Completed"],
-    ["May 21, 2023", "Metronidazole", "1 pill per day", "Completed"],
-    ["January 05, 2023", "Metronidazole", "1 pill per day", "Completed"],
-    ["June 12, 2022", "Metronidazole", "1 pill per day", "Completed"],
-    ["May 19, 2022", "Metronidazole", "1 pill per day", "Completed"],
-    ["March 16, 2022", "Urinalysis", "1 pill per day", "Completed"]
-  ];
-
-  const medicalHistoryData = [
-    ["March 16, 2025", "Hospitalization"],
-    ["March 14, 2025", "Paw injury"],
-    ["February 12, 2025", "Illness"],
-    ["January 05, 2025", "Dental extraction"],
-    ["January 05, 2024", "Surgery"],
-    ["December 13, 2023", "Surgery"],
-    ["May 21, 2023", "Surgery"],
-    ["January 05, 2023", "Surgery"],
-    ["June 12, 2022", "Surgery"],
-    ["May 19, 2022", "Surgery"],
-    ["March 16, 2022", "Surgery"],
-  ];
+  const handleDownload = async (details: string) => {
+    try {
+      const fileUrl = getFileUrl(details);
+      const response = await fetch(fileUrl);
+      const blob = await response.blob();
+      const blobUrl = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = blobUrl;
+      a.download = details;
+      a.style.display = 'none';
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(blobUrl);
+      document.body.removeChild(a);
+    } catch (error) {
+      console.error('Error downloading file:', error);
+    }
+  };
 
   return (
     <>
@@ -139,10 +210,33 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction, tabCha
                 <img src={"/img/dashboard/compGreenStatus.svg"} alt={`Green Icon`} className=" w-6 h-6 left-[32px] top-[36px] absolute" />
 
 
-                <div className="w-96 h-[503px] left-[68px] top-[97px] absolute justify-start"><span className="text-side-text text-baseleading-9">Test overview<br /></span><span className="text-side-text text-base font-normal leading-9">
-                  {/* Snowball's blood test provides insights into his overall health by examining various blood components like red and white blood cells, platelets, and organ function indicators.<br /><br /></span><span className="text-side-text text-base leading-9">Conclusion</span><span className="text-side-text text-base font-normal leading-9"> <br />Snowball's overall blood results are mostly normal, but the slight elevation in Blood Urea Nitrogen (BUN) may indicate mild dehydration. No immediate concerns are noted, but keeping an eye on hydration and rechecking in the future is advised.<br /><br /> */}
-                  {htmlComponent}
-                  </span></div>
+                <div className="w-96 h-[503px] left-[68px] top-[97px] absolute justify-start">
+                  <span className="text-side-text text-baseleading-9">Test overview<br /></span>
+                  <span className="text-side-text text-base font-normal leading-9">
+                    {loading ? (
+                      <div style={{ 
+                        display: 'flex', 
+                        justifyContent: 'center', 
+                        alignItems: 'center',
+                        height: '100%'
+                      }}>
+                        <p>Loading summary...</p>
+                      </div>
+                    ) : error ? (
+                      <div style={{ 
+                        display: 'flex', 
+                        justifyContent: 'center', 
+                        alignItems: 'center',
+                        height: '100%',
+                        color: 'red'
+                      }}>
+                        <p>{error}</p>
+                      </div>
+                    ) : (
+                      htmlComponent
+                    )}
+                  </span>
+                </div>
                 <div data-property-1="Default" className="w-28 left-[68px] top-[616px] absolute bg-sky-800 rounded-[5px] inline-flex justify-center items-center gap-2.5">
                   <button
                     className="text-center justify-center text-white text-base font-normal leading-loose w-full h-full cursor-pointer"
@@ -191,13 +285,13 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction, tabCha
                   </tr>
                 </thead>
                 <tbody>
-                  {vaccinationsData.map(([date, time, vaccine, manufacturer, dosage, administeredBy], index) => (
-                    <tr key={index} style={{ height: "64px", borderBottom: "1px solid #e5e5e5" }}>
-                      <td style={{ paddingLeft: 40, color: "#111827" }}>{date}</td>
-                      <td style={{ paddingLeft: 24, color: "#111827" }}>{vaccine}</td>
-                      <td style={{ paddingLeft: 24, color: "#111827" }}>{manufacturer}</td>
-                      <td style={{ paddingLeft: 24, color: "#111827" }}>{dosage}</td>
-                      <td style={{ paddingLeft: 24, color: "#111827" }}>{administeredBy}</td>
+                  {vaccinationsData.map((vaccination) => (
+                    <tr key={vaccination.vaccineId} style={{ height: "64px", borderBottom: "1px solid #e5e5e5" }}>
+                      <td style={{ paddingLeft: 40, color: "#111827" }}>{new Date().toLocaleDateString()}</td>
+                      <td style={{ paddingLeft: 24, color: "#111827" }}>{vaccination.name}</td>
+                      <td style={{ paddingLeft: 24, color: "#111827" }}>{vaccination.manufacturer}</td>
+                      <td style={{ paddingLeft: 24, color: "#111827" }}>{vaccination.dosage}</td>
+                      <td style={{ paddingLeft: 24, color: "#111827" }}>{vaccination.administeredBy}</td>
                       <td style={{ paddingLeft: 24 }}>
                         <button
                           style={{
@@ -210,7 +304,7 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction, tabCha
                             cursor: "pointer",
                             padding: 0,
                           }}
-                          onClick={() => alert("Details clicked")}
+                          onClick={() => handleDownload(vaccination.details)}
                         >
                           <img
                             src="/img/health-records/details-icon.svg"
@@ -239,7 +333,8 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction, tabCha
 
                 <tbody>
                   {testData.map((testResult, index) => {
-                    const isPending = testResult.status === "Pending";
+                    const isPending = testResult.result === "";
+                    const isCompleted = testResult.result !== "";
                     const iconSrc = isPending
                       ? "/img/general/yellow-circle-icon.svg"
                       : "/img/general/green-circle-icon.svg";
@@ -250,19 +345,20 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction, tabCha
                         style={{
                           height: "64px",
                           borderBottom: "1px solid #e5e5e5",
-                          cursor: "pointer"
+                          cursor: isCompleted ? "pointer" : "default"
                         }}
-                        onClick={async () => {
+                        onClick={isCompleted ? async () => {
                           setItemNumber(index);
                           const fileToDownload = index !== -1 ?
                             testData[index].result :
                             testResult.result;
 
-                          const fileUrl = getImageUrl(fileToDownload);
+                          const fileUrl = getFileUrl(fileToDownload);
                           setPdfUrl(fileUrl);
                           handleAnalysis(fileUrl);
+                          handleFullAnalysis(fileUrl);
                           setOnDocumentDetail(true);
-                        }}
+                        } : undefined}
                       >
                         <td style={{ paddingLeft: 40, color: "#111827" }}>{testResult.dateOrdered}</td>
                         <td style={{ paddingLeft: 24, color: "#111827" }}>{testResult.name}</td>
@@ -273,7 +369,7 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction, tabCha
                           </div>
                         </td>
                         <td style={{ paddingLeft: 24 }}>
-                          {!isPending && (
+                          {isCompleted && (
                             <button
                               style={{
                                 display: "flex",
@@ -281,7 +377,6 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction, tabCha
                                 gap: "6px",
                                 border: "none",
                                 background: "transparent",
-
                                 color: "#374151",
                                 cursor: "pointer",
                                 padding: 0,
@@ -296,7 +391,7 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction, tabCha
 
                                 try {
                                   // Get the file URL
-                                  const fileUrl = getImageUrl(fileToDownload); //filtodownload is string
+                                  const fileUrl = getImageUrl(fileToDownload);
 
                                   // Fetch the file as a blob
                                   const response = await fetch(fileUrl);
@@ -352,21 +447,21 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction, tabCha
                 </thead>
 
                 <tbody>
-                  {medicationsData.map(([date, medication, frequency, status], index) => {
-                    const isActive = status === "Active";
+                  {medicationsData.map((medication) => {
+                    const isActive = medication.status === "Ongoing";
                     const iconSrc = isActive
                       ? "/img/general/yellow-circle-icon.svg"
                       : "/img/general/green-circle-icon.svg";
 
                     return (
-                      <tr key={index} style={{ height: "64px", borderBottom: "1px solid #e5e5e5" }}>
-                        <td style={{ paddingLeft: 40, color: "#111827" }}>{date}</td>
-                        <td style={{ paddingLeft: 24, color: "#111827" }}>{medication}</td>
-                        <td style={{ paddingLeft: 24, color: "#111827" }}>{frequency}</td>
+                      <tr key={medication.medicationId} style={{ height: "64px", borderBottom: "1px solid #e5e5e5" }}>
+                        <td style={{ paddingLeft: 40, color: "#111827" }}>{medication.date}</td>
+                        <td style={{ paddingLeft: 24, color: "#111827" }}>{medication.medication}</td>
+                        <td style={{ paddingLeft: 24, color: "#111827" }}>{medication.frequency}</td>
                         <td style={{ paddingLeft: 24 }}>
                           <div style={{ display: "flex", alignItems: "center", gap: "8px", color: "#111827" }}>
-                            <img src={iconSrc} alt={`${status} Icon`} style={{ width: "16px", height: "16px" }} />
-                            {status}
+                            <img src={iconSrc} alt={`${medication.status} Icon`} style={{ width: "16px", height: "16px" }} />
+                            {medication.status}
                           </div>
                         </td>
                         <td style={{ paddingLeft: 24 }}>
@@ -377,12 +472,11 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction, tabCha
                               gap: "6px",
                               border: "none",
                               background: "transparent",
-
                               color: "#374151",
                               cursor: "pointer",
                               padding: 0,
                             }}
-                            onClick={() => alert("Download instructions")}
+                            onClick={() => handleDownload(medication.details)}
                           >
                             <img
                               src="/img/health-records/details-icon.svg"
@@ -410,10 +504,10 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction, tabCha
                 </thead>
 
                 <tbody>
-                  {medicalHistoryData.map(([date, category], index) => (
-                    <tr key={index} style={{ height: "64px", borderBottom: "1px solid #e5e5e5" }}>
-                      <td style={{ paddingLeft: 40, color: "#111827" }}>{date}</td>
-                      <td style={{ paddingLeft: 24, color: "#111827" }}>{category}</td>
+                  {medicalHistoryData.map((history) => (
+                    <tr key={history.historyId} style={{ height: "64px", borderBottom: "1px solid #e5e5e5" }}>
+                      <td style={{ paddingLeft: 40, color: "#111827" }}>{history.date}</td>
+                      <td style={{ paddingLeft: 24, color: "#111827" }}>{history.category}</td>
                       <td style={{ paddingLeft: 24 }}>
                         <button
                           style={{
@@ -422,12 +516,11 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction, tabCha
                             gap: "6px",
                             border: "none",
                             background: "transparent",
-
                             color: "#374151",
                             cursor: "pointer",
                             padding: 0,
                           }}
-                          onClick={() => alert("View details")}
+                          onClick={() => handleDownload(history.details)}
                         >
                           <img
                             src="/img/health-records/details-icon.svg"
@@ -467,7 +560,8 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction, tabCha
             borderRadius: '8px',
             padding: '20px',
             position: 'relative',
-            overflowY: 'auto'
+            display: 'flex',
+            flexDirection: 'column'
           }}>
             <button
               onClick={() => setShowFullAnalysisModal(false)}
@@ -484,82 +578,37 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction, tabCha
               ✕
             </button>
 
-            {/* {htmlComponent && (
-              <div
-                className="mt-4"
-                dangerouslySetInnerHTML={{ __html: htmlComponent }}
-              />
-            )} */}
-            <div className="p-4">
-              {/* Chemistry Panel Table */}
-              <h2 className="text-xl font-semibold mb-4">Chemistry Panel – Organ Function & Metabolism</h2>
-              <div className="overflow-x-auto">
-                <table className="table-auto w-full border border-gray-300 text-sm">
-                  <thead>
-                    <tr className="bg-gray-100">
-                      <th className="border border-gray-300 px-4 py-2 text-left">Test</th>
-                      <th className="border border-gray-300 px-4 py-2 text-left">What It Measures</th>
-                      <th className="border border-gray-300 px-4 py-2 text-left">Result</th>
-                      <th className="border border-gray-300 px-4 py-2 text-left">Normal Range</th>
-                      <th className="border border-gray-300 px-4 py-2 text-left">Meaning</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {[
-                      ["ALP", "Liver & bone enzyme", "163 U/L", "5–160 U/L", "Slightly high – may happen with liver stress, medications, or age. Often mild and not urgent."],
-                      ["ALT", "Liver enzyme", "61 U/L", "18–121 U/L", "Normal – liver cells are not inflamed or damaged."],
-                      ["AST", "Liver/muscle enzyme", "27 U/L", "16–55 U/L", "Normal – no signs of muscle or liver damage."],
-                      ["GGT", "Bile duct enzyme", "8 U/L", "0–13 U/L", "Normal – no issues with bile flow."],
-                      ["BUN", "Kidney waste filter", "41 mg/dL", "9–31 mg/dL", "High – may indicate dehydration or stress on kidneys. Could also be a high-protein diet."],
-                      ["Creatinine", "Kidney function", "0.9 mg/dL", "0.5–1.5 mg/dL", "Normal – kidneys are likely working properly."],
-                      ["BUN/Creatinine Ratio", "Kidney hydration balance", "45.6", "-", "High ratio confirms possible dehydration or early kidney stress."],
-                      ["TCO₂ (Bicarbonate)", "Acid/base balance", "16 mmol/L", "13–27 mmol/L", "Normal – good body pH balance."],
-                      ["Glucose", "Blood sugar", "92 mg/dL", "63–114 mg/dL", "Normal – no sign of diabetes."],
-                      ["Cholesterol", "Fat in blood", "194 mg/dL", "131–345 mg/dL", "Normal – healthy fat balance."],
-                      ["Calcium", "Bone/nerve health", "9.7 mg/dL", "8.4–11.8 mg/dL", "Normal – bones, muscles, nerves are supported."],
-                      ["Phosphorus", "Bone & kidney balance", "4.1 mg/dL", "2.5–6.1 mg/dL", "Normal."],
-                      ["Albumin", "Main blood protein", "3.0 g/dL", "2.7–3.9 g/dL", "Normal – helps control fluid balance."],
-                      ["Globulin", "Immune proteins", "3.8 g/dL", "2.4–4.0 g/dL", "Normal – immune system function."],
-                      ["Total Protein", "Albumin + globulin", "6.8 g/dL", "5.5–7.5 g/dL", "Normal – overall protein health."],
-                      ["Total Bilirubin", "Liver waste", "0.1 mg/dL", "0–0.3 mg/dL", "Normal – liver is clearing waste."],
-                      ["Unconjugated Bilirubin", "Pre-liver bilirubin", "0.0 mg/dL", "0.0–0.2 mg/dL", "Normal."],
-                      ["Conjugated Bilirubin", "Post-liver bilirubin", "0.1 mg/dL", "0.0–0.1 mg/dL", "Normal."],
-                      ["CK (Creatine Kinase)", "Muscle damage", "104 U/L", "10–200 U/L", "Normal – no sign of muscle injury."],
-                      ["Na (Sodium)", "Hydration & nerves", "148 mmol/L", "142–152 mmol/L", "Normal – no dehydration or imbalance."],
-                      ["K (Potassium)", "Muscle & heart function", "4.6 mmol/L", "4.0–5.4 mmol/L", "Normal – stable electrolyte."],
-                      ["Cl (Chloride)", "Blood acid balance", "119 mmol/L", "108–119 mmol/L", "At upper limit – not concerning."],
-                      ["Na/K Ratio", "Electrolyte check", "32", "28–37", "Normal."],
-                      ["Albumin/Globulin Ratio", "Protein balance", "0.8", "0.7–1.5", "Normal."]
-                    ].map(([test, measure, result, range, meaning], idx) => (
-                      <tr key={idx}>
-                        <td className="border border-gray-300 px-4 py-2">{test}</td>
-                        <td className="border border-gray-300 px-4 py-2">{measure}</td>
-                        <td className="border border-gray-300 px-4 py-2">{result}</td>
-                        <td className="border border-gray-300 px-4 py-2">{range}</td>
-                        <td className="border border-gray-300 px-4 py-2">{meaning}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-
-              {/* Sample Condition Flags and Summary */}
-              <div className="mt-8 space-y-4 text-sm text-gray-800">
-                <h3 className="text-lg font-semibold">Sample Condition Flags</h3>
-                <p><strong>Hemolysis:</strong> +++ – Some red blood cells broke during collection – may affect liver or muscle enzymes slightly.</p>
-                <p><strong>Lipemia:</strong> Normal – No extra fat in sample – great!</p>
-
-                <h3 className="text-lg font-semibold mt-6">Summary for Pet Parents</h3>
-                <p><strong>Your pet's liver, kidney, and glucose values are mostly normal.</strong></p>
-                <p><strong>Slightly high ALP and high BUN could mean:</strong></p>
-                <ul className="list-disc list-inside ml-4">
-                  <li>Mild dehydration</li>
-                  <li>Age-related changes (especially in senior dogs)</li>
-                  <li>Possibly diet or medications (especially if on steroids or high-protein food)</li>
-                </ul>
-              </div>
+            <div style={{ 
+              flex: 1, 
+              overflowY: 'auto',
+              padding: '20px',
+              marginTop: '20px'
+            }}>
+              {analysisLoading ? (
+                <div style={{ 
+                  display: 'flex', 
+                  justifyContent: 'center', 
+                  alignItems: 'center',
+                  height: '100%'
+                }}>
+                  <p>Loading analysis...</p>
+                </div>
+              ) : error ? (
+                <div style={{ 
+                  display: 'flex', 
+                  justifyContent: 'center', 
+                  alignItems: 'center',
+                  height: '100%',
+                  color: 'red'
+                }}>
+                  <p>{error}</p>
+                </div>
+              ) : (
+                <div className="text-side-text text-base font-normal leading-9">
+                  {analysisContent}
+                </div>
+              )}
             </div>
-
           </div>
         </div>
       )}

@@ -10,10 +10,12 @@ import Cookies from 'js-cookie';
 
 interface MessageTextProp {
     convoID: number;
+    onCreateConversation?: (message: string) => Promise<void>;
+    isNewConversation?: boolean;
 }
 
 //takes in prop of the setpagestate from page.tsx of message to change which modal is rendered
-export default function MessageText({ convoID }: MessageTextProp) {
+export default function MessageText({ convoID, onCreateConversation, isNewConversation }: MessageTextProp) {
 
 
     interface Conversation {
@@ -46,7 +48,7 @@ export default function MessageText({ convoID }: MessageTextProp) {
         firstName: string | null;
         lastName: string | null;
         birthdate: string | null;  // date will come as string
-        gender: string | null;
+        sex: string | null;
         phoneNumber: number | null;  // bigint type
         email: string | null;
         contactPreference: string | null;
@@ -195,6 +197,11 @@ export default function MessageText({ convoID }: MessageTextProp) {
         setIsUploading(true);
 
         try {
+            if (isNewConversation && onCreateConversation) {
+                await onCreateConversation(messageToSend);
+                return;
+            }
+
             // Handle text message
             if (messageToSend.trim()) {
                 const textMessage = {
@@ -343,31 +350,32 @@ export default function MessageText({ convoID }: MessageTextProp) {
 
     return (
         <main className="w-full h-full flex flex-col overflow-hidden">
-            <div className="w-full flex flex-row justify-between items-center h-[60px] border-b-[1px] border-solid border-[#DFDFDF] px-4 flex-shrink-0">
-                <div className="ml-3 flex flex-col w-[200px]">
-                    <div className="text-[#919191]">
-                        To: {otherEndUserData && (
-                            otherEndUserData.userType === 1 
-                                ? `${otherEndUserData.firstName} ${otherEndUserData.lastName}`
-                                : otherEndUserData.userType === 2 
-                                    ? `Dr. ${otherEndUserData.lastName}`
-                                    : otherEndUserData.lastName
-                        )}
+            {!isNewConversation && (
+                <div className="w-full flex flex-row justify-between items-center h-[60px] border-b-[1px] border-solid border-[#DFDFDF] px-4 flex-shrink-0">
+                    <div className="ml-3 flex flex-col w-[200px]">
+                        <div className="text-[#919191]">
+                            To: {otherEndUserData && (
+                                otherEndUserData.userType === 1 
+                                    ? `${otherEndUserData.firstName} ${otherEndUserData.lastName}`
+                                    : otherEndUserData.userType === 2 
+                                        ? `Dr. ${otherEndUserData.lastName}`
+                                        : otherEndUserData.lastName
+                            )}
+                        </div>
+                        <div className="text-[#4C4C4C]">
+                            {"Subject: " + convoData?.name}
+                        </div>
                     </div>
-                    <div className="text-[#4C4C4C]">
-                        {"Subject: " + convoData?.name}
-                    </div>
+
+                    <Image
+                        src="/img/message/write.svg"
+                        alt="Message image"
+                        width={25}
+                        height={20}
+                        className="mr-3 h-auto max-w-[25px]"
+                    />
                 </div>
-
-                <Image
-                    src="/img/message/write.svg"
-                    alt="Message image"
-                    width={25}
-                    height={20}
-                    className="mr-3 h-auto max-w-[25px]"
-                />
-            </div>
-
+            )}
             <div className="flex-1 overflow-y-auto px-3 relative scroll-smooth">
                 <div className="flex flex-col gap-4 pb-[80px] pt-2">
                     {messageData.map((message, index) => {
