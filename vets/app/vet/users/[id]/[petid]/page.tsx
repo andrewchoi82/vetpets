@@ -14,18 +14,18 @@ export default function PetHealthRecords() {
   const [petName, setPetName] = useState("");
   
   const params = useParams();
-  const petId = params.petId as string;
+  const petIdStr = params.petid as string;
+  const petId = petIdStr ? parseInt(petIdStr, 10) : undefined;
   
   // Store petId in cookie for health records API calls
   useEffect(() => {
     if (petId) {
-      console.log("Setting petId cookie:", petId);
-      Cookies.set('petId', petId);
+      Cookies.set('petId', petId.toString());
       
       // Fetch pet details to display name in header
       const fetchPetDetails = async () => {
         try {
-          const res = await fetch(`/api/pets/pet?petId=${petId}`, {
+          const res = await fetch(`/api/pets/${petId}`, {
             method: 'GET',
           });
           
