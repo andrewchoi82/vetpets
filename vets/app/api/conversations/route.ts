@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
     .from('conversations')
     .select('*')
     .eq('petId', petId)
-    .order('recentDate', { ascending: false });
+    .order('lastMessageTime', { ascending: false });
   if (error) return NextResponse.json({ error: error.message }, { status: 400 });
   return NextResponse.json(data);
 }

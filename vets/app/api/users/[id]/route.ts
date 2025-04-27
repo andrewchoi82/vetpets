@@ -1,19 +1,37 @@
 import { supabase } from '@/app/lib/supabaseClient';
 import { NextRequest, NextResponse } from 'next/server';
+import { parse } from 'cookie';
+import { verifyJWT } from '@/app/lib/jwt';
 
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
-  const { id } = params;
-  const { data, error } = await supabase.from('users').select('*').eq('id', id).single();
+export async function GET(request: NextRequest, context: { params: { id: string } }) {
+  const { params } = context;
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 400 });
-  return NextResponse.json(data);
-}
+  const cookieHeader = request.headers.get('cookie') || '';
+  const cookies = parse(cookieHeader);
+  const token = cookies.token;
 
-export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
-  const updates = await req.json();
-  const { id } = params;
-  const { data, error } = await supabase.from('users').update(updates).eq('id', id).single();
+  if (!token) {
+    return NextResponse.json({ error: 'Unauthorized: No token provided' }, { status: 401 });
+  }
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 400 });
+  const decoded = verifyJWT(token);
+  if (!decoded) {
+    return NextResponse.json({ error: 'Unauthorized: Invalid or expired token' }, { status: 401 });
+  }
+
+  if (decoded.userId !== parseInt(params.id)) {
+    return NextResponse.json({ error: 'Forbidden: ID mismatch' }, { status: 403 });
+  }
+
+  const { data, error } = await supabase
+    .from('users')
+    .select('id, username, userType')
+    .eq('id', params.id)
+    .single();
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 400 });
+  }
+
   return NextResponse.json(data);
 }

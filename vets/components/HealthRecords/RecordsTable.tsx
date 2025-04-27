@@ -2,8 +2,9 @@
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { getTests } from "@/app/lib/api/tests";
-import { getImageUrl } from "@/app/lib/supabaseGetFile";
+import { getFileUrl } from "@/app/lib/supabaseGetFile";
 import { Document, Page, pdfjs } from "react-pdf";
+import { getImageUrl } from "@/app/lib/supabaseGetImage";
 
 interface RecordsHeaderProps {
   selectedTab: "vaccinations" | "test results" | "medications" | "medical history";
@@ -35,50 +36,24 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction, tabCha
   const [htmlComponent, setHtmlComponent] = useState('');
   const [error, setError] = useState('');
 
-  const handleAnalysis = async (blob: Blob) => {
+  const handleAnalysis = async (fileURL: string) => {
+  // const handleAnalysis = async (blob: Blob) => {
     try {
       setLoading(true);
       setError('');
       setHtmlComponent('');
 
-      // Load the PDF document
-      const arrayBuffer = await blob.arrayBuffer();
-      const pdf = await pdfjs.getDocument({ data: arrayBuffer }).promise;
-
-      // Get the first page (or you could process multiple pages)
-      const page = await pdf.getPage(1);
-
-      // Render the page to a canvas
-      const viewport = page.getViewport({ scale: 2.0 }); // Higher scale for better quality
-      const canvas = document.createElement('canvas');
-      const context = canvas.getContext('2d');
-      canvas.height = viewport.height;
-      canvas.width = viewport.width;
-
-      await page.render({
-        canvasContext: context!,
-        viewport: viewport
-      }).promise;
-
-      // Convert canvas to base64 image
-      const imageData = canvas.toDataURL('image/jpeg', 0.95);
-
-      // Send the image data to the API
-      const res = await fetch('/api/summarize-doc', {
+      const res = await fetch('/api/summarize-doc',{
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ fileData: imageData }),
-      });
+        body: JSON.stringify({ url: fileURL }),
+      })
 
-      const data = await res.json();
+      const data = await res.json()
 
-      if (!res.ok) {
-        throw new Error(data.error || 'Failed to analyze lab report');
-      }
-
-      setHtmlComponent(data.component);
+      setHtmlComponent(data.summary);
       setLoading(false);
     } catch (err: any) {
       console.error('Error:', err.message);
@@ -86,60 +61,6 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction, tabCha
       setLoading(false);
     }
   };
-
-  // const handleAnalysis = async (blob: any) => {
-  //   try {
-  //     setLoading(true);
-  //     setError('');
-  //     setHtmlComponent('');
-
-  //     // Fetch the blob data
-  //     // const response = await fetch(blobUrl);
-  //     // const blob = await response.blob();
-
-  //     // Convert blob to base64
-  //     const reader = new FileReader();
-  //     reader.readAsDataURL(blob);
-
-  //     reader.onloadend = async () => {
-  //       const base64data = reader.result as string;
-
-  //       const res1 = await fetch('/api/summarize-doc', {
-  //         method: 'POST',
-  //         headers: {
-  //           'Content-Type': 'application/json',
-  //         },
-  //         body: JSON.stringify({ fileData: base64data }),
-  //       });
-  //       const data1 = await res1.json();
-  //       console.log("Summary response:", JSON.stringify(data1, null, 2));
-
-
-  //       // Send the base64 data to the API
-  //       const res = await fetch('/api/testing-analysis', {
-  //         method: 'POST',
-  //         headers: {
-  //           'Content-Type': 'application/json',
-  //         },
-  //         body: JSON.stringify({ fileData: base64data }),
-  //       });
-
-  //       const data = await res.json();
-
-  //       if (!res.ok) {
-  //         throw new Error(data.error || 'Failed to analyze lab report');
-  //       }
-
-  //       setHtmlComponent(data.component); // This is the HTML <div> as a string
-  //       setLoading(false);
-  //     };
-  //   } catch (err: any) {
-  //     console.error('Error:', err.message);
-  //     setError(err.message);
-  //     setLoading(false);
-  //   }
-  // };
-
 
   useEffect(() => {
     const fetchTests = async () => {
@@ -218,7 +139,10 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction, tabCha
                 <img src={"/img/dashboard/compGreenStatus.svg"} alt={`Green Icon`} className=" w-6 h-6 left-[32px] top-[36px] absolute" />
 
 
-                <div className="w-96 h-[503px] left-[68px] top-[97px] absolute justify-start"><span className="text-side-text text-baseleading-9">Test overview<br /></span><span className="text-side-text text-base font-normal leading-9">Snowball's blood test provides insights into his overall health by examining various blood components like red and white blood cells, platelets, and organ function indicators.<br /><br /></span><span className="text-side-text text-base leading-9">Conclusion</span><span className="text-side-text text-base font-normal leading-9"> <br />Snowball's overall blood results are mostly normal, but the slight elevation in Blood Urea Nitrogen (BUN) may indicate mild dehydration. No immediate concerns are noted, but keeping an eye on hydration and rechecking in the future is advised.<br /><br /></span></div>
+                <div className="w-96 h-[503px] left-[68px] top-[97px] absolute justify-start"><span className="text-side-text text-baseleading-9">Test overview<br /></span><span className="text-side-text text-base font-normal leading-9">
+                  {/* Snowball's blood test provides insights into his overall health by examining various blood components like red and white blood cells, platelets, and organ function indicators.<br /><br /></span><span className="text-side-text text-base leading-9">Conclusion</span><span className="text-side-text text-base font-normal leading-9"> <br />Snowball's overall blood results are mostly normal, but the slight elevation in Blood Urea Nitrogen (BUN) may indicate mild dehydration. No immediate concerns are noted, but keeping an eye on hydration and rechecking in the future is advised.<br /><br /> */}
+                  {htmlComponent}
+                  </span></div>
                 <div data-property-1="Default" className="w-28 left-[68px] top-[616px] absolute bg-sky-800 rounded-[5px] inline-flex justify-center items-center gap-2.5">
                   <button
                     className="text-center justify-center text-white text-base font-normal leading-loose w-full h-full cursor-pointer"
@@ -335,15 +259,8 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction, tabCha
                             testResult.result;
 
                           const fileUrl = getImageUrl(fileToDownload);
-
-                          const response = await fetch(fileUrl);
-                          const blob = await response.blob();
-                          const blobUrl = window.URL.createObjectURL(blob);
-
-                          setPdfUrl(blobUrl);
-                          handleAnalysis(blob);
-
-
+                          setPdfUrl(fileUrl);
+                          handleAnalysis(fileUrl);
                           setOnDocumentDetail(true);
                         }}
                       >

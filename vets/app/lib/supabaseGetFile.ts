@@ -1,6 +1,6 @@
 import { supabase } from '@/app/lib/supabaseClient';
 
-export const getImageUrl = (filePath: string): string => {
+export const getFileUrl = (filePath: string): string => {
   const { data } = supabase
     .storage
     .from('files')

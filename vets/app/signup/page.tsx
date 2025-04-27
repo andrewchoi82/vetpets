@@ -3,53 +3,56 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Cookies from 'js-cookie';
 
-export default function Login() {
+export default function SignUp() {
   const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const router = useRouter();
 
-  const handleLogin = async () => {
-    const res = await fetch("/api/auth/login", {
+  async function signup(credentials: { email: string; password: string; username: string }) {
+    const res = await fetch(`/api/auth/signup`, {   
       method: "POST",
-      body: JSON.stringify({ email, password }),
       headers: { "Content-Type": "application/json" },
-      credentials: "include",                    
+      body: JSON.stringify(credentials),
     });
-    
-    const result = await res.json();
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Signup failed");
+    return data;
+  }
   
-    if (!result.success || !result.userId) {
-      alert("Invalid email or password");
+
+  const handleCreate = async () => {
+    if (password !== confirmPassword) {
+      alert("Passwords do not match.");
       return;
-    } 
-    
-    // Save userId to cookie
-    Cookies.set('userId', result.userId, { expires: 7 }); // Expires in 7 days
+    }
   
     try {
-      const res = await fetch(`/api/me?userId=${result.userId}`, {
-          method: 'GET',
-        });
-      const user = await res.json();
-      if (user?.userType === 2) {
-        router.push("/vet");
-      } else if (user?.userType === 1) {
-        router.push("/getpet");
-      } else {
-        alert("Unknown user type.");
+      const result = await signup({ email, password, username });
+  
+      if (!result.success) {
+        alert("Signup failed: " + (result.error || "Unknown error"));
+        return;
       }
-  }
-  catch (error) {
-      console.error('Error fetching user:', error);
-  } 
+  
+      alert("Signup Success! Please log in.");
+      router.push("/login");  
+  
+    } catch (error) {
+      console.error("Error during signup:", error);
+      alert("Signup error occurred.");
+    }
   };
+  
+  
   
 
   return (
     <div className="w-[1512px] h-[982px] relative bg-white overflow-hidden">
       <div className="w-[559px] px-14 py-11 left-[138px] top-[225px] absolute bg-white rounded-[10px] inline-flex flex-col justify-start items-start gap-8 overflow-hidden">
         <div className="self-stretch h-14 justify-center text-black text-3xl font-['SF_Pro'] leading-[66px]">
-          Welcome back!
+          Create an Account!
         </div>
 
         <div className="self-stretch h-12 relative rounded-[10px] outline outline-1 outline-offset-[-1px] outline-Hoover-grey overflow-hidden flex items-center">
@@ -64,6 +67,16 @@ export default function Login() {
 
         <div className="self-stretch h-12 relative rounded-[10px] outline outline-1 outline-offset-[-1px] outline-Hoover-grey overflow-hidden flex items-center">
           <input
+            type="username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            placeholder="Username"
+            className="w-full h-full px-4 text-base text-Hoover-grey font-['SF_Pro'] bg-transparent outline-none"
+          />
+        </div>
+
+        <div className="self-stretch h-12 relative rounded-[10px] outline outline-1 outline-offset-[-1px] outline-Hoover-grey overflow-hidden flex items-center">
+          <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -72,30 +85,32 @@ export default function Login() {
           />
         </div>
 
+        <div className="self-stretch h-12 relative rounded-[10px] outline outline-1 outline-offset-[-1px] outline-Hoover-grey overflow-hidden flex items-center">
+          <input
+            type="password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            placeholder="Confirm Password"
+            className="w-full h-full px-4 text-base text-Hoover-grey font-['SF_Pro'] bg-transparent outline-none"
+          />
+        </div>
+
         <div
-          onClick={handleLogin}
+          onClick={handleCreate}
           className="self-stretch h-12 bg-sky-800 rounded-[10px] inline-flex justify-center items-center gap-2.5 cursor-pointer"
         >
           <div className="text-center justify-center text-white text-xl font-normal font-['SF_Pro'] leading-[48.40px]">
-            Login
+            Sign up
           </div>
         </div>
 
         <div style={{ display: "flex" }}> 
           <button
+            onClick={() => router.push("/login")}
             type="button"
-            onClick={() => router.push("/signup")}
             className="justify-center text-side-text text-xs font-normal font-['SF_Pro'] underline leading-7 cursor-pointer"
           >
-            Create account
-          </button>
-
-        
-          <button
-            type="button"
-            className="ml-3 justify-center text-side-text text-xs font-normal font-['SF_Pro'] underline leading-7 cursor-pointer"
-          >
-            Forgot your password?
+            Already have an account?
           </button>
         </div>
 
