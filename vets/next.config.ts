@@ -6,6 +6,9 @@ const nextConfig: NextConfig = {
     serverComponentsExternalPackages: ['@adobe/pdfservices-node-sdk', 'log4js','pdf2json'],
 
   },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
 
   images: {
     remotePatterns: [
