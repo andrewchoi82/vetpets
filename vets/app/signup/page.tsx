@@ -70,6 +70,9 @@ export default function SignUp() {
     }
 
     const { confirmPassword, ...submitData } = formData;
+    
+    // Clean phone number by removing all non-numeric characters
+    submitData.phoneNumber = submitData.phoneNumber.replace(/\D/g, '');
 
     try {
       const res = await fetch("/api/auth/signup", {
