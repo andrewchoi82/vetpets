@@ -70,6 +70,9 @@ export default function SignUp() {
     }
 
     const { confirmPassword, ...submitData } = formData;
+    
+    // Clean phone number by removing all non-numeric characters
+    submitData.phoneNumber = submitData.phoneNumber.replace(/\D/g, '');
 
     try {
       const res = await fetch("/api/auth/signup", {
@@ -111,7 +114,7 @@ export default function SignUp() {
             <InputField placeholder="First Name" value={formData.firstName} onChange={(e) => handleChange("firstName", e.target.value)} />
             <InputField placeholder="Last Name" value={formData.lastName} onChange={(e) => handleChange("lastName", e.target.value)} />
             <div className="w-full flex flex-col gap-2">
-              <label className="text-black text-base font-['SF_Pro'] mb-1">When's your birthday?</label>
+              <label className="text-black text-base font-['SF_Pro'] mb-1">When is your birthday?</label>
               <input
                 type="date"
                 value={formData.birthdate}

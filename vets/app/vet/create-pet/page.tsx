@@ -19,9 +19,10 @@ export default function PDFTestPage() {
   const [matchedFields, setMatchedFields] = useState<any>(null);
   const [editableJson, setEditableJson] = useState<string>('');
   const [confirmationResult, setConfirmationResult] = useState<string>('');
+  const [isParsing, setIsParsing] = useState<boolean>(false);
 
 
-  const [doctorId, setDoctorId] = useState(6);
+  const [doctorId, setDoctorId] = useState("38c27395-28f5-4b0b-b823-05f0952a5402");
 
 
   const Notify = (status: string, message: string) => {
@@ -35,6 +36,7 @@ export default function PDFTestPage() {
 
   const processMatchFields = async (documentText: string) => {
     try {
+      setIsParsing(true);
       const response = await fetch('/api/match-fields', {
         method: 'POST',
         headers: {
@@ -61,6 +63,8 @@ export default function PDFTestPage() {
     } catch (error) {
       console.error('Error matching fields:', error);
       Notify("error", "Failed to process document fields");
+    } finally {
+      setIsParsing(false);
     }
   };
 
@@ -333,6 +337,14 @@ export default function PDFTestPage() {
                       title="PDF Viewer"
                     ></iframe>
                   </div>
+                </div>
+              ) : isParsing ? (
+                <div className="bg-white rounded-lg shadow-md p-4 h-full flex flex-col justify-center items-center text-center">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
+                  <h3 className="text-xl font-medium text-gray-700 mb-2">Waiting for parsing to complete</h3>
+                  <p className="text-gray-500 max-w-md">
+                    Please wait while we process your PDF and match the fields...
+                  </p>
                 </div>
               ) : (
                 <div className="bg-white rounded-lg shadow-md p-4 h-full flex flex-col justify-center items-center text-center">

@@ -333,8 +333,8 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction, tabCha
 
                 <tbody>
                   {testData.map((testResult, index) => {
-                    const isPending = testResult.result === "";
-                    const isCompleted = testResult.result !== "";
+                    const isPending = testResult.result === "" || testResult.result === null;
+                    const isCompleted = testResult.result !== "" && testResult.result !== null;
                     const iconSrc = isPending
                       ? "/img/general/yellow-circle-icon.svg"
                       : "/img/general/green-circle-icon.svg";
