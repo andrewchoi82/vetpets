@@ -3,11 +3,10 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
-) {
-
-  const paramsData = await params;
-  const petId = Number(paramsData.id);
+  { params }: { params: Promise<{ id: string }> }
+): Promise<NextResponse> {
+  const { id } = await params;
+  const petId = Number(id);
 
   if (isNaN(petId)) {
     return NextResponse.json({ error: 'Invalid petId format' }, { status: 400 });

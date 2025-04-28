@@ -2,7 +2,7 @@ import { supabase } from "@/app/lib/supabaseClient";
 import { NextResponse } from "next/server";
 import { NextRequest } from "next/server";
 
-export async function GET(req: NextRequest) {
+export async function GET(req: NextRequest): Promise<NextResponse> {
   const { searchParams } = new URL(req.url);
   const userId = searchParams.get('userId');
 
