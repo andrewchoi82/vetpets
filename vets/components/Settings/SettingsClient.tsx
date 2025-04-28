@@ -108,7 +108,14 @@ export default function SettingsClient() {
     <div style={{ display: "flex", height: "100vh", overflow: "hidden" }}>
       <SideBarContainerClient selectedPage="Settings" />
 
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", background: "#fff", overflowY: "auto" }}>
+      <div style={{ 
+        flex: 1, 
+        display: "flex", 
+        flexDirection: "column", 
+        background: "#fff", 
+        overflowY: "auto",
+        marginLeft: "120px" // Add margin to avoid overlap with the sidebar
+      }}>
         <Header title="Settings" showSearchBar={true} />
         
         {updateSuccess !== null && (

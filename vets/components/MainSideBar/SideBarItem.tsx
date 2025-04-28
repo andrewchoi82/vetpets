@@ -6,6 +6,7 @@ type SideBarItemProps = {
   isSelected?: boolean;
   onClick?: () => void;
   notificationCount?: number;
+  iconsOnly?: boolean;
 };
 
 export const SideBarItem = ({
@@ -14,6 +15,7 @@ export const SideBarItem = ({
   isSelected = false,
   onClick,
   notificationCount = 0,
+  iconsOnly = false,
 }: SideBarItemProps) => {
   const imagePath = isSelected
     ? path.replace("nonSelectedVersion", "selectedVersion")
@@ -25,13 +27,15 @@ export const SideBarItem = ({
       style={{
         display: "flex",
         alignItems: "center",
-        padding: "22px 40px",
+        justifyContent: iconsOnly ? "center" : "flex-start",
+        padding: iconsOnly ? "22px 0" : "22px 40px",
         backgroundColor: isSelected ? "#E9EFF4" : "transparent",
         color: "#4c4c4c",
         cursor: "pointer",
         width: "100%",
         borderRight: isSelected ? "4px solid #004D81" : "4px solid transparent",
         transition: "all 0.2s ease",
+        position: iconsOnly ? "relative" : "static",
       }}
     >
       <Image
@@ -40,21 +44,23 @@ export const SideBarItem = ({
         width={15}
         height={15}
         style={{
-          marginRight: "12px",
+          marginRight: iconsOnly ? 0 : "12px",
         }}
       />
 
-      <p
-        style={{
-          margin: 0,
-          fontSize: "15px",
-          flexGrow: 1,
-          color: isSelected ? "#004D81" : "#4c4c4c",
-          fontWeight: isSelected ? 500 : 400,
-        }}
-      >
-        {text}
-      </p>
+      {!iconsOnly && (
+        <p
+          style={{
+            margin: 0,
+            fontSize: "15px",
+            flexGrow: 1,
+            color: isSelected ? "#004D81" : "#4c4c4c",
+            fontWeight: isSelected ? 500 : 400,
+          }}
+        >
+          {text}
+        </p>
+      )}
 
       {notificationCount > 0 && (
         <div
@@ -69,6 +75,8 @@ export const SideBarItem = ({
             alignItems: "center",
             justifyContent: "center",
             fontWeight: 500,
+            position: iconsOnly ? "absolute" : "relative",
+            right: iconsOnly ? "12px" : "auto",
           }}
         >
           {notificationCount}

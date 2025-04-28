@@ -17,7 +17,14 @@ export default function Clients() {
     <div style={{ display: "flex", height: "100vh", overflow: "hidden" }}>
       <SideBarContainerVets selectedPage="Clients" />
 
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", background: "#fff", overflowY: "auto" }}>
+      <div style={{ 
+        flex: 1, 
+        display: "flex", 
+        flexDirection: "column", 
+        background: "#fff", 
+        overflowY: "auto",
+        marginLeft: "120px" 
+      }}>
         <Header title="Clients" showSearchBar={false}/>
 
         <ClientsHeader/>
@@ -26,5 +33,3 @@ export default function Clients() {
     </div>
   );
 }
-
-
