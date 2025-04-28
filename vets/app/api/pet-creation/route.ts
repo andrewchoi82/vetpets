@@ -43,7 +43,6 @@ interface Test {
   dateOrdered: string;
   dateExpected: string;
   status: string;
-  result: string;
 }
 
 interface MedicalHistory {
@@ -121,6 +120,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid content format' }, { status: 400 });
     }
 
+    console.log(userId);
     // Create pet using petInfo
     const petResponse = await fetch('http://localhost:3000/api/pets', {
       method: 'POST',
@@ -128,7 +128,7 @@ export async function GET(req: NextRequest) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        userId: parseInt(userId),
+        userId: userId,
         doctorId: requestData.doctorId,
         ...content.petInfo
       }),
@@ -224,7 +224,7 @@ export async function GET(req: NextRequest) {
 
     // Create medical history
     for (const history of content.medicalHistory) {
-      const historyResponse = await fetch('http://localhost:3000/api/medical-history', {
+      const historyResponse = await fetch('http://localhost:3000/api/history', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

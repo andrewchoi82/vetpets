@@ -24,6 +24,6 @@ export async function middleware(req: NextRequest) {
 export const config = {
   matcher: [
     // Only protect app pages, not static files or the login page
-    "/((?!api|_next/static|_next/image|_next/font|public|images|assets|img|fonts|favicon.ico|login).*)",
+    "/((?!api|_next/static|_next/image|_next/font|public|images|assets|img|fonts|favicon.ico|login|signup).*)",
   ],
 };
