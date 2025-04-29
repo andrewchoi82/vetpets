@@ -61,8 +61,6 @@ export default function Appointments() {
     }
   };
   
-  
-  
 
   const handleSchedule = async (newAppointment: any) => {
     try {
@@ -89,7 +87,7 @@ export default function Appointments() {
         overflowY: "auto",
         marginLeft: "120px" // Add margin to avoid overlap with the sidebar
       }}>
-        <Header title="Appointments" showSearchBar={true} />
+        <Header title="" showSearchBar={true} />
         <AppointmentsHeader
           selectedTab={selectedTab}
           setSelectedTab={setSelectedTab}

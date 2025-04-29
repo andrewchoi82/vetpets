@@ -83,7 +83,7 @@ export default function RecordsHeader({ selectedTab, setSelectedTabAction, tabCh
         <div style={{ display: "flex", alignItems: "center" }}>
           <div style={{ fontSize: 22, fontWeight: 500 }}>Health Records</div>
           <Image
-            src="/img/health-records/paw.svg"
+            src="/img/paw.svg"
             alt="Paw Icon"
             width={20}
             height={20}
