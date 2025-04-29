@@ -40,13 +40,13 @@ export default function DashboardAppointmentsBox() {
   const [appointmentData, setAppointmentData] = useState<Appointment | null>(null);
   const [doctorId, setDoctorId] = useState<string | null>(null);
   const [doctorName, setDoctorName] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
 
-  // FETCH IS HARD CODED FOR FIRST ITEM CHANGE LATER
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
         if (!petId) return;
-        
+        setIsLoading(true);
         const data = await getAppointments(petId);
         if (Array.isArray(data) && data.length > 0) {
           const sorted = data.sort(
@@ -57,6 +57,8 @@ export default function DashboardAppointmentsBox() {
         }
       } catch (error) {
         console.error("Failed to fetch appointments.");
+      } finally {
+        setIsLoading(false);
       }
     };
   
@@ -88,12 +90,9 @@ export default function DashboardAppointmentsBox() {
   return (
     <div
         style={{
-          width: "580px",
-          height: "300px",
-          backgroundColor: "white",
+          width: "full",
+          height: "full",
           borderRadius: "10px",
-          border: "1px solid #e5e5e5",
-          padding: "16px",
           paddingBottom: "0px",
           display: "flex",
           flexDirection: "column",
@@ -114,11 +113,30 @@ export default function DashboardAppointmentsBox() {
         </div>
 
         {/* Main Content */}
-        {appointmentData ? (
+        {isLoading ? (
+          <div
+            style={{
+              padding: "16px 20px",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              marginLeft: "-16px",
+              marginRight: "-16px",
+              color: "#4c4c4c",
+              flex: 1,
+              gap: "16px"
+            }}
+          >
+            <div style={{ fontSize: "17px", color: "#919191" }}>
+              Loading...
+            </div>
+          </div>
+        ) : appointmentData ? (
           <>
             <div
               style={{
-                backgroundColor: "#f4f4f4",
+                backgroundColor: "#D9E5EC",
                 padding: "16px 20px",
                 display: "flex",
                 justifyContent: "space-between",
@@ -189,7 +207,7 @@ export default function DashboardAppointmentsBox() {
                 fontSize: "17px",
                 color: "#919191",
                 padding: "5px",
-                marginTop: "10px"
+                marginTop: "5px"
               }}
             >
               <Image src="/img/dashboard/compNavigation.svg" alt="location" width={18} height={18} />
@@ -258,41 +276,39 @@ export default function DashboardAppointmentsBox() {
             </div>
           </>
         ) : (
-          <>
-            <div
-              style={{
-                backgroundColor: "#f4f4f4",
-                padding: "16px 20px",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                marginLeft: "-16px",
-                marginRight: "-16px",
-                color: "#4c4c4c",
-                flex: 1,
-                gap: "16px"
-              }}
-            >
-              <div style={{ fontSize: "17px", color: "#919191" }}>
-                No appointments scheduled
-              </div>
-              <button
-                style={{
-                  fontSize: "15px",
-                  backgroundColor: "#004d81",
-                  color: "white",
-                  padding: "8px 16px",
-                  borderRadius: "5px",
-                  border: "none",
-                  cursor: "pointer",
-                }}
-                onClick={handleAppointmentAction}
-              >
-                Schedule
-              </button>
+          <div
+            style={{
+              backgroundColor: "#f4f4f4",
+              padding: "16px 20px",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              marginLeft: "-16px",
+              marginRight: "-16px",
+              color: "#4c4c4c",
+              flex: 1,
+              gap: "16px"
+            }}
+          >
+            <div style={{ fontSize: "17px", color: "#919191" }}>
+              No appointments scheduled
             </div>
-          </>
+            <button
+              style={{
+                fontSize: "15px",
+                backgroundColor: "#004d81",
+                color: "white",
+                padding: "8px 16px",
+                borderRadius: "5px",
+                border: "none",
+                cursor: "pointer",
+              }}
+              onClick={handleAppointmentAction}
+            >
+              Schedule
+            </button>
+          </div>
         )}
       </div>
 

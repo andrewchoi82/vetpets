@@ -25,7 +25,7 @@ export const SideBarContainerClient = ({ selectedPage }: SideBarContainerProps) 
 
   const pathToName: Record<string, string> = {
     "/": "Dashboard",
-    "/client/appointments": "Calendar",
+    "/client/appointments": "Appointments",
     "/client/message": "Messages",
     "/client/health-records": "Health Records",
     "/client/billings": "Billing",
@@ -41,7 +41,7 @@ export const SideBarContainerClient = ({ selectedPage }: SideBarContainerProps) 
 
   const topMenuItems: MenuItem[] = [
     { path: "/img/sidebar-options/nonSelectedVersion/dashboard.svg", text: "Dashboard", href: "/" },
-    { path: "/img/sidebar-options/nonSelectedVersion/appointments.svg", text: "Calendar", href: "/client/appointments" },
+    { path: "/img/sidebar-options/nonSelectedVersion/appointments.svg", text: "Appointments", href: "/client/appointments" },
     { path: "/img/sidebar-options/nonSelectedVersion/messages.svg", text: "Messages", href: "/client/message", notificationCount: 2 },
     { path: "/img/sidebar-options/nonSelectedVersion/health-records.svg", text: "Health Records", href: "/client/health-records" },
     { path: "/img/sidebar-options/nonSelectedVersion/billing.svg", text: "Billing", href: "/client/billings" }
