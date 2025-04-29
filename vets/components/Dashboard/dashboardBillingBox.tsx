@@ -54,7 +54,7 @@ export default function DashboardBillingBox() {
       </div>
 
       <div
-        className="flex flex-col text-[17px] text-[#4c4c4c] overflow-y-auto max-h-[180px] hide-scroll"
+        className="flex flex-col text-[17px] text-[#4c4c4c] overflow-y-auto max-h-[180px] mt-5 hide-scroll"
       >
         {billingData.map((billing) => (
           <div

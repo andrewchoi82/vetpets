@@ -96,179 +96,94 @@ export default function DashboardAppointmentsBox() {
           paddingBottom: "0px",
           display: "flex",
           flexDirection: "column",
-          gap: "12px",
+          gap: "8px",
         }}
       >
         {/* Header */}
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <div style={{ fontSize: "20px", fontWeight: "500", color: "#4c4c4c" }}>
+        <div className="flex justify-between items-center">
+          <div className="text-base md:text-xl font-medium text-[#4c4c4c]">
             Upcoming Appointment
           </div>
         </div>
 
         {/* Main Content */}
         {isLoading ? (
-          <div
-            style={{
-              padding: "16px 20px",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-              marginLeft: "-16px",
-              marginRight: "-16px",
-              color: "#4c4c4c",
-              flex: 1,
-              gap: "16px"
-            }}
-          >
-            <div style={{ fontSize: "17px", color: "#919191" }}>
+          <div className="p-4 md:p-5 flex flex-col items-center justify-center -mx-4 md:-mx-5 text-[#4c4c4c] flex-1 gap-4">
+            <div className="text-sm md:text-lg text-[#919191]">
               Loading...
             </div>
           </div>
         ) : appointmentData ? (
           <>
-            <div
-              style={{
-                backgroundColor: "#D9E5EC",
-                padding: "16px 20px",
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                marginLeft: "-16px",
-                marginRight: "-16px",
-                color: "#4c4c4c"
-              }}
-            >
-              <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-                <div style={{ display: "flex", flexDirection: "column" }}>
-                {appointmentData && (
-                  <>
-                    <div style={{ fontSize: "17px", fontWeight: "normal" }}>
-                      {new Date(appointmentData.date).toLocaleDateString("en-US", {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      })}
-                    </div>
-                    <div style={{ fontSize: "17px" }}>
-                      {new Date(`1970-01-01T${appointmentData.time}Z`).toLocaleTimeString("en-US", {
-                        hour: "numeric",
-                        minute: "2-digit",
-                        hour12: true,
-                      })}
-                    </div>
-                  </>
-                )}
+            <div className="bg-[#D9E5EC] p-4 md:p-5 flex justify-between items-center -mx-4 text-[#4c4c4c] ">
+              <div className="flex items-center gap-4 md:gap-6">
+                <div className="flex flex-col">
+                  {appointmentData && (
+                    <>
+                      <div className="text-sm md:text-lg font-normal truncate">
+                        {new Date(appointmentData.date).toLocaleDateString("en-US", {
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                        })}
+                      </div>
+                      <div className="text-sm md:text-lg truncate">
+                        {new Date(`1970-01-01T${appointmentData.time}Z`).toLocaleTimeString("en-US", {
+                          hour: "numeric",
+                          minute: "2-digit",
+                          hour12: true,
+                        })}
+                      </div>
+                    </>
+                  )}
                 </div>
-                <div
-                  style={{
-                    width: "1px",
-                    backgroundColor: "#919191",
-                    alignSelf: "stretch",
-                    marginTop: "-6px",
-                    marginBottom: "-6px",
-                  }}
-                />
+                <div className="w-px bg-[#919191] self-stretch -my-1.5" />
 
-                <div style={{ fontSize: "17px", fontWeight: "normal" }}>
+                <div className="text-sm md:text-lg font-normal truncate">
                   {appointmentData?.name}
                 </div>
               </div>
 
-              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                
-                {/* MAKE THIS CONDITION RENDER W BACKEND LATER */}
-                  <Image
-                    src={"/img/dashboard/dr-sarah-pfp.jpg"}
-                    alt="Doctor"
-                    width={42.4}
-                    height={41.5}
-                    style={{ borderRadius: "9999px" }}
-                  />
-              
-                <div style={{ fontSize: "15px", color: "#6b7280" }}>{doctorName}</div>
+              <div className="flex items-center gap-2 md:gap-3">
+                <Image
+                  src={"/img/dashboard/dr-sarah-pfp.jpg"}
+                  alt="Doctor"
+                  width={42.4}
+                  height={41.5}
+                  className="rounded-full"
+                />
+                <div className="text-xs md:text-base text-[#6b7280] truncate">{doctorName}</div>
               </div>
             </div>
 
+            {/* Location and Status */}
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center gap-3 md:gap-4 text-sm md:text-lg text-[#919191] p-1 md:p-1.5">
+                <Image src="/img/dashboard/compNavigation.svg" alt="location" width={18} height={18} />
+                <span className="truncate">{appointmentData?.location}</span>
+              </div>
 
-            {/* Location */}
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "12px",
-                fontSize: "17px",
-                color: "#919191",
-                padding: "5px",
-                marginTop: "5px"
-              }}
-            >
-              <Image src="/img/dashboard/compNavigation.svg" alt="location" width={18} height={18} />
-              <span>{appointmentData?.location}</span>
-            </div>
-
-            {/* Status */}
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "12px",
-                fontSize: "17px",
-                color: "#919191",
-                padding: "5px",
-                paddingBottom: "0px"
-              }}
-            >
-              <Image src="/img/dashboard/compGreenStatus.svg" alt="status" width={18} height={18} />
-              <span style={{ color: "#919191", fontStyle: "italic" }}>
-                {appointmentData?.status === "confirmed"
-                  ? "Appointment confirmed"
-                  : "Appointment not confirmed"}
-              </span>
-
+              <div className="flex items-center gap-3 md:gap-4 text-sm md:text-lg text-[#919191] p-1 md:p-1.5">
+                <Image src="/img/dashboard/compGreenStatus.svg" alt="status" width={18} height={18} />
+                <span className="italic truncate">
+                  {appointmentData?.status === "confirmed"
+                    ? "Appointment confirmed"
+                    : "Appointment not confirmed"}
+                </span>
+              </div>
             </div>
 
             {/* Actions */}
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "flex-end",
-                gap: "16px",
-                fontSize: "17px",
-                marginBottom: "15px",
-              }}
-            >
+            <div className="flex justify-end gap-4 md:gap-6 text-sm md:text-lg mt-[-10px]">
               <button
-                style={{
-                  fontSize: "15px",
-                  color: "#1e3a8a",
-                  textDecoration: "underline",
-                  background: "none",
-                  border: "none",
-                  cursor: "pointer",
-                }}
+                className="text-xs md:text-base text-[#1e3a8a] underline bg-transparent border-none cursor-pointer"
                 onClick={handleAppointmentAction}
               >
                 Cancel
               </button>
 
               <button
-                style={{
-                  fontSize: "15px",
-                  backgroundColor: "#004d81",
-                  color: "white",
-                  padding: "4px 10px",
-                  borderRadius: "5px",
-                  border: "none",
-                  cursor: "pointer",
-                }}
+                className="text-xs md:text-base bg-[#004d81] text-white px-2.5 md:px-3 py-1 md:py-1.5 rounded-md border-none cursor-pointer"
                 onClick={handleAppointmentAction}
               >
                 Reschedule
@@ -276,34 +191,12 @@ export default function DashboardAppointmentsBox() {
             </div>
           </>
         ) : (
-          <div
-            style={{
-              backgroundColor: "#f4f4f4",
-              padding: "16px 20px",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-              marginLeft: "-16px",
-              marginRight: "-16px",
-              color: "#4c4c4c",
-              flex: 1,
-              gap: "16px"
-            }}
-          >
-            <div style={{ fontSize: "17px", color: "#919191" }}>
+          <div className="bg-[#f4f4f4] p-4 md:p-5 flex flex-col items-center justify-center -mx-4 md:-mx-5 text-[#4c4c4c] flex-1 gap-4">
+            <div className="text-sm md:text-lg text-[#919191]">
               No appointments scheduled
             </div>
             <button
-              style={{
-                fontSize: "15px",
-                backgroundColor: "#004d81",
-                color: "white",
-                padding: "8px 16px",
-                borderRadius: "5px",
-                border: "none",
-                cursor: "pointer",
-              }}
+              className="text-xs md:text-base bg-[#004d81] text-white px-4 md:px-6 py-2 md:py-2.5 rounded-md border-none cursor-pointer"
               onClick={handleAppointmentAction}
             >
               Schedule

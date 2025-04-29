@@ -102,7 +102,10 @@ export const SideBarContainerClient = ({ selectedPage }: SideBarContainerProps) 
           gridTemplateRows: "auto 1fr auto",
           backgroundColor: "#FFFFFF",
           borderRadius: "20px",
-          margin: "20px 0 20px 20px",
+          marginTop: "20px",
+          marginRight: "0px",
+          marginBottom: "20px",
+          marginLeft: "20px",
           boxShadow: isContainerHovered 
             ? "0px 5px 20px rgba(0, 0, 0, 0.16), inset 0 0 0 1px rgba(255, 255, 255, 0.8), 0 0 0 1px rgba(0, 0, 0, 0.04)" 
             : "0px 4px 20px rgba(0, 0, 0, 0.15), inset 0 0 0 1px rgba(255, 255, 255, 0.8), 0 0 0 1px rgba(0, 0, 0, 0.04)",
