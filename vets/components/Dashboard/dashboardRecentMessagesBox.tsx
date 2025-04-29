@@ -19,15 +19,19 @@ export default function DashboardRecentMessagesBox() {
   }
 
   const [messageData, setMessageData] = useState<Conversation[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const petId = Cookies.get('petId');
 
   useEffect(() => {
     const fetchConvos = async () => {
       try {
+        setIsLoading(true);
         const data = await getConversations(Number(petId));
         setMessageData(data);
       } catch (err) {
         console.error("Failed to fetch conversations");
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -48,7 +52,7 @@ export default function DashboardRecentMessagesBox() {
   };
 
   return (
-    <div className="w-[544px] h-[300px] bg-white rounded-[10px] border border-[#e5e5e5] flex flex-col">
+    <div className="w-full h-full bg-white rounded-[10px] flex flex-col">
       {/* Header */}
       <div className="flex justify-between items-center  p-3">
         <div style={{ color: "#4c4c4c", fontWeight: "500", fontSize: "20px" }} className="text-lg">
@@ -57,9 +61,13 @@ export default function DashboardRecentMessagesBox() {
       </div>
 
       {/* Messages */}
-      <div className={`divide-y px-2 divide-gray-200 text-[17px] overflow-y-scroll flex-1 ${messageData.length === 0 ? 'bg-[#f4f4f4]' : ''}`} style={{ scrollbarWidth: "none" }}>
-        {messageData.length === 0 ? (
+      <div className={`px-2 text-[17px] overflow-y-scroll flex-1 ${messageData.length === 0 && !isLoading ? 'bg-[#f4f4f4]' : ''}`} style={{ scrollbarWidth: "none" }}>
+        {isLoading ? (
           <div className="flex flex-col items-center justify-center h-full text-gray-500">
+            Loading...
+          </div>
+        ) : messageData.length === 0 ? (
+          <div className="flex flex-col items-center justify-center h-full text-gray-500 bg-[#f4f4f4]">
             No recent messages
             <button
                 style={{
@@ -77,10 +85,9 @@ export default function DashboardRecentMessagesBox() {
                 Message
               </button>
           </div>
-    
         ) : (
           messageData.map((message, index) => (
-            <div key={message.convoId} className="flex justify-between items-center py-3 p-2  bg-white">
+            <div key={message.convoId} className="flex justify-between items-center py-2 p-2 bg-white">
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-[6px] flex items-center justify-center">
                   <Image
