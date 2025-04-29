@@ -25,8 +25,8 @@ export const SideBarContainerClient = ({ selectedPage }: SideBarContainerProps) 
 
   const pathToName: Record<string, string> = {
     "/": "Dashboard",
-    "/client/message": "Messages",
     "/client/appointments": "Calendar",
+    "/client/message": "Messages",
     "/client/health-records": "Health Records",
     "/client/billings": "Billing",
     "/client/settings": "Settings"
@@ -41,14 +41,10 @@ export const SideBarContainerClient = ({ selectedPage }: SideBarContainerProps) 
 
   const topMenuItems: MenuItem[] = [
     { path: "/img/sidebar-options/nonSelectedVersion/dashboard.svg", text: "Dashboard", href: "/" },
-    { path: "/img/sidebar-options/nonSelectedVersion/messages.svg", text: "Messages", href: "/client/message", notificationCount: 2 },
     { path: "/img/sidebar-options/nonSelectedVersion/appointments.svg", text: "Calendar", href: "/client/appointments" },
+    { path: "/img/sidebar-options/nonSelectedVersion/messages.svg", text: "Messages", href: "/client/message", notificationCount: 2 },
     { path: "/img/sidebar-options/nonSelectedVersion/health-records.svg", text: "Health Records", href: "/client/health-records" },
     { path: "/img/sidebar-options/nonSelectedVersion/billing.svg", text: "Billing", href: "/client/billings" }
-  ];
-
-  const settingsItem: MenuItem[] = [
-    { path: "/img/sidebar-options/nonSelectedVersion/settings.svg", text: "Settings", href: "/client/settings" }
   ];
 
   const [userData, setUserData] = useState<any>(null);
@@ -56,28 +52,23 @@ export const SideBarContainerClient = ({ selectedPage }: SideBarContainerProps) 
   const currId = Cookies.get("userId");
 
   useEffect(() => {
-    const cached = sessionStorage.getItem("userData");
-    if (cached) {
-      setUserData(JSON.parse(cached));
-      setIsUserDataLoading(false);
-      return;
-    }
-
     const fetchUserData = async () => {
       try {
         const res = await fetch(`/api/me?userId=${currId}`);
         const user = await res.json();
         setUserData(user);
-        sessionStorage.setItem("userData", JSON.stringify(user));
       } catch (err) {
         console.error("Failed to fetch user:", err);
       } finally {
         setIsUserDataLoading(false);
       }
     };
-
-    fetchUserData();
-  }, []);
+  
+    if (currId) {
+      fetchUserData();
+    }
+  }, [currId]);
+  
 
   const handleClick = (href: string, text: string): void => {
     setCurrentSelected(text);
@@ -91,14 +82,15 @@ export const SideBarContainerClient = ({ selectedPage }: SideBarContainerProps) 
   return (
     <>
       <div style={{ position: "fixed", top: "20px", left: "10px", zIndex: 110, width: "120px", height: "30px" }}>
-  <Image 
-    src="/img/vetrail-logo-with-text.svg" 
-    alt="Vetrail Logo" 
-    fill 
-    style={{ objectFit: "contain" }}
-  />
-</div>
-
+        <div style={{ width: "120px", height: "30px", position: "relative" }}>
+          <Image 
+            src="/img/vetrail-logo-with-text.svg" 
+            alt="Vetrail Logo" 
+            fill 
+            style={{ objectFit: "contain" }}
+          />
+        </div>
+      </div>
 
       <aside
         onMouseEnter={() => setIsContainerHovered(true)}
@@ -173,7 +165,6 @@ export const SideBarContainerClient = ({ selectedPage }: SideBarContainerProps) 
               backgroundColor: currentSelected === "Settings" ? "#E8F0FE" : "transparent",
               transition: "border 0.2s ease-in-out, background-color 0.2s ease-in-out"
             }}
-            
           >
             {isUserDataLoading ? (
               <div
@@ -181,7 +172,7 @@ export const SideBarContainerClient = ({ selectedPage }: SideBarContainerProps) 
                   width: "100%",
                   height: "100%",
                   borderRadius: "50%",
-                  backgroundColor: "#E0E0E0"
+                  backgroundColor: "#D3D3D3"   // <-- force gray
                 }}
               />
             ) : userData?.profilePic ? (
@@ -203,11 +194,12 @@ export const SideBarContainerClient = ({ selectedPage }: SideBarContainerProps) 
                   width: "100%",
                   height: "100%",
                   borderRadius: "50%",
-                  backgroundColor: "#D3D3D3"
+                  backgroundColor: "#D3D3D3"    // <-- also force gray fallback here
                 }}
               />
             )}
           </div>
+
         </div>
       </aside>
     </>
