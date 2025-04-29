@@ -23,7 +23,7 @@ export default function HealthRecords() {
           overflowY: "auto",
           marginLeft: "120px" 
         }}>
-            <Header title="Health Records" showSearchBar={true}/>
+            <Header title="" showSearchBar={true}/>
 
             <RecordsHeader selectedTab={selectedTab} setSelectedTabAction={setSelectedTab} tabChange={tabChange} setTabChange={setTabChange}/>
             <RecordsTable selectedTab={selectedTab} setSelectedTabAction={setSelectedTab} tabChange={tabChange} setTabChange={setTabChange}/>
