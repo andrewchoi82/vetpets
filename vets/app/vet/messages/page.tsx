@@ -25,7 +25,14 @@ export default function Message() {
     <div style={{ display: "flex", height: "100vh", overflow: "hidden" }}>
       <SideBarContainerVets selectedPage="Messages" />
 
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", background: "#fff", overflow: "hidden" }}>
+      <div style={{ 
+        flex: 1, 
+        display: "flex", 
+        flexDirection: "column", 
+        background: "#fff", 
+        overflow: "hidden",
+        marginLeft: "120px" // Add margin to avoid overlap with the sidebar
+      }}>
         <Header title="Messages" showSearchBar={true}/>
         <div style={{ flex: 1, overflow: "hidden" }}>
         {pageState.view === 'overview' && (

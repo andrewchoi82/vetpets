@@ -49,7 +49,7 @@ export default function Appointments() {
       query = query.lt('date', today);
     }
   
-    // ✅ Sort by date DESC (most recent first)
+    // Sort by date DESC (most recent first)
     query = query.order('date', { ascending: false });
   
     const { data, error } = await query;
@@ -81,7 +81,14 @@ export default function Appointments() {
   return (
     <div style={{ display: "flex", height: "100vh", overflow: "hidden" }}>
       <SideBarContainerClient selectedPage="Appointments" />
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", background: "#fff", overflowY: "auto" }}>
+      <div style={{ 
+        flex: 1, 
+        display: "flex", 
+        flexDirection: "column", 
+        background: "#fff", 
+        overflowY: "auto",
+        marginLeft: "120px" // Add margin to avoid overlap with the sidebar
+      }}>
         <Header title="Appointments" showSearchBar={true} />
         <AppointmentsHeader
           selectedTab={selectedTab}
