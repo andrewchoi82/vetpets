@@ -176,7 +176,7 @@ export default function Login() {
           position: "relative", 
           right: 0,
           overflow: "hidden",
-          background: "radial-gradient(circle at 50% 50%,rgb(184, 236, 246) 20%, white 80%)",
+          background: "radial-gradient(circle at 50% 50%,rgb(192, 234, 243) 20%, white 80%)",
         }}
       >
         {/* Central circles layout based on mockup measurements */}
@@ -185,22 +185,22 @@ export default function Login() {
           { top: "43%", left: "48%", size: 109, image: "/img/login/sample-dog-1.png" },
           
           // Top line
-          { top: "20%", left: "48%", size: 60, color: "#1e3a8a" }, // Top dark blue circle (101.37px from center)
+          { top: "20%", left: "48%", size: 60, color: "#004F82" }, // Top dark blue circle (101.37px from center)
           
           // Right side
-          { top: "50%", left: "78%", size: 80, color: "#1e3a8a" }, // Right dark blue large circle (164.57px from center)
-          { top: "40%", left: "72%", size: 22, color: "#1e3a8a" }, // Upper right small dark blue
-          { top: "35%", left: "65%", size: 16, color: "#7dd3fc" }, // Upper right tiny light blue
+          { top: "50%", left: "78%", size: 80, color: "#004F82" }, // Right dark blue large circle (164.57px from center)
+          { top: "40%", left: "72%", size: 22, color: "#004F82" }, // Upper right small dark blue
+          { top: "35%", left: "65%", size: 16, color: "#6BE0F8" }, // Upper right tiny light blue
           
           // Left side
-          { top: "45%", left: "25%", size: 80, color: "#7dd3fc" }, // Left light blue large circle (107px from center)
-          { top: "30%", left: "35%", size: 20, color: "#1e3a8a" }, // Upper left small dark blue
+          { top: "45%", left: "25%", size: 80, color: "#6BE0F8" }, // Left light blue large circle (107px from center)
+          { top: "30%", left: "35%", size: 20, color: "#004F82" }, // Upper left small dark blue
           
           // Bottom layout
-          { top: "65%", left: "50%", size: 60, color: "#1e3a8a" }, // Bottom dark blue circle (113.97px from center)
-          { top: "68%", left: "70%", size: 60, color: "#7dd3fc" }, // Bottom right light blue (109px from bottom center)
-          { top: "55%", left: "60%", size: 12, color: "#7dd3fc" }, // Small light blue dot
-          { top: "60%", left: "38%", size: 18, color: "#1e3a8a" }, // Bottom left small dark blue (10.65px from position)
+          { top: "65%", left: "50%", size: 60, color: "#004F82" }, // Bottom dark blue circle (113.97px from center)
+          { top: "68%", left: "70%", size: 60, color: "#6BE0F8" }, // Bottom right light blue (109px from bottom center)
+          { top: "55%", left: "60%", size: 12, color: "#6BE0F8" }, // Small light blue dot
+          { top: "60%", left: "38%", size: 18, color: "#004F82" }, // Bottom left small dark blue (10.65px from position)
           
           // Bottom corner dog image - 88x88
           { top: "68%", left: "30%", size: 88, image: "/img/login/sample-dog-2.png" },
