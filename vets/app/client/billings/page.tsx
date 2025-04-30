@@ -22,7 +22,7 @@ export default function Billings() {
           overflowY: "auto",
           marginLeft: "120px" // Add margin to avoid overlap with the sidebar
         }}>
-            <Header title="Billings" showSearchBar={true}/>
+            <Header title="" showSearchBar={true}/>
 
             <BillingsHeader selectedTab={selectedTab} setSelectedTabAction={setSelectedTab}/>
             <BillingsTable selectedTab={selectedTab} setSelectedTabAction={setSelectedTab}/>

@@ -1,64 +1,86 @@
-
 "use client";
 import React from "react";
 import Image from "next/image";
+import { SelectTab } from "../Util/SelectTab";
 
-interface BillingsTableProps {
-   selectedTab: "current bills" | "payment history";
-   setSelectedTabAction: (tab: "current bills" | "payment history") => void;
+interface BillingsHeaderProps {
+  selectedTab: "current bills" | "payment history";
+  setSelectedTabAction: (tab: "current bills" | "payment history") => void;
 }
 
-export default function RecordsHeader({ selectedTab, setSelectedTabAction }: BillingsTableProps) {
+interface TabItem {
+  label: string;
+  value: "current bills" | "payment history";
+  iconBasePath: string;
+  fileName: string;
+}
+
+export default function RecordsHeader({ selectedTab, setSelectedTabAction }: BillingsHeaderProps) {
+  const tabs: TabItem[] = [
+    {
+      label: "Current bills",
+      value: "current bills",
+      iconBasePath: "/img/billings",
+      fileName: "current-bills-icon.svg"
+    },
+    {
+      label: "Payment history",
+      value: "payment history",
+      iconBasePath: "/img/billings",
+      fileName: "payment-history-icon.svg"
+    }
+  ];
+
+  const getIconPath = (tab: TabItem, isSelected: boolean) => {
+    const folder = isSelected ? "selected" : "nonSelected";
+    return `${tab.iconBasePath}/${folder}/${tab.fileName}`;
+  };
+
+  const selectTabItems = tabs.map((tab) => ({
+    label: tab.label,
+    value: tab.value,
+    icon: (
+      <Image
+        src={getIconPath(tab, selectedTab === tab.value)}
+        alt={tab.label}
+        width={16}
+        height={16}
+      />
+    )
+  }));
+
   return (
-    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", padding: "0 24px", borderBottom: "1px solid #e5e7eb" }}>
-      {/* Tabs */}
-      <div style= {{display: "flex", alignItems: "center"}}> 
-         <div style={{ display: "flex", gap: "32px", marginTop: "25px" }}>
-            <button
-               onClick={() => setSelectedTabAction("current bills")}
-               style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "6px",
-                  marginTop: "5px",
-                  paddingBottom: "14px",
-                  border: "none",
-                  background: "none",
-                  borderBottom: selectedTab === "current bills" ? "2px solid #1e3a8a" : "2px solid transparent",
-                  color: selectedTab === "current bills" ? "#1e3a8a" : "#4b5563",
-                  fontWeight: selectedTab === "current bills" ? 500 : 300,
-                  fontSize: "17px",
-                  cursor: "pointer",
-               }}
-            >
-               <Image src="/img/billings/current-bills-icon.svg" alt="Current bills" width={16} height={16} />
-               Current bills
-            </button>
+    <div style={{
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "flex-end",
+      padding: "0 24px",
+      borderBottom: "1px solid #e5e7eb"
+    }}>
+      <div style={{ display: "flex", flexDirection: "column", width: "100%", marginTop: 20, marginBottom: 20 }}>
+        {/* Title and paw icon */}
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <div style={{ fontSize: 22, fontWeight: 500 }}>Billings</div>
+          <Image
+            src="/img/paw.svg"
+            alt="Paw Icon"
+            width={20}
+            height={20}
+            style={{ marginLeft: 9 }}
+          />
+        </div>
 
-            <button
-               onClick={() => setSelectedTabAction("payment history")}
-               style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "6px",
-                  marginTop: "5px",
-                  paddingBottom: "14px",
-                  border: "none",
-                  background: "none",
-                  borderBottom: selectedTab === "payment history" ? "2px solid #1e3a8a" : "2px solid transparent",
-                  color: selectedTab === "payment history" ? "#1e3a8a" : "#4b5563",
-                  fontWeight: selectedTab === "payment history" ? 500 : 300,
-                  fontSize: "17px",
-                  cursor: "pointer",
-               }}
-            >
-               <Image src="/img/billings/payment-history-icon.svg" alt="Payment history" width={16} height={16} />
-               Payment history
-            </button>
-
-            
-            </div>
-         </div>
+        {/* Tabs */}
+        <div style={{ marginTop: 8 }}>
+          <SelectTab
+            tabs={selectTabItems}
+            selectedTab={selectedTab}
+            onSelectTab={(tabValue) =>
+              setSelectedTabAction(tabValue as "current bills" | "payment history")
+            }
+          />
+        </div>
+      </div>
     </div>
   );
 }
