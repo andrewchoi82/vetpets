@@ -7,6 +7,7 @@ import PersonalInfoContainer from "@/components/Settings/PersonalInfoContainer";
 import AccountInfo from "@/components/Settings/AccountInfo";
 import { getImageUrl as getStorageImageUrl } from '@/app/lib/supabaseGetImage';
 import Cookies from 'js-cookie';
+import Image from "next/image";
 
 export default function SettingsClient() {
   const [userData, setUserData] = useState<any>(null);
@@ -116,7 +117,7 @@ export default function SettingsClient() {
         overflowY: "auto",
         marginLeft: "120px" // Add margin to avoid overlap with the sidebar
       }}>
-        <Header title="Settings" showSearchBar={true} />
+        <Header title="" showSearchBar={true} />
         
         {updateSuccess !== null && (
           <div 
@@ -132,6 +133,17 @@ export default function SettingsClient() {
             {updateSuccess ? "Successfully updated your information!" : "Failed to update information. Please try again."}
           </div>
         )}
+
+        <div style={{ display: "flex", alignItems: "center", marginTop: "20px", marginLeft: "20px" }}>
+          <div style={{ fontSize: 22, fontWeight: 500 }}>Profile</div>
+          <Image
+            src="/img/paw.svg"
+            alt="Paw Icon"
+            width={20}
+            height={20}
+            style={{ marginLeft: 9 }}
+          />
+        </div>
         
         <BasicInfoContainer
           style={{ marginTop: "20px", marginLeft: "20px" }}

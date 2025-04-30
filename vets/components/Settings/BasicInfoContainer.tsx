@@ -23,6 +23,7 @@ export default function BasicInfoContainer({
   onUpdate,
 }: SidebarProps) {
   const [editMode, setEditMode] = useState<"fullName" | InputField | "profilePic" | null>(null);
+  const [hoveredField, setHoveredField] = useState<null | string>(null);
   const [firstName, lastName] = fullName.split(" ");
   const [inputValues, setInputValues] = useState({
     firstName: firstName || "",
@@ -35,13 +36,10 @@ export default function BasicInfoContainer({
   const formattedSex = formatSex(sex);
   const formattedBirthday = formatDate(birthday);
 
-  const handleEdit = (field: "fullName" | InputField | "profilePic") => {
-    setEditMode(field);
-  };
+  const handleEdit = (field: "fullName" | InputField | "profilePic") => setEditMode(field);
 
-  const handleChange = (field: InputField, value: string) => {
+  const handleChange = (field: InputField, value: string) =>
     setInputValues((prev) => ({ ...prev, [field]: value }));
-  };
 
   const handleSave = (field: string) => {
     if (field === "fullName") {
@@ -62,6 +60,48 @@ export default function BasicInfoContainer({
     });
     setEditMode(null);
   };
+
+  // Fixed hover style to maintain original spacing
+  const getHoverStyle = (field: string): React.CSSProperties => ({
+    backgroundColor: hoveredField === field ? "#f9fafb" : "transparent",
+    transition: "background-color 0.2s ease",
+    marginLeft: "-25px", // Negative margin to offset parent padding
+    paddingLeft: "25px", // Add padding back on the left
+    paddingRight: "25px", // Add padding on the right
+    width: "calc(100% + 50px)", // Add 50px to account for both left and right padding
+    marginTop: "-10px",
+    marginBottom: "-10px",
+    paddingTop: "10px",
+    paddingBottom: "10px",
+  });
+
+  const ArrowButton = ({ onClick }: { onClick: () => void }) => (
+    <button
+      onClick={onClick}
+      style={{
+        border: "none",
+        background: "none",
+        padding: 0,
+        cursor: "pointer",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        width: "10.087px",
+        height: "15.63px",
+        flexShrink: 0,
+      }}
+    >
+      <img
+        src="/img/settings/arrow.svg"
+        alt="Edit"
+        style={{
+          width: "10.087px",
+          height: "15.63px",
+          flexShrink: 0,
+        }}
+      />
+    </button>
+  );  
 
   return (
     <div
@@ -92,11 +132,14 @@ export default function BasicInfoContainer({
           {/* Profile Picture */}
           <div
             style={{
+              ...getHoverStyle("profilePic"),
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
               fontSize: "17px",
             }}
+            onMouseEnter={() => setHoveredField("profilePic")}
+            onMouseLeave={() => setHoveredField(null)}
           >
             <div style={{ display: "flex", alignItems: "center" }}>
               <p style={{ width: "150px" }}>Profile picture</p>
@@ -113,21 +156,19 @@ export default function BasicInfoContainer({
                 }}
               />
             </div>
-            <div
-              style={{ color: "#9CA3AF", fontSize: "18px", cursor: "pointer" }}
-              onClick={() => handleEdit("profilePic")}
-            >
-              {">"}
-            </div>
+            <ArrowButton onClick={() => handleEdit("profilePic")} />
           </div>
 
           {/* Full Name */}
           <div
             style={{
+              ...getHoverStyle("fullName"),
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
             }}
+            onMouseEnter={() => setHoveredField("fullName")}
+            onMouseLeave={() => setHoveredField(null)}
           >
             {editMode === "fullName" ? (
               <div style={{ display: "flex", width: "100%", alignItems: "center", gap: "10px" }}>
@@ -193,12 +234,7 @@ export default function BasicInfoContainer({
                   <p style={{ width: "150px" }}>Full name</p>
                   <p style={{ color: "#4C4C4C" }}>{formattedName}</p>
                 </div>
-                <div
-                  style={{ color: "#9CA3AF", fontSize: "18px", cursor: "pointer" }}
-                  onClick={() => handleEdit("fullName")}
-                >
-                  {">"}
-                </div>
+                <ArrowButton onClick={() => handleEdit("fullName")} />
               </>
             )}
           </div>
@@ -206,10 +242,13 @@ export default function BasicInfoContainer({
           {/* Birthday */}
           <div
             style={{
+              ...getHoverStyle("birthday"),
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
             }}
+            onMouseEnter={() => setHoveredField("birthday")}
+            onMouseLeave={() => setHoveredField(null)}
           >
             {editMode === "birthday" ? (
               <div style={{ display: "flex", width: "100%", alignItems: "center", gap: "10px" }}>
@@ -261,12 +300,8 @@ export default function BasicInfoContainer({
                   <p style={{ width: "150px" }}>Birthday</p>
                   <p style={{ color: "#4C4C4C" }}>{formattedBirthday}</p>
                 </div>
-                <div
-                  style={{ color: "#9CA3AF", fontSize: "18px", cursor: "pointer" }}
-                  onClick={() => handleEdit("birthday")}
-                >
-                  {">"}
-                </div>
+
+                <ArrowButton onClick={() => handleEdit("birthday")} />
               </>
             )}
           </div>
@@ -274,10 +309,13 @@ export default function BasicInfoContainer({
           {/* Sex */}
           <div
             style={{
+              ...getHoverStyle("sex"),
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
             }}
+            onMouseEnter={() => setHoveredField("sex")}
+            onMouseLeave={() => setHoveredField(null)}
           >
             {editMode === "sex" ? (
               <div style={{ display: "flex", width: "100%", alignItems: "center", gap: "10px" }}>
@@ -332,12 +370,7 @@ export default function BasicInfoContainer({
                   <p style={{ width: "150px" }}>Sex</p>
                   <p style={{ color: "#4C4C4C" }}>{formattedSex}</p>
                 </div>
-                <div
-                  style={{ color: "#9CA3AF", fontSize: "18px", cursor: "pointer" }}
-                  onClick={() => handleEdit("sex")}
-                >
-                  {">"}
-                </div>
+                <ArrowButton onClick={() => handleEdit("sex")} />
               </>
             )}
           </div>
