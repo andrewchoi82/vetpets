@@ -6,23 +6,23 @@ import { Header } from "../../../components/MainHeader/Header";
 import { supabase } from "@/app/lib/supabaseClient";
 import { useEffect, useState } from "react";
 import { SideBarContainerClient } from "../../../components/MainSideBar/SideBarContainerClient";
-
+import Image from "next/image";
 
 export default function Appointments() {
   const [selectedTab, setSelectedTab] = useState<"upcoming" | "past">("upcoming");
   const [appointments, setAppointments] = useState<any[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const petId = 1; 
+  const [loading, setLoading] = useState(true);
+  const petId = 1;
 
   useEffect(() => {
     fetchAppointmentData();
   }, [selectedTab]);
 
-  console.log(appointments);
-
   const fetchAppointmentData = async () => {
-    const today = new Date().toISOString().split('T')[0]; // Format: YYYY-MM-DD
-  
+    setLoading(true);
+
+    const today = new Date().toISOString().split('T')[0];
     let query = supabase
       .from('appointments')
       .select(`
@@ -40,27 +40,26 @@ export default function Appointments() {
           )
         )
       `)
-      .eq('petId', petId);  // Filter by petId
-  
-    // Apply upcoming or past filter
+      .eq('petId', petId);
+
     if (selectedTab === "upcoming") {
       query = query.gte('date', today);
     } else {
       query = query.lt('date', today);
     }
-  
-    // Sort by date DESC (most recent first)
+
     query = query.order('date', { ascending: false });
-  
+
     const { data, error } = await query;
-  
+
     if (error) {
-      console.error("Error fetching pets with doctor names:", error);
+      console.error("Error fetching appointments:", error);
     } else {
       setAppointments(data);
     }
+
+    setLoading(false);
   };
-  
 
   const handleSchedule = async (newAppointment: any) => {
     try {
@@ -76,6 +75,50 @@ export default function Appointments() {
     }
   };
 
+  if (loading) {
+    return (
+      <div style={{ display: "flex", height: "100vh", overflow: "hidden" }}>
+        <SideBarContainerClient selectedPage="Appointments" />
+        <div style={{ 
+          flex: 1, 
+          position: "relative", 
+          backgroundColor: "#fff", 
+          marginLeft: "120px" 
+        }}>
+          <div style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            backgroundColor: "#ffffff",
+            zIndex: 10
+          }}>
+            <Image
+              src="/img/vetrail-logo.svg"
+              alt="Loading..."
+              width={80}
+              height={80}
+              style={{
+                animation: "spin 1.5s linear infinite"
+              }}
+            />
+          </div>
+
+          <style jsx>{`
+            @keyframes spin {
+              0% { transform: rotate(0deg); }
+              100% { transform: rotate(360deg); }
+            }
+          `}</style>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div style={{ display: "flex", height: "100vh", overflow: "hidden" }}>
       <SideBarContainerClient selectedPage="Appointments" />
@@ -85,7 +128,7 @@ export default function Appointments() {
         flexDirection: "column", 
         background: "#fff", 
         overflowY: "auto",
-        marginLeft: "120px" // Add margin to avoid overlap with the sidebar
+        marginLeft: "120px"
       }}>
         <Header title="" showSearchBar={true} />
         <AppointmentsHeader
