@@ -227,14 +227,14 @@ export default function MessagesSide({ setPageState }: MessageOverviewProps) {
     return (
         <main className="w-full bg-white h-full overflow-hidden">
             <div className="flex h-full">
-                <div className="w-md h-full overflow-y-auto border-[1px] border-solid border-[#DFDFDF] bg-gray-100">
+                <div className="w-md h-full overflow-y-auto border-[1px] border-r border-r-[#DFDFDF] border-t-0 border-l-0 border-b-0 space-y-3 p-3">
                     {messageData && messageData.length > 0 ? (
                         messageData.map((message, index) => (
                             <div
                                 key={message.convoId}
-                                className={`flex flex-row justify-center items-center w-full h-[11vh] border-solid border-[#DFDFDF] ${index === 0 ? 'border-b-[1px]' :
+                                className={`flex flex-row justify-center items-center w-full h-[11vh] rounded-xl border-solid border-[#DFDFDF] ${index === 0 ? 'border-b-[1px]' :
                                     'border-b-[1px]'
-                                    } ${onMessage && message.convoId === convoNum ? 'bg-gray-200' : 'bg-white'} hover:bg-gray-200 cursor-pointer`}
+                                    } ${onMessage && message.convoId === convoNum ? 'bg-[#004F82]': 'bg-[#F2F2F2] hover:bg-gray-200'} cursor-pointer`}
                                 style={{ gap: '20px' }}
                                 onClick={() => {
                                     if (onMessage) {
@@ -278,11 +278,11 @@ export default function MessagesSide({ setPageState }: MessageOverviewProps) {
                                     height={52}
                                     className="rounded-[100%]"
                                 />
-                                <div className="flex flex-col w-[200px] ">
-                                    <div className="text-[#919191] font-medium">
+                                <div className="flex flex-col w-[200px]">
+                                    <div className={`${onMessage && message.convoId === convoNum ? 'text-white' : 'text-[#919191]'} font-medium`}>
                                         {message.name}
                                     </div>
-                                    <div className="text-[#4C4C4C]">
+                                    <div className={`${onMessage && message.convoId === convoNum ? 'text-[#DFDFDF]' : 'text-[#4C4C4C]'}`}>
                                         {currUserData?.userType === 1 ? (
                                             otherEndUserData && (
                                                 otherEndUserData.userType === 1
