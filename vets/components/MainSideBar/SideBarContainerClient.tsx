@@ -44,7 +44,7 @@ export const SideBarContainerClient = ({ selectedPage }: SideBarContainerProps) 
     { path: "/img/sidebar-options/nonSelectedVersion/appointments.svg", text: "Appointments", href: "/client/appointments" },
     { path: "/img/sidebar-options/nonSelectedVersion/messages.svg", text: "Messages", href: "/client/message", notificationCount: 2 },
     { path: "/img/sidebar-options/nonSelectedVersion/health-records.svg", text: "Health Records", href: "/client/health-records" },
-    { path: "/img/sidebar-options/nonSelectedVersion/billing.svg", text: "Billing", href: "/client/billings" }
+    { path: "/img/sidebar-options/nonSelectedVersion/billing.svg", text: "Billings", href: "/client/billings" }
   ];
 
   const [userData, setUserData] = useState<any>(null);

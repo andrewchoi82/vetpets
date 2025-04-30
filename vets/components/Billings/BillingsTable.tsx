@@ -1,15 +1,15 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie";
 
 interface BillingsTableProps {
   selectedTab: "current bills" | "payment history";
   setSelectedTabAction: (tab: "current bills" | "payment history") => void;
 }
 
-export default function RecordsTable({ selectedTab, setSelectedTabAction }: BillingsTableProps) {
+export default function RecordsTable({ selectedTab }: BillingsTableProps) {
   const [billings, setBillings] = useState<any[]>([]);
-  const petId = "1";
+  const petId = Cookies.get("petId") || "1";
 
   useEffect(() => {
     const fetchBillings = async () => {
@@ -31,20 +31,20 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction }: Bill
       (selectedTab === "payment history" && bill.status.toLowerCase() === "paid")
   );
 
-  const renderTable = (data: any[], statusColor: "red" | "green") => (
-    <div style={{ width: "100%" }}>
+  return (
+    <div style={{ width: "100%", minHeight: "600px" }}>
       <table style={{ width: "100%", borderCollapse: "collapse" }}>
         <thead>
           <tr style={{ borderBottom: "1px solid #d1d5db" }}>
-            <th style={{ ...baseThStyle, fontSize: 17, paddingLeft: 40, width: "160px" }}>Date</th>
-            <th style={{ ...baseThStyle, fontSize: 17, paddingLeft: 24, width: "240px" }}>Appointment reason</th>
-            <th style={{ ...baseThStyle, fontSize: 17, paddingLeft: 24, width: "160px" }}>Total amount</th>
-            <th style={{ ...baseThStyle, fontSize: 17, paddingLeft: 24, width: "160px" }}>Status</th>
-            <th style={{ ...baseThStyle, fontSize: 17, paddingLeft: 24, width: "120px" }}></th>
+            <th style={{ ...baseThStyle, width: "176px", paddingLeft: "40px" }}>Date</th>
+            <th style={{ ...baseThStyle, width: "240px" }}>Appointment reason</th>
+            <th style={{ ...baseThStyle, width: "160px" }}>Total amount</th>
+            <th style={{ ...baseThStyle, width: "160px" }}>Status</th>
+            <th style={{ ...baseThStyle, width: "120px" }}></th>
           </tr>
         </thead>
         <tbody>
-          {data.map((bill, index) => {
+          {filteredBillings.map((bill, index) => {
             const iconSrc =
               bill.status.toLowerCase() === "unpaid"
                 ? "/img/general/red-circle-icon.svg"
@@ -52,42 +52,45 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction }: Bill
 
             return (
               <tr key={index} style={{ height: "64px", borderBottom: "1px solid #e5e5e5" }}>
-                <td style={{ paddingLeft: 40, fontSize: "17px", color: "#111827" }}>
+                <td style={{ ...baseTdStyle, paddingLeft: "40px" }}>
                   {new Date(bill.date).toLocaleDateString("en-US", {
                     year: "numeric",
                     month: "long",
                     day: "numeric",
                   })}
                 </td>
-                <td style={{ paddingLeft: 24, fontSize: "17px", color: "#111827" }}>{bill.name}</td>
-                <td style={{ paddingLeft: 24, fontSize: "17px", color: "#111827" }}>
-                  {`$${bill.cost.toFixed(2)}`}
-                </td>
-                <td style={{ paddingLeft: 24 }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "17px", color: "#111827" }}>
-                    <img src={iconSrc} alt={`${bill.status} Icon`} style={{ width: "16px", height: "16px", marginTop: "1px" }} />
+                <td style={baseTdStyle}>{bill.name}</td>
+                <td style={baseTdStyle}>${bill.cost.toFixed(2)}</td>
+                <td style={baseTdStyle}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                    <img
+                      src={iconSrc}
+                      alt={`${bill.status} Icon`}
+                      style={{ width: "16px", height: "16px", marginTop: "1px" }}
+                    />
                     {bill.status.charAt(0).toUpperCase() + bill.status.slice(1)}
                   </div>
                 </td>
-                <td style={{ paddingLeft: 24 }}>
+                <td style={baseTdStyle}>
                   <button
+                    onClick={() => window.open(bill.statement, "_blank")}
                     style={{
                       display: "flex",
                       alignItems: "center",
                       gap: "6px",
-                      border: "none",
                       background: "transparent",
-                      fontSize: "17px",
-                      color: "#374151",
+                      border: "none",
+                      color: "#4C4C4C",
+                      fontSize: "15px",
+                      fontWeight: 400,
                       cursor: "pointer",
                       padding: 0,
                     }}
-                    onClick={() => window.open(bill.statement, "_blank")}
                   >
                     <img
                       src="/img/health-records/details-icon.svg"
-                      alt="Download Icon"
-                      style={{ width: "18px", height: "18px", marginTop: "5px" }}
+                      alt="Statement Icon"
+                      style={{ width: "18px", height: "18px", marginTop: "4px" }}
                     />
                     <span style={{ textDecoration: "underline" }}>Statement</span>
                   </button>
@@ -99,15 +102,28 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction }: Bill
       </table>
     </div>
   );
-
-  return <>{selectedTab === "current bills" ? renderTable(filteredBillings, "red") : renderTable(filteredBillings, "green")}</>;
 }
 
 const baseThStyle = {
-  paddingTop: "20px",
-  paddingBottom: "8px",
-  fontSize: "13px",
-  fontWeight: 500,
-  color: "#6B7280",
+  height: "64px",
+  fontSize: "17px",
+  fontWeight: 400,
+  fontFamily: "SF Pro",
+  color: "#919191",
+  lineHeight: "220%",
+  fontStyle: "normal",
   textAlign: "left" as const,
+  verticalAlign: "middle" as const,
+};
+
+const baseTdStyle = {
+  height: "64px",
+  fontSize: "15px",
+  fontWeight: 400,
+  fontFamily: "Inter",
+  color: "#4C4C4C",
+  lineHeight: "220%",
+  fontStyle: "normal",
+  textAlign: "left" as const,
+  verticalAlign: "middle" as const,
 };
