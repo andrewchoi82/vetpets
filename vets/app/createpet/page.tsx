@@ -170,7 +170,28 @@ export default function CreatePet() {
 
             {/* Login Panel */}
 
-                <div className="flex flex-col w-125 h-96 mt-[30vh] mr-30 bg-white rounded-2xl shadow-[0px_4px_20px_0px_rgba(0,0,0,0.03)] border-[1px] border-[#DFDFDF] p-8">
+                <div className="flex flex-col w-125 h-96 mt-[30vh] mr-30 bg-white rounded-2xl shadow-[0px_4px_20px_0px_rgba(0,0,0,0.03)] border-[1px] border-[#DFDFDF] p-8 relative">
+                    {/* Close Button */}
+                    <button
+                        onClick={() => router.push("/getpet")}
+                        className="absolute top-4 right-4 w-6 h-6 flex items-center justify-center text-gray-500 hover:text-gray-700 hover:cursor-pointer"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth={2}
+                            stroke="currentColor"
+                            className="w-5 h-5"
+                        >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M6 18L18 6M6 6l12 12"
+                            />
+                        </svg>
+                    </button>
+
                     <div className="text-[#4C4C4C] text-Text-Main text-4xl font-semibold leading-[77px] mb-4">
                         Connect your pet
                     </div>

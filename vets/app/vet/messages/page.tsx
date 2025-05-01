@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import React, { useEffect, useState } from 'react';
-import { Header } from "@/components/MainHeader/Header";
+import { HeaderNew } from "@/components/MainHeader/HeaderNew";
 import { SideBarContainerClient } from "@/components/MainSideBar/SideBarContainerClient";
 import MessageTexting from "@/components/Messages/MessageTexting";
 import MessageOverview from "@/components/Messages/MessageOverview";
@@ -33,7 +33,7 @@ export default function Message() {
         overflow: "hidden",
         marginLeft: "120px" // Add margin to avoid overlap with the sidebar
       }}>
-        <Header title="Messages" showSearchBar={true}/>
+        <HeaderNew  title="Messages" showSearchBar={true}/>
         <div style={{ flex: 1, overflow: "hidden" }}>
         {pageState.view === 'overview' && (
             <MessagesSide setPageState={setPageState} />

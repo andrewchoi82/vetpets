@@ -160,7 +160,7 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction, tabCha
             <div style={{ width: '40%', paddingRight: '20px' }}>
               <div className="w-[548px] h-[849px] relative bg-black/0 overflow-hidden">
                 <div className="w-96 h-5 left-[72px] top-[29px] absolute justify-center text-side-text text-xl leading-10">
-                  AI-generated blood test results summary
+                  AI-generated test results summary
                 </div>
                 <img src={"/img/dashboard/compGreenStatus.svg"} alt={`Green Icon`} className="w-6 h-6 left-[32px] top-[36px] absolute" />
 

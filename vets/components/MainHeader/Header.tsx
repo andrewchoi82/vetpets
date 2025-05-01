@@ -144,20 +144,14 @@ export const Header = ({ title, showSearchBar }: HeaderProps) => {
       style={{
         display: "flex",
         alignItems: "center",
-        justifyContent: "space-between",
+        justifyContent: "end",
         width: "100%",
-        padding: "40px 30px",
-        paddingTop: "40px",
-        paddingBottom: "20px",
-
-        borderBottom: "1px solid #E5E5E5",
         backgroundColor: "#fff",
       }}
     >
-      <h1 style={{ fontSize: "30px", fontWeight: "500" }}>{title}</h1>
 
-      <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
-        {showSearchBar && <SearchBar />}
+      <div style={{ display: "flex", alignItems: "center", gap: "20px", marginTop: "40px" ,marginRight: "5%"}}>
+        <SearchBar />
 
         <Image
           src="/img/header/reminder-icon.svg"
