@@ -20,6 +20,7 @@ export default function MainContentNew() {
     sex: string;
     sterilized: boolean;
     petpicture: string;
+    name: string;
   };
 
   const [pet, setPet] = useState<Pet | null>(null);
@@ -43,7 +44,7 @@ export default function MainContentNew() {
   return (
     <main className="p-[5px] md:p-[50px] h-full bg-[#F9F9F9]">
       <div className="flex items-center gap-2 bg-[#F9F9F9] ">
-        <h1 className="text-3xl font-bold">Snowball</h1>
+        <h1 className="text-3xl font-bold">{pet?.breed || ""}</h1>
         <Image
           src="/img/dashboard/paw.svg" // replace with correct path
           alt="Snowball"
