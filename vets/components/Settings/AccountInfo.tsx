@@ -17,15 +17,14 @@ export default function AccountInfo({
   onUpdate,
 }: SidebarProps) {
   const [editMode, setEditMode] = useState<"username" | "password" | null>(null);
+  const [hoveredField, setHoveredField] = useState<string | null>(null);
   const [inputValues, setInputValues] = useState({
     username: username,
     password: "",
     confirmPassword: "",
   });
 
-  const handleEdit = (field: "username" | "password") => {
-    setEditMode(field);
-  };
+  const handleEdit = (field: "username" | "password") => setEditMode(field);
 
   const handleChange = (field: InputField, value: string) => {
     setInputValues((prev) => ({ ...prev, [field]: value }));
@@ -56,6 +55,48 @@ export default function AccountInfo({
     setEditMode(null);
   };
 
+  const getHoverStyle = (field: string): React.CSSProperties => ({
+    backgroundColor: hoveredField === field ? "#f9fafb" : "transparent",
+    transition: "background-color 0.2s ease",
+    marginLeft: "-25px",
+    paddingLeft: "25px",
+    paddingRight: "25px",
+    width: "calc(100% + 50px)",
+    marginTop: "-10px",
+    marginBottom: "-10px",
+    paddingTop: "10px",
+    paddingBottom: "10px",
+  });
+
+  const ArrowButton = ({ onClick }: { onClick: () => void }) => (
+    <button
+      onClick={onClick}
+      style={{
+        border: "none",
+        background: "none",
+        padding: 0,
+        cursor: "pointer",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        width: "10.087px",
+        height: "15.63px",
+        flexShrink: 0,
+      }}
+    >
+      <img
+        src="/img/settings/arrow.svg"
+        alt="Edit"
+        style={{
+          width: "10.087px",
+          height: "15.63px",
+          flexShrink: 0,
+        }}
+      />
+    </button>
+  );
+  
+
   return (
     <div
       style={{
@@ -85,11 +126,14 @@ export default function AccountInfo({
           {/* Username */}
           <div
             style={{
+              ...getHoverStyle("username"),
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
               fontSize: "17px",
             }}
+            onMouseEnter={() => setHoveredField("username")}
+            onMouseLeave={() => setHoveredField(null)}
           >
             {editMode === "username" ? (
               <div style={{ display: "flex", width: "100%", alignItems: "center", gap: "10px" }}>
@@ -108,32 +152,8 @@ export default function AccountInfo({
                       color: "#4C4C4C",
                     }}
                   />
-                  <button
-                    onClick={() => handleSave("username")}
-                    style={{
-                      padding: "8px 12px",
-                      backgroundColor: "#0ea5e9",
-                      color: "white",
-                      border: "none",
-                      borderRadius: "5px",
-                      cursor: "pointer",
-                    }}
-                  >
-                    Save
-                  </button>
-                  <button
-                    onClick={handleCancel}
-                    style={{
-                      padding: "8px 12px",
-                      backgroundColor: "#ef4444",
-                      color: "white",
-                      border: "none",
-                      borderRadius: "5px",
-                      cursor: "pointer",
-                    }}
-                  >
-                    Cancel
-                  </button>
+                  <button onClick={() => handleSave("username")} style={primaryButtonStyle}>Save</button>
+                  <button onClick={handleCancel} style={cancelLinkStyle}>Cancel</button>
                 </div>
               </div>
             ) : (
@@ -142,12 +162,7 @@ export default function AccountInfo({
                   <p style={{ width: "150px" }}>Username</p>
                   <p style={{ color: "#4C4C4C" }}>{username}</p>
                 </div>
-                <div
-                  style={{ color: "#9CA3AF", fontSize: "18px", cursor: "pointer" }}
-                  onClick={() => handleEdit("username")}
-                >
-                  {">"}
-                </div>
+                <ArrowButton onClick={() => handleEdit("username")} />
               </>
             )}
           </div>
@@ -155,72 +170,47 @@ export default function AccountInfo({
           {/* Password */}
           <div
             style={{
+              ...getHoverStyle("password"),
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
             }}
+            onMouseEnter={() => setHoveredField("password")}
+            onMouseLeave={() => setHoveredField(null)}
           >
             {editMode === "password" ? (
               <div style={{ display: "flex", width: "100%", alignItems: "center", gap: "10px" }}>
                 <p style={{ width: "150px" }}>Password</p>
                 <div style={{ display: "flex", flex: 1, flexDirection: "column", gap: "10px" }}>
-                  <div style={{ display: "flex", width: "100%", gap: "10px" }}>
-                    <input
-                      type="password"
-                      value={inputValues.password}
-                      onChange={(e) => handleChange("password", e.target.value)}
-                      placeholder="New Password"
-                      style={{
-                        flex: 1,
-                        padding: "8px",
-                        border: "1px solid #DFDFDF",
-                        borderRadius: "5px",
-                        color: "#4C4C4C",
-                      }}
-                    />
-                  </div>
-                  <div style={{ display: "flex", width: "100%", gap: "10px" }}>
-                    <input
-                      type="password"
-                      value={inputValues.confirmPassword}
-                      onChange={(e) => handleChange("confirmPassword", e.target.value)}
-                      placeholder="Confirm New Password"
-                      style={{
-                        flex: 1,
-                        padding: "8px",
-                        border: "1px solid #DFDFDF",
-                        borderRadius: "5px",
-                        color: "#4C4C4C",
-                      }}
-                    />
-                  </div>
-                  <div style={{ display: "flex", width: "100%", gap: "10px", justifyContent: "flex-end" }}>
-                    <button
-                      onClick={() => handleSave("password")}
-                      style={{
-                        padding: "8px 12px",
-                        backgroundColor: "#0ea5e9",
-                        color: "white",
-                        border: "none",
-                        borderRadius: "5px",
-                        cursor: "pointer",
-                      }}
-                    >
-                      Save
-                    </button>
-                    <button
-                      onClick={handleCancel}
-                      style={{
-                        padding: "8px 12px",
-                        backgroundColor: "#ef4444",
-                        color: "white",
-                        border: "none",
-                        borderRadius: "5px",
-                        cursor: "pointer",
-                      }}
-                    >
-                      Cancel
-                    </button>
+                  <input
+                    type="password"
+                    value={inputValues.password}
+                    onChange={(e) => handleChange("password", e.target.value)}
+                    placeholder="New Password"
+                    style={{
+                      flex: 1,
+                      padding: "8px",
+                      border: "1px solid #DFDFDF",
+                      borderRadius: "5px",
+                      color: "#4C4C4C",
+                    }}
+                  />
+                  <input
+                    type="password"
+                    value={inputValues.confirmPassword}
+                    onChange={(e) => handleChange("confirmPassword", e.target.value)}
+                    placeholder="Confirm New Password"
+                    style={{
+                      flex: 1,
+                      padding: "8px",
+                      border: "1px solid #DFDFDF",
+                      borderRadius: "5px",
+                      color: "#4C4C4C",
+                    }}
+                  />
+                  <div style={{ display: "flex", gap: "10px", justifyContent: "flex-end" }}>
+                    <button onClick={() => handleSave("password")} style={primaryButtonStyle}>Save</button>
+                    <button onClick={handleCancel} style={cancelLinkStyle}>Cancel</button>
                   </div>
                 </div>
               </div>
@@ -230,12 +220,7 @@ export default function AccountInfo({
                   <p style={{ width: "150px" }}>Password</p>
                   <p style={{ color: "#4C4C4C" }}>{password}</p>
                 </div>
-                <div
-                  style={{ color: "#9CA3AF", fontSize: "18px", cursor: "pointer" }}
-                  onClick={() => handleEdit("password")}
-                >
-                  {">"}
-                </div>
+                <ArrowButton onClick={() => handleEdit("password")} />
               </>
             )}
           </div>
@@ -244,3 +229,21 @@ export default function AccountInfo({
     </div>
   );
 }
+
+const primaryButtonStyle = {
+  padding: "8px 20px",
+  backgroundColor: "#004d81",
+  color: "#fff",
+  border: "none",
+  borderRadius: "8px",
+  cursor: "pointer",
+};
+
+const cancelLinkStyle = {
+  background: "none",
+  border: "none",
+  color: "#004d81",
+  textDecoration: "underline",
+  fontSize: "16px",
+  cursor: "pointer",
+};

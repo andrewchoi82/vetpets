@@ -40,7 +40,7 @@ export default function DashboardBillingBox() {
   
 
   return (
-    <div className="w-[580px] h-[266px] bg-white rounded-[10px] border border-[#e5e5e5] p-4 flex flex-col gap-4">
+    <div className="w-full h-full bg-white rounded-[10px] p-4 flex flex-col gap-2">
       <div className="flex justify-between items-center">
         <div
           style={{
@@ -54,7 +54,7 @@ export default function DashboardBillingBox() {
       </div>
 
       <div
-        className="flex flex-col divide-y divide-gray-200 text-[17px] text-[#4c4c4c] overflow-y-auto max-h-[180px] hide-scroll"
+        className="flex flex-col text-[17px] text-[#4c4c4c] overflow-y-auto max-h-[180px] mt-5 hide-scroll"
       >
         {billingData.map((billing) => (
           <div

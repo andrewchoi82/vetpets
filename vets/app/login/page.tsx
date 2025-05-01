@@ -1,35 +1,39 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie";
+import Image from "next/image";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
 
+  const handleGoToCreate = ()=>{
+    router.push("/signup");
+  }
+
   const handleLogin = async () => {
     const res = await fetch("/api/auth/login", {
       method: "POST",
       body: JSON.stringify({ email, password }),
       headers: { "Content-Type": "application/json" },
-      credentials: "include",                    
+      credentials: "include",
     });
-    
+
     const result = await res.json();
-  
+
     if (!result.success || !result.userId) {
       alert("Invalid email or password");
       return;
-    } 
-    
-    // Save userId to cookie
-    Cookies.set('userId', result.userId, { expires: 7 }); // Expires in 7 days
-  
+    }
+
+    Cookies.set("userId", result.userId, { expires: 7 });
+
     try {
       const res = await fetch(`/api/me?userId=${result.userId}`, {
-          method: 'GET',
-        });
+        method: "GET",
+      });
       const user = await res.json();
       if (user?.userType === 2) {
         router.push("/vet");
@@ -38,80 +42,246 @@ export default function Login() {
       } else {
         alert("Unknown user type.");
       }
-  }
-  catch (error) {
-      console.error('Error fetching user:', error);
-  } 
+    } catch (error) {
+      console.error("Error fetching user:", error);
+    }
   };
-  
 
   return (
-    <div className="w-[1512px] h-[982px] relative bg-white overflow-hidden">
-      <div className="w-[559px] px-14 py-11 left-[138px] top-[225px] absolute bg-white rounded-[10px] inline-flex flex-col justify-start items-start gap-8 overflow-hidden">
-        <div className="self-stretch h-14 justify-center text-black text-3xl font-['SF_Pro'] leading-[66px]">
-          Welcome back!
-        </div>
-
-        <div className="self-stretch h-12 relative rounded-[10px] outline outline-1 outline-offset-[-1px] outline-Hoover-grey overflow-hidden flex items-center">
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Email"
-            className="w-full h-full px-4 text-base text-Hoover-grey font-['SF_Pro'] bg-transparent outline-none"
+    <div
+      style={{
+        display: "flex",
+        height: "100vh",
+        width: "100%",
+        background: "white",
+        position: "relative",
+        fontFamily: "Inter, sans-serif",
+      }}
+    >
+      <div style={{ position: "fixed", top: "20px", left: "10px", zIndex: 110, width: "150px", height: "38px" }}>
+        <div style={{ width: "150px", height: "38px", position: "relative" }}>
+          <Image 
+            src="/img/vetrail-logo-with-text.svg" 
+            alt="Vetrail Logo" 
+            fill 
+            style={{ objectFit: "contain" }}
           />
         </div>
+      </div>
 
-        <div className="self-stretch h-12 relative rounded-[10px] outline outline-1 outline-offset-[-1px] outline-Hoover-grey overflow-hidden flex items-center">
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Password"
-            className="w-full h-full px-4 text-base text-Hoover-grey font-['SF_Pro'] bg-transparent outline-none"
-          />
-        </div>
+      {/* Left: Floating Circles with individual gradients */}
+      <div 
+        style={{ 
+          flex: 1, 
+          position: "relative", 
+          left: 0,
+          overflow: "hidden",
+          background: "radial-gradient(circle at 50% 50%,rgb(192, 234, 243) 10%, white 60%)",
+        }}
+      >
+        {/* Central circles layout based on mockup measurements */}
+        {[
+          // Main center dog image - 109x109
+          { top: "43%", left: "48%", size: 109, image: "/img/login/sample-dog-1.png" },
+          
+          // Top line
+          { top: "20%", left: "48%", size: 60, color: "#004F82" }, // Top dark blue circle (101.37px from center)
+          
+          // Right side
+          { top: "50%", left: "78%", size: 80, color: "#004F82" }, // Right dark blue large circle (164.57px from center)
+          { top: "40%", left: "72%", size: 22, color: "#004F82" }, // Upper right small dark blue
+          { top: "35%", left: "65%", size: 16, color: "#6BE0F8" }, // Upper right tiny light blue
+          
+          // Left side
+          { top: "45%", left: "25%", size: 80, color: "#6BE0F8" }, // Left light blue large circle (107px from center)
+          { top: "30%", left: "35%", size: 20, color: "#004F82" }, // Upper left small dark blue
+          
+          // Bottom layout
+          { top: "65%", left: "50%", size: 60, color: "#004F82" }, // Bottom dark blue circle (113.97px from center)
+          { top: "68%", left: "70%", size: 60, color: "#6BE0F8" }, // Bottom right light blue (109px from bottom center)
+          { top: "55%", left: "60%", size: 12, color: "#6BE0F8" }, // Small light blue dot
+          { top: "60%", left: "38%", size: 18, color: "#004F82" }, // Bottom left small dark blue (10.65px from position)
+          
+          // Bottom corner dog image - 88x88
+          { top: "68%", left: "30%", size: 88, image: "/img/login/sample-dog-2.png" },
+        ].map((circle, index) =>
+          circle.image ? (
+            <div
+              key={index}
+              style={{
+                position: "absolute",
+                top: circle.top,
+                left: circle.left,
+                width: `${circle.size}px`,
+                height: `${circle.size}px`,
+                borderRadius: "50%",
+                overflow: "hidden",
+                boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
+                zIndex: 5,
+                transform: "translate(-50%, -50%)", // Center the circle on its position
+              }}
+            >
+              <img src={circle.image} style={{ width: "100%", height: "100%", objectFit: "cover" }} alt="dog" />
+            </div>
+          ) : (
+            <div
+              key={index}
+              style={{
+                position: "absolute",
+                top: circle.top,
+                left: circle.left,
+                width: `${circle.size}px`,
+                height: `${circle.size}px`,
+                borderRadius: "50%",
+                backgroundColor: circle.color,
+                zIndex: 5,
+                transform: "translate(-50%, -50%)", // Center the circle on its position
+              }}
+            />
+          )
+        )}
+      </div>
 
-        <div
-          onClick={handleLogin}
-          className="self-stretch h-12 bg-sky-800 rounded-[10px] inline-flex justify-center items-center gap-2.5 cursor-pointer"
-        >
-          <div className="text-center justify-center text-white text-xl font-normal font-['SF_Pro'] leading-[48.40px]">
+      {/* Login Panel */}
+      <div style={{ 
+        width: "40%", 
+        paddingRight: "16%", 
+        paddingTop: "225px", 
+        display: "flex", 
+        justifyContent: "flex-end"
+      }}>
+        <div style={{ width: "321px" }}>
+          <div
+            style={{
+              width: "142px",
+              height: "52px",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              color: "#4C4C4C",
+              fontSize: "35px",
+              fontWeight: 600,
+              lineHeight: "220%",
+              marginBottom: "32px",
+            }}
+          >
             Login
           </div>
-        </div>
 
-        <div style={{ display: "flex" }}> 
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            style={{
+              display: "flex",
+              width: "100%",
+              height: "48px",
+              padding: "15px 20px",
+              alignItems: "center",
+              gap: "10px",
+              borderRadius: "10px",
+              border: "1px solid #DFDFDF",
+              background: "#FFF",
+              boxShadow: "0px 4px 20px 0px rgba(0, 0, 0, 0.03)",
+              marginBottom: "16px",
+              fontSize: "14px",
+            }}
+          />
+
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            style={{
+              display: "flex",
+              width: "100%",
+              height: "48px",
+              padding: "15px 20px",
+              alignItems: "center",
+              gap: "10px",
+              borderRadius: "10px",
+              border: "1px solid #DFDFDF",
+              background: "#FFF",
+              boxShadow: "0px 4px 20px 0px rgba(0, 0, 0, 0.03)",
+              fontSize: "14px",
+            }}
+          />
+
           <button
-            type="button"
-            onClick={() => router.push("/signup")}
-            className="justify-center text-side-text text-xs font-normal font-['SF_Pro'] underline leading-7 cursor-pointer"
+            style={{
+              display: "flex",
+              width: "100%",
+              height: "32px",
+              justifyContent: "end",
+              alignItems: "top",
+              color: "#004F82",
+              background: "none",
+              border: "none",
+              fontSize: "12px",
+              cursor: "pointer",
+              padding: "10px",
+              marginBottom: "14px"
+
+            }}
           >
-            Create account
+            Forgot Password?
           </button>
 
-        
           <button
-            type="button"
-            className="ml-3 justify-center text-side-text text-xs font-normal font-['SF_Pro'] underline leading-7 cursor-pointer"
+            onClick={handleLogin}
+            style={{
+              display: "flex",
+              width: "100%",
+              height: "48px",
+              padding: "15px 20px",
+              justifyContent: "center",
+              alignItems: "center",
+              gap: "10px",
+              borderRadius: "10px",
+              background: "#004F82",
+              color: "white",
+              fontSize: "16px",
+              fontWeight: 500,
+              border: "none",
+              boxShadow: "0px 4px 20px 0px rgba(0, 0, 0, 0.03)",
+              cursor: "pointer",
+              marginBottom: "8px"
+            }}
           >
-            Forgot your password?
+            Login
           </button>
+          <div
+            style={{
+              display: "flex",
+              width: "100%",
+              height: "32px",
+              justifyContent: "center",
+              alignItems: "center",
+              color: "#004F82",
+              fontSize: "12px",
+            }}
+          >
+            Don't have an account?
+            <button
+              onClick={handleGoToCreate}
+              style={{
+                marginLeft: "5px",
+                color: "#004F82",
+                background: "none",
+                border: "none",
+                fontSize: "12px",
+                cursor: "pointer",
+                textDecoration: "underline",
+                padding: "0"
+              }}
+            >
+              Sign Up
+            </button>
+          </div>
         </div>
-
       </div>
-
-      <img
-        className="w-12 h-16 left-[62px] top-[49px] absolute"
-        src="/img/vetrail-logo.svg"
-      />
-      <div className="w-32 h-10 left-[120px] top-[55px] absolute justify-center text-black text-3xl font-bold font-['Sulphur_Point'] leading-[66px]">
-        Vetrail
-      </div>
-      <img
-        className="w-[715px] h-96 left-[697px] top-[225px] absolute"
-        src="/img/login/login-image.svg"
-      />
     </div>
   );
 }

@@ -1,6 +1,6 @@
 "use client"
 
-import { Header } from "@/components/MainHeader/Header";
+import { HeaderNew  } from "@/components/MainHeader/HeaderNew";
 import MainContent from "@/components/Dashboard/MainContent";
 import { SideBarContainerVets } from "@/components/MainSideBar/SideBarContainerVets";
 import ClientsHeader from "@/components/vet/Clients/ClientsHeader";
@@ -17,14 +17,18 @@ export default function Clients() {
     <div style={{ display: "flex", height: "100vh", overflow: "hidden" }}>
       <SideBarContainerVets selectedPage="Clients" />
 
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", background: "#fff", overflowY: "auto" }}>
-        <Header title="Clients" showSearchBar={false}/>
+      <div style={{ 
+        flex: 1, 
+        display: "flex", 
+        flexDirection: "column", 
+        background: "#fff", 
+        overflowY: "auto",
+        marginLeft: "120px" 
+      }}>
+        <HeaderNew  title="Clients" showSearchBar={false}/>
 
-        <ClientsHeader/>
-        {selected === "profile" ? <ClientsProfile/> : <ClientsTable selected={selected} setSelected={setSelected}/>}
+         <ClientsTable selected={selected} setSelected={setSelected}/>
       </div>
     </div>
   );
 }
-
-

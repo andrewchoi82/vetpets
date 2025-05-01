@@ -29,13 +29,13 @@
     "react-hot-toast": "^2.5.2",
     "react-pdf": "^9.2.1",
     "socket.io": "^4.8.1",
+    "tailwind-scrollbar-hide": "^2.0.0",
     "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
     "@types/bcrypt": "^5.0.2",
-    "@types/cookie": "^1.0.0",
     "@types/formidable": "^3.4.5",
     "@types/js-cookie": "^3.0.6",
     "@types/jsonwebtoken": "^9.0.9",

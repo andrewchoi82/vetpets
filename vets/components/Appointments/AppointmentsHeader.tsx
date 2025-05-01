@@ -1,11 +1,13 @@
 "use client";
+
 import React from "react";
 import Image from "next/image";
+import { SelectTab } from "../Util/SelectTab";
 
 interface AppointmentsHeaderProps {
   selectedTab: "upcoming" | "past";
   setSelectedTab: (tab: "upcoming" | "past") => void;
-  onScheduleClick: () => void; // ✅ Add this prop
+  onScheduleClick: () => void;
 }
 
 export default function AppointmentsHeader({
@@ -13,70 +15,123 @@ export default function AppointmentsHeader({
   setSelectedTab,
   onScheduleClick,
 }: AppointmentsHeaderProps) {
-  return (
-    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", padding: "0 24px", borderBottom: "1px solid #e5e7eb" }}>
-      {/* Tabs */}
-      <div style={{ display: "flex", alignItems: "center" }}>
-        <div style={{ display: "flex", gap: "32px", marginTop: "25px" }}>
-          <button
-            onClick={() => setSelectedTab("upcoming")}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "14px",
-              marginTop: "5px",
-              paddingBottom: "14px",
-              border: "none",
-              background: "none",
-              borderBottom: selectedTab === "upcoming" ? "2px solid #1e3a8a" : "2px solid transparent",
-              color: selectedTab === "upcoming" ? "#1e3a8a" : "#4b5563",
-              fontWeight: selectedTab === "upcoming" ? 500 : 300,
-              fontSize: "17px",
-              cursor: "pointer",
-            }}
-          >
-            <Image src="/img/appointments/upcoming-appointments.svg" alt="Upcoming" width={19} height={14} />
-            Upcoming Appointments
-          </button>
+  const getIconPath = (tabValue: "upcoming" | "past", isSelected: boolean) => {
+    const folder = isSelected ? "selected" : "nonSelected";
+    const filename = `${tabValue}-appointments.svg`;
+    return `/img/appointments/${folder}/${filename}`;
+  };
 
-          <button
-            onClick={() => setSelectedTab("past")}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "14px",
-              marginTop: "5px",
-              paddingBottom: "14px",
-              border: "none",
-              background: "none",
-              borderBottom: selectedTab === "past" ? "2px solid #1e3a8a" : "2px solid transparent",
-              color: selectedTab === "past" ? "#1e3a8a" : "#4b5563",
-              fontWeight: selectedTab === "past" ? 500 : 300,
-              fontSize: "17px",
-              cursor: "pointer",
-            }}
-          >
-            <Image src="/img/appointments/past-appointments.svg" alt="Past" width={20} height={14} />
-            Past Appointments
-          </button>
+  const tabItems = [
+    {
+      label: "Upcoming Appointments",
+      value: "upcoming",
+      icon: (
+        <Image
+          src={getIconPath("upcoming", selectedTab === "upcoming")}
+          alt="Upcoming"
+          width={19}
+          height={14}
+        />
+      ),
+    },
+    {
+      label: "Past Appointments",
+      value: "past",
+      icon: (
+        <Image
+          src={getIconPath("past", selectedTab === "past")}
+          alt="Past"
+          width={20}
+          height={14}
+        />
+      ),
+    },
+  ];
+
+  return (
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "flex-end",
+        padding: "0 24px",
+        borderBottom: "1px solid #e5e7eb",
+      }}
+    >
+      <div style={{ display: "flex", flexDirection: "column", width: "100%", marginTop: 20, marginBottom: 20 }}>
+        {/* Title and paw icon */}
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <div style={{ fontSize: 22, fontWeight: 500 }}>Appointments</div>
+          <Image
+            src="/img/paw.svg"
+            alt="Paw Icon"
+            width={20}
+            height={20}
+            style={{ marginLeft: 9 }}
+          />
+        </div>
+
+        {/* Select Tabs */}
+        <div style={{ marginTop: 8 }}>
+          <SelectTab
+            tabs={tabItems}
+            selectedTab={selectedTab}
+            onSelectTab={(tabValue) => setSelectedTab(tabValue as "upcoming" | "past")}
+          />
         </div>
       </div>
 
+      {/* Schedule Appointment Button */}
       <button
         onClick={onScheduleClick}
         style={{
-          backgroundColor: "#1e3a8a",
-          color: "white",
-          padding: "8px 16px",
-          borderRadius: "6px",
+          display: "inline-flex",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: "10px",
+          padding: "0px 18px",
+          height: "33px",
+          borderRadius: "100px",
+          border: "1px solid #DFDFDF",
+          backgroundColor: "#FFFFFF",
+          boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.03)",
           fontWeight: 500,
-          fontSize: "14px",
+          fontSize: "15px",
+          color: "#4C4C4C",
           cursor: "pointer",
-          marginBottom: "11px",
+          whiteSpace: "nowrap",
+          lineHeight: 1,
+          marginBottom: "20px",
+          transition: "all 0.2s ease-in-out",
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.backgroundColor = "#f9fafb";
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.backgroundColor = "#ffffff";
+          e.currentTarget.style.transform = "scale(1)";
+        }}
+        onMouseDown={(e) => {
+          e.currentTarget.style.transform = "scale(0.97)";
+        }}
+        onMouseUp={(e) => {
+          e.currentTarget.style.transform = "scale(1)";
         }}
       >
-        Schedule Appointment
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="17"
+          height="17"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="#4C4C4C"
+          strokeWidth="2"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+        </svg>
+        Schedule appointment
       </button>
+
     </div>
   );
 }
