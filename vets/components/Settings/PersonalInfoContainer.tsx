@@ -11,13 +11,12 @@ type SidebarProps = {
   onUpdate: (field: string, value: string) => Promise<void>;
 };
 
-// Define an interface with an index signature for the input values
 interface InputValues {
   phoneNumber: string;
   email: string;
   contactPref: string;
   address: string;
-  [key: string]: string; // Add index signature to allow string indexing
+  [key: string]: string;
 }
 
 export default function PersonalInfoContainer({
@@ -29,25 +28,22 @@ export default function PersonalInfoContainer({
   onUpdate,
 }: SidebarProps) {
   const [editMode, setEditMode] = useState<string | null>(null);
+  const [hoveredField, setHoveredField] = useState<string | null>(null);
   const [inputValues, setInputValues] = useState<InputValues>({
-    phoneNumber: phoneNumber,
-    email: email,
-    contactPref: contactPref,
-    address: address,
+    phoneNumber,
+    email,
+    contactPref,
+    address,
   });
 
-  // Format the display values
   const formattedPhone = formatPhoneNumber(phoneNumber);
   const formattedContactPref = formatContactPreference(contactPref);
   const formattedAddress = formatAddress(address);
 
-  const handleEdit = (field: string) => {
-    setEditMode(field);
-  };
+  const handleEdit = (field: string) => setEditMode(field);
 
-  const handleChange = (field: string, value: string) => {
-    setInputValues(prev => ({ ...prev, [field]: value }));
-  };
+  const handleChange = (field: string, value: string) =>
+    setInputValues((prev) => ({ ...prev, [field]: value }));
 
   const handleSave = async (field: string) => {
     await onUpdate(field, inputValues[field]);
@@ -55,15 +51,50 @@ export default function PersonalInfoContainer({
   };
 
   const handleCancel = () => {
-    // Reset the input values to the original values
-    setInputValues({
-      phoneNumber: phoneNumber,
-      email: email,
-      contactPref: contactPref,
-      address: address,
-    });
+    setInputValues({ phoneNumber, email, contactPref, address });
     setEditMode(null);
   };
+
+  const getHoverStyle = (field: string): React.CSSProperties => ({
+    backgroundColor: hoveredField === field ? "#f9fafb" : "transparent",
+    transition: "background-color 0.2s ease",
+    marginLeft: "-25px",
+    paddingLeft: "25px",
+    paddingRight: "25px",
+    width: "calc(100% + 50px)",
+    marginTop: "-10px",
+    marginBottom: "-10px",
+    paddingTop: "10px",
+    paddingBottom: "10px",
+  });
+
+  const ArrowButton = ({ onClick }: { onClick: () => void }) => (
+    <button
+      onClick={onClick}
+      style={{
+        border: "none",
+        background: "none",
+        padding: 0,
+        cursor: "pointer",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        width: "10.087px",
+        height: "15.63px",
+        flexShrink: 0,
+      }}
+    >
+      <img
+        src="/img/settings/arrow.svg"
+        alt="Edit"
+        style={{
+          width: "10.087px",
+          height: "15.63px",
+          flexShrink: 0,
+        }}
+      />
+    </button>
+  );
 
   return (
     <div
@@ -82,67 +113,26 @@ export default function PersonalInfoContainer({
           Personal Information
         </h5>
 
-        <div
-          style={{
-            paddingTop: "15px",
-            paddingBottom: "20px",
-            display: "flex",
-            flexDirection: "column",
-            gap: "20px",
-          }}
-        >
-          {/* Row: Phone Number */}
+        <div style={{ paddingTop: "15px", paddingBottom: "20px", display: "flex", flexDirection: "column", gap: "20px" }}>
+          {/* Phone Number */}
           <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              fontSize: "17px"
-            }}
+            style={{ ...getHoverStyle("phoneNumber"), display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: "17px" }}
+            onMouseEnter={() => setHoveredField("phoneNumber")}
+            onMouseLeave={() => setHoveredField(null)}
           >
-            {editMode === 'phoneNumber' ? (
+            {editMode === "phoneNumber" ? (
               <div style={{ display: "flex", width: "100%", alignItems: "center", gap: "10px" }}>
                 <p style={{ width: "150px" }}>Phone number</p>
                 <div style={{ display: "flex", flex: 1, gap: "10px" }}>
                   <input
                     type="tel"
                     value={inputValues.phoneNumber}
-                    onChange={(e) => handleChange('phoneNumber', e.target.value)}
+                    onChange={(e) => handleChange("phoneNumber", e.target.value)}
                     placeholder="Phone Number"
-                    style={{
-                      flex: 1,
-                      padding: "8px",
-                      border: "1px solid #DFDFDF",
-                      borderRadius: "5px",
-                      color: "#4C4C4C"
-                    }}
+                    style={{ flex: 1, padding: "8px", border: "1px solid #DFDFDF", borderRadius: "5px", color: "#4C4C4C" }}
                   />
-                  <button 
-                    onClick={() => handleSave('phoneNumber')}
-                    style={{
-                      padding: "8px 12px",
-                      backgroundColor: "#0ea5e9",
-                      color: "white",
-                      border: "none",
-                      borderRadius: "5px",
-                      cursor: "pointer"
-                    }}
-                  >
-                    Save
-                  </button>
-                  <button 
-                    onClick={handleCancel}
-                    style={{
-                      padding: "8px 12px",
-                      backgroundColor: "#ef4444",
-                      color: "white",
-                      border: "none",
-                      borderRadius: "5px",
-                      cursor: "pointer"
-                    }}
-                  >
-                    Cancel
-                  </button>
+                  <button onClick={() => handleSave("phoneNumber")} style={primaryButtonStyle}>Save</button>
+                  <button onClick={handleCancel} style={cancelLinkStyle}>Cancel</button>
                 </div>
               </div>
             ) : (
@@ -151,222 +141,64 @@ export default function PersonalInfoContainer({
                   <p style={{ width: "150px" }}>Phone number</p>
                   <p style={{ color: "#4C4C4C" }}>{formattedPhone}</p>
                 </div>
-                <div 
-                  style={{ color: "#9CA3AF", fontSize: "18px", cursor: "pointer" }}
-                  onClick={() => handleEdit('phoneNumber')}
-                >
-                  {">"}
-                </div>
+                <ArrowButton onClick={() => handleEdit("phoneNumber")} />
               </>
             )}
           </div>
 
-          {/* Row: Email */}
+          {/* Email */}
           <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-            }}
+            style={{ ...getHoverStyle("email"), display: "flex", alignItems: "center", justifyContent: "space-between" }}
+            onMouseEnter={() => setHoveredField("email")}
+            onMouseLeave={() => setHoveredField(null)}
           >
-            {editMode === 'email' ? (
-              <div style={{ display: "flex", width: "100%", alignItems: "center", gap: "10px" }}>
-                <p style={{ width: "150px" }}>Email</p>
-                <div style={{ display: "flex", flex: 1, gap: "10px" }}>
-                  <input
-                    type="email"
-                    value={inputValues.email}
-                    onChange={(e) => handleChange('email', e.target.value)}
-                    placeholder="Email"
-                    style={{
-                      flex: 1,
-                      padding: "8px",
-                      border: "1px solid #DFDFDF",
-                      borderRadius: "5px",
-                      color: "#4C4C4C"
-                    }}
-                  />
-                  <button 
-                    onClick={() => handleSave('email')}
-                    style={{
-                      padding: "8px 12px",
-                      backgroundColor: "#0ea5e9",
-                      color: "white",
-                      border: "none",
-                      borderRadius: "5px",
-                      cursor: "pointer"
-                    }}
-                  >
-                    Save
-                  </button>
-                  <button 
-                    onClick={handleCancel}
-                    style={{
-                      padding: "8px 12px",
-                      backgroundColor: "#ef4444",
-                      color: "white",
-                      border: "none",
-                      borderRadius: "5px",
-                      cursor: "pointer"
-                    }}
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </div>
+            {editMode === "email" ? (
+              <InputRow field="email" label="Email" value={inputValues.email} handleChange={handleChange} handleSave={handleSave} handleCancel={handleCancel} />
             ) : (
               <>
                 <div style={{ display: "flex", alignItems: "center" }}>
                   <p style={{ width: "150px" }}>Email</p>
                   <p style={{ color: "#4C4C4C" }}>{email}</p>
                 </div>
-                <div 
-                  style={{ color: "#9CA3AF", fontSize: "18px", cursor: "pointer" }}
-                  onClick={() => handleEdit('email')}
-                >
-                  {">"}
-                </div>
+                <ArrowButton onClick={() => handleEdit("email")} />
               </>
             )}
           </div>
 
-          {/* Row: Contact Preference */}
+          {/* Contact Preference */}
           <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-            }}
+            style={{ ...getHoverStyle("contactPref"), display: "flex", alignItems: "center", justifyContent: "space-between" }}
+            onMouseEnter={() => setHoveredField("contactPref")}
+            onMouseLeave={() => setHoveredField(null)}
           >
-            {editMode === 'contactPref' ? (
-              <div style={{ display: "flex", width: "100%", alignItems: "center", gap: "10px" }}>
-                <p style={{ width: "150px" }}>Contact preference</p>
-                <div style={{ display: "flex", flex: 1, gap: "10px" }}>
-                  <select
-                    value={inputValues.contactPref}
-                    onChange={(e) => handleChange('contactPref', e.target.value)}
-                    style={{
-                      flex: 1,
-                      padding: "8px",
-                      border: "1px solid #DFDFDF",
-                      borderRadius: "5px",
-                      color: "#4C4C4C"
-                    }}
-                  >
-                    <option value="Phone Call">Phone Call</option>
-                    <option value="Text Message">Text Message</option>
-                    <option value="Email">Email</option>
-                    <option value="No Preference">No Preference</option>
-                  </select>
-                  <button 
-                    onClick={() => handleSave('contactPref')}
-                    style={{
-                      padding: "8px 12px",
-                      backgroundColor: "#0ea5e9",
-                      color: "white",
-                      border: "none",
-                      borderRadius: "5px",
-                      cursor: "pointer"
-                    }}
-                  >
-                    Save
-                  </button>
-                  <button 
-                    onClick={handleCancel}
-                    style={{
-                      padding: "8px 12px",
-                      backgroundColor: "#ef4444",
-                      color: "white",
-                      border: "none",
-                      borderRadius: "5px",
-                      cursor: "pointer"
-                    }}
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </div>
+            {editMode === "contactPref" ? (
+              <SelectRow field="contactPref" label="Contact preference" value={inputValues.contactPref} handleChange={handleChange} handleSave={handleSave} handleCancel={handleCancel} options={["Phone Call", "Text Message", "Email", "No Preference"]} />
             ) : (
               <>
                 <div style={{ display: "flex", alignItems: "center" }}>
                   <p style={{ width: "150px" }}>Contact preference</p>
                   <p style={{ color: "#4C4C4C" }}>{formattedContactPref}</p>
                 </div>
-                <div 
-                  style={{ color: "#9CA3AF", fontSize: "18px", cursor: "pointer" }}
-                  onClick={() => handleEdit('contactPref')}
-                >
-                  {">"}
-                </div>
+                <ArrowButton onClick={() => handleEdit("contactPref")} />
               </>
             )}
           </div>
 
-          {/* Row: Address */}
+          {/* Address */}
           <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-            }}
+            style={{ ...getHoverStyle("address"), display: "flex", alignItems: "center", justifyContent: "space-between" }}
+            onMouseEnter={() => setHoveredField("address")}
+            onMouseLeave={() => setHoveredField(null)}
           >
-            {editMode === 'address' ? (
-              <div style={{ display: "flex", width: "100%", alignItems: "center", gap: "10px" }}>
-                <p style={{ width: "150px" }}>Address</p>
-                <div style={{ display: "flex", flex: 1, gap: "10px" }}>
-                  <input
-                    type="text"
-                    value={inputValues.address}
-                    onChange={(e) => handleChange('address', e.target.value)}
-                    placeholder="Address"
-                    style={{
-                      flex: 1,
-                      padding: "8px",
-                      border: "1px solid #DFDFDF",
-                      borderRadius: "5px",
-                      color: "#4C4C4C"
-                    }}
-                  />
-                  <button 
-                    onClick={() => handleSave('address')}
-                    style={{
-                      padding: "8px 12px",
-                      backgroundColor: "#0ea5e9",
-                      color: "white",
-                      border: "none",
-                      borderRadius: "5px",
-                      cursor: "pointer"
-                    }}
-                  >
-                    Save
-                  </button>
-                  <button 
-                    onClick={handleCancel}
-                    style={{
-                      padding: "8px 12px",
-                      backgroundColor: "#ef4444",
-                      color: "white",
-                      border: "none",
-                      borderRadius: "5px",
-                      cursor: "pointer"
-                    }}
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </div>
+            {editMode === "address" ? (
+              <InputRow field="address" label="Address" value={inputValues.address} handleChange={handleChange} handleSave={handleSave} handleCancel={handleCancel} />
             ) : (
               <>
                 <div style={{ display: "flex", alignItems: "center" }}>
                   <p style={{ width: "150px" }}>Address</p>
                   <p style={{ color: "#4C4C4C" }}>{formattedAddress}</p>
                 </div>
-                <div 
-                  style={{ color: "#9CA3AF", fontSize: "18px", cursor: "pointer" }}
-                  onClick={() => handleEdit('address')}
-                >
-                  {">"}
-                </div>
+                <ArrowButton onClick={() => handleEdit("address")} />
               </>
             )}
           </div>
@@ -375,3 +207,60 @@ export default function PersonalInfoContainer({
     </div>
   );
 }
+
+// Shared button styles
+const primaryButtonStyle = {
+  padding: "8px 20px",
+  backgroundColor: "#004d81",
+  color: "#fff",
+  border: "none",
+  borderRadius: "8px",
+  cursor: "pointer",
+};
+
+const cancelLinkStyle = {
+  background: "none",
+  border: "none",
+  color: "#004d81",
+  textDecoration: "underline",
+  fontSize: "16px",
+  cursor: "pointer",
+};
+
+// Reusable input row
+const InputRow = ({ field, label, value, handleChange, handleSave, handleCancel }: any) => (
+  <div style={{ display: "flex", width: "100%", alignItems: "center", gap: "10px" }}>
+    <p style={{ width: "150px" }}>{label}</p>
+    <div style={{ display: "flex", flex: 1, gap: "10px" }}>
+      <input
+        type="text"
+        value={value}
+        onChange={(e) => handleChange(field, e.target.value)}
+        placeholder={label}
+        style={{ flex: 1, padding: "8px", border: "1px solid #DFDFDF", borderRadius: "5px", color: "#4C4C4C" }}
+      />
+      <button onClick={() => handleSave(field)} style={primaryButtonStyle}>Save</button>
+      <button onClick={handleCancel} style={cancelLinkStyle}>Cancel</button>
+    </div>
+  </div>
+);
+
+// Reusable select row
+const SelectRow = ({ field, label, value, handleChange, handleSave, handleCancel, options }: any) => (
+  <div style={{ display: "flex", width: "100%", alignItems: "center", gap: "10px" }}>
+    <p style={{ width: "150px" }}>{label}</p>
+    <div style={{ display: "flex", flex: 1, gap: "10px" }}>
+      <select
+        value={value}
+        onChange={(e) => handleChange(field, e.target.value)}
+        style={{ flex: 1, padding: "8px", border: "1px solid #DFDFDF", borderRadius: "5px", color: "#4C4C4C" }}
+      >
+        {options.map((opt: string) => (
+          <option key={opt} value={opt}>{opt}</option>
+        ))}
+      </select>
+      <button onClick={() => handleSave(field)} style={primaryButtonStyle}>Save</button>
+      <button onClick={handleCancel} style={cancelLinkStyle}>Cancel</button>
+    </div>
+  </div>
+);
