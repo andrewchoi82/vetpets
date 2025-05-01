@@ -9,6 +9,8 @@ import { useState, useEffect } from "react";
 import Cookies from 'js-cookie';
 import Image from 'next/image';
 import { getPetById } from "@/app/lib/api/pets";
+import { getImageUrl } from "@/app/lib/supabaseGetImage";
+
 
 export default function MainContentNew() {
   type Pet = {
@@ -17,7 +19,7 @@ export default function MainContentNew() {
     weight: string;
     sex: string;
     sterilized: boolean;
-    petpicture: string;
+    pet_picture: string;
     name: string;
   };
 
@@ -87,7 +89,7 @@ export default function MainContentNew() {
   return (
     <main className="p-[5px] md:p-[50px] h-full bg-[#F9F9F9]">
       <div className="flex items-center gap-2 bg-[#F9F9F9] ">
-        <h1 className="text-3xl font-bold">{pet?.breed || ""}</h1>
+        <h1 className="text-3xl font-bold">{pet?.name || ""}</h1>
         <Image
           src="/img/dashboard/paw.svg"
           alt="Snowball"
@@ -100,8 +102,8 @@ export default function MainContentNew() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-[#F9F9F9]">
           <Image
-            src={pet?.petpicture ? getStorageImageUrl(pet.petpicture) : "/img/message/doggg.png"}
-            alt="Snowball"
+                    src={(!pet?.pet_picture || pet?.pet_picture==="") ? "/img/message/doggg.png" : getImageUrl(pet?.pet_picture)}
+                    alt="Snowball"
             width={250}
             height={284}
             className="w-64 max-h-72 h-72 object-cover rounded-xl shadow-md mx-auto md:mx-0"
@@ -109,10 +111,10 @@ export default function MainContentNew() {
 
           <div className="bg-white rounded-xl shadow-md p-6 flex flex-col mr-[8px] md:mr-0 max-h-72 h-72">
             <div className="mt-4 space-y-4 w-full">
-              <InfoItem icon="/img/dashboard/dashboardAge.svg" label="Age" value={pet?.age} />
-              <InfoItem icon="/img/dashboard/sex-icon.svg" label="Gender" value={pet?.sex} />
-              <InfoItem icon="/img/dashboard/dashboardWeight.svg" label="Weight" value={pet?.weight} />
-              <InfoItem icon="/img/dashboard/dashboardBreed.svg" label="Breed" value={pet?.breed} />
+              <InfoItem icon="/img/dashboard/dashboardAge.svg" label="Age" value={pet?.age||""} />
+              <InfoItem icon="/img/dashboard/sex-icon.svg" label="Gender" value={pet?.sex||""} />
+              <InfoItem icon="/img/dashboard/dashboardWeight.svg" label="Weight" value={pet?.weight||""} />
+              <InfoItem icon="/img/dashboard/dashboardBreed.svg" label="Breed" value={pet?.breed||""} />
               <InfoItem
                 icon="/img/dashboard/sterilized-icon.svg"
                 label="Sterilized"

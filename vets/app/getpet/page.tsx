@@ -11,17 +11,81 @@ export default function GetPet() {
   const [petId, setPetId] = useState("");
   const router = useRouter();
   const currId = Cookies.get("userId");
+  const [currUserData, setCurrUserData] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  interface User {
+    id: string;  // uuid type
+    userType: number;  // smallint type
+    firstName: string | null;
+    lastName: string | null;
+    birthdate: string | null;  // date will come as string
+    sex: string | null;
+    phoneNumber: number | null;  // bigint type
+    email: string | null;
+    contactPreference: string | null;
+    address: string | null;
+    username: string | null;
+    profilePic: string | null;
+}
+
 
   const scrollRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    if (currId) {
-      fetch(`/api/pets/petsByUser?userId=${currId}`)
-        .then((res) => res.json())
-        .then((data) => setPets(data))
-        .catch((err) => console.error("Error fetching pets:", err));
-    }
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        if (currId) {
+          fetch(`/api/pets/petsByUser?userId=${currId}`)
+            .then((res) => res.json())
+            .then((data) => setPets(data))
+            .catch((err) => console.error("Error fetching pets:", err));
+        }
+
+        const res2 = await fetch(`/api/me?userId=${currId}`, {
+          method: 'GET',
+        });
+        const userCurr = await res2.json();
+        setCurrUserData(userCurr);
+      }
+      catch (error) {
+        console.error("Error fetching pets:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
   }, [currId]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div style={{
+          position: "relative",
+          width: "80px",
+          height: "80px"
+        }}>
+          <Image
+            src="/img/vetrail-logo.svg"
+            alt="Loading..."
+            fill
+            style={{
+              animation: "spin 1.5s linear infinite"
+            }}
+          />
+        </div>
+
+        <style jsx>{`
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+        `}</style>
+      </div>
+    );
+  }
 
   const handlePetSelection = (petId: number) => {
     Cookies.set("petId", petId.toString(), { expires: 7 });
@@ -29,7 +93,7 @@ export default function GetPet() {
   };
 
   const handleAddNewPet = () => {
-    setShowPetIdField(prev => !prev);
+    router.push("/createpet");
   };
 
   const handleSubmitPetId = async () => {
@@ -51,15 +115,21 @@ export default function GetPet() {
     }
   };
 
+  const scrollLeft = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollBy({ left: -264, behavior: "smooth" }); // 240px + 24px gap
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col items-center pt-[145px] bg-white relative">
       {/* Fixed Logo */}
       <div style={{ position: "fixed", top: "20px", left: "10px", zIndex: 110, width: "150px", height: "38px" }}>
         <div style={{ width: "150px", height: "38px", position: "relative" }}>
-          <Image 
-            src="/img/vetrail-logo-with-text.svg" 
-            alt="Vetrail Logo" 
-            fill 
+          <Image
+            src="/img/vetrail-logo-with-text.svg"
+            alt="Vetrail Logo"
+            fill
             style={{ objectFit: "contain" }}
           />
         </div>
@@ -68,10 +138,10 @@ export default function GetPet() {
       {/* Welcome Section */}
       <div className="flex flex-col items-center mb-[20px]">
         <Image src="/img/paw.svg" width={48} height={48} alt="Paw Icon" className="mb-[22px]" />
-        <h1 className="text-3xl font-semibold text-gray-900 mb-[20px]">Welcome, Jane!</h1>
+        <h1 className="text-3xl font-semibold text-gray-900 mb-[20px]">{"Welcome, " + currUserData?.firstName + "!"}</h1>
         <button
           onClick={handleAddNewPet}
-          className="px-4 py-2 rounded-full text-sm bg-white text-gray-900 border border-gray-300 hover:bg-gray-100"
+          className="px-4 py-2 rounded-full text-sm bg-white text-gray-900 border border-gray-300 hover:bg-gray-100 hover:cursor-pointer"
         >
           {showPetIdField ? "Cancel" : "+ Add pet"}
         </button>
@@ -102,20 +172,20 @@ export default function GetPet() {
         </div>
       )}
 
-      {/* Pet List with Scroll Button */}
+      {/* Pet List with Scroll Buttons */}
       <div className="relative w-[520px] max-w-full pt-4">
-      {/* Scrollable Row with hover space */}
-      <div
-  ref={scrollRef}
-  className="overflow-x-auto"
-  style={{
-    paddingTop: "16px",
-    paddingBottom: "20px", // pushes scrollbar further down
-    marginTop: "-16px",
-    overflowY: "visible",
-  }}
->
-  <style jsx>{`
+        {/* Scrollable Row with hover space */}
+        <div
+          ref={scrollRef}
+          className="overflow-x-auto"
+          style={{
+            paddingTop: "16px",
+            paddingBottom: "20px", // pushes scrollbar further down
+            marginTop: "-16px",
+            overflowY: "visible",
+          }}
+        >
+          <style jsx>{`
     .overflow-x-auto::-webkit-scrollbar {
       height: 4px;
       margin-top: 12px; /* not all browsers respect this */
@@ -140,43 +210,60 @@ export default function GetPet() {
     }
   `}</style>
 
-  <div className="flex gap-6 px-2 pb-2" style={{ overflowY: "visible" }}>
-    {pets.map((pet) => (
-      <div
-        key={pet.petId}
-        onClick={() => handlePetSelection(pet.petId)}
-        className="w-[240px] h-[240px] flex-shrink-0 cursor-pointer transition-transform duration-200 ease-in-out hover:scale-105 hover:-translate-y-1"
-        style={{ overflowY: "visible" }}
-      >
-        <div className="w-full h-full rounded-[10px] shadow-md overflow-hidden">
-          <Image
-            src={getImageUrl(pet.pet_picture)}
-            alt={pet.name}
-            width={240}
-            height={240}
-            className="object-cover w-full h-full"
-          />
+          <div className="flex gap-6 px-2 pb-2" style={{ overflowY: "visible" }}>
+            {pets.map((pet) => (
+              <div
+                key={pet.petId}
+                onClick={() => handlePetSelection(pet.petId)}
+                className="w-[240px] h-[240px] flex-shrink-0 cursor-pointer transition-transform duration-200 ease-in-out hover:scale-105 hover:-translate-y-1 relative group"
+                style={{ overflowY: "visible" }}
+              >
+                <div className="w-full h-full rounded-[10px] shadow-md overflow-hidden relative">
+                  <Image
+                    src={(!pet.pet_picture || pet.pet_picture==="") ? "/img/message/doggg.png" : getImageUrl(pet.pet_picture)}
+                    alt={pet.name}
+                    width={240}
+                    height={240}
+                    className="object-cover w-full h-full"
+                  />
+                  {/* Hover Overlay */}
+                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
+                    <span className="text-white text-xl font-medium">{pet.name}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
-    ))}
-  </div>
-</div>
 
+        {/* Scroll Left Arrow Button */}
+        <button
+          onClick={scrollLeft}
+          className="absolute left-[-45px] top-[50%] translate-y-[-50%] hover:opacity-80"
+          style={{ zIndex: 20 }}
+        >
+          <Image
+            src="/img/getPets/slider-arrow.svg"
+            alt="Scroll Left"
+            width={24}
+            height={24}
+            style={{ transform: 'rotate(180deg)' }}
+          />
+        </button>
 
-      {/* Scroll Arrow Button */}
-      <button
-        onClick={scrollRight}
-        className="absolute right-[-45px] top-[50%] translate-y-[-50%] hover:opacity-80"
-        style={{ zIndex: 20 }}
-      >
-        <Image
-          src="/img/getPets/slider-arrow.svg"
-          alt="Scroll Right"
-          width={24}
-          height={24}
-        />
-      </button>
-
+        {/* Scroll Right Arrow Button */}
+        <button
+          onClick={scrollRight}
+          className="absolute right-[-45px] top-[50%] translate-y-[-50%] hover:opacity-80"
+          style={{ zIndex: 20 }}
+        >
+          <Image
+            src="/img/getPets/slider-arrow.svg"
+            alt="Scroll Right"
+            width={24}
+            height={24}
+          />
+        </button>
       </div>
     </div>
   );

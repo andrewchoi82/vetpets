@@ -4,6 +4,8 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { SideBarItem } from "@/components/MainSideBar/SideBarItem";
+import { getImageUrl as getStorageImageUrl } from '@/app/lib/supabaseGetImage';
+import Cookies from 'js-cookie';
 
 export interface SideBarContainerProps {
   selectedPage: string;
@@ -20,6 +22,9 @@ export const SideBarContainerVets = ({ selectedPage }: SideBarContainerProps) =>
   const router = useRouter();
   const [isContainerHovered, setIsContainerHovered] = useState<boolean>(false);
   const [currentSelected, setCurrentSelected] = useState<string>(selectedPage);
+  const [userData, setUserData] = useState<any>(null);
+  const [isUserDataLoading, setIsUserDataLoading] = useState(true);
+  const currId = Cookies.get("userId");
 
   const pathToName: Record<string, string> = {
     "/vet/": "Clients",
@@ -34,6 +39,24 @@ export const SideBarContainerVets = ({ selectedPage }: SideBarContainerProps) =>
       setCurrentSelected(pathToName[currentPath]);
     }
   }, []);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const res = await fetch(`/api/me?userId=${currId}`);
+        const user = await res.json();
+        setUserData(user);
+      } catch (err) {
+        console.error("Failed to fetch user:", err);
+      } finally {
+        setIsUserDataLoading(false);
+      }
+    };
+  
+    if (currId) {
+      fetchUserData();
+    }
+  }, [currId]);
 
   const menuItems: MenuItem[] = [
     { path: "/img/vet/sidebar-options/nonSelectedVersion/clients.svg", text: "Clients", href: "/vet/" },
@@ -53,10 +76,10 @@ export const SideBarContainerVets = ({ selectedPage }: SideBarContainerProps) =>
 
   return (
     <>
-      <div style={{ position: "fixed", top: "20px", left: "10px", zIndex: 110, width: "90px", height: "22px" }}>
-        <div style={{ width: "90px", height: "22px", position: "relative" }}>
+      <div style={{ position: "fixed", top: "20px", left: "10px", zIndex: 110, width: "120px", height: "30px" }}>
+        <div style={{ width: "120px", height: "30px", position: "relative" }}>
           <Image 
-            src="/img/vetrail-logo.svg" 
+            src="/img/vetrail-logo-with-text.svg" 
             alt="Vetrail Logo" 
             fill 
             style={{ objectFit: "contain" }}
@@ -109,7 +132,69 @@ export const SideBarContainerVets = ({ selectedPage }: SideBarContainerProps) =>
 
         <div style={{ gridRow: "2" }}></div>
 
-        <div style={{ gridRow: "3" }}></div>
+        <div style={{ 
+          gridRow: "3", 
+          display: "flex", 
+          flexDirection: "column", 
+          width: "100%",
+          paddingBottom: "10px",
+          marginTop: "auto"
+        }}>
+          <div
+            onClick={() => router.push("/vet/settings")}
+            style={{
+              width: "28px",
+              height: "28px",
+              borderRadius: "50%",
+              overflow: "hidden",
+              margin: "0 auto",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              border: currentSelected === "Settings"
+                ? "2px solid #0A4B94"
+                : isContainerHovered
+                ? "1.5px solid #0A4B94"
+                : "none",
+              backgroundColor: currentSelected === "Settings" ? "#E8F0FE" : "transparent",
+              transition: "border 0.2s ease-in-out, background-color 0.2s ease-in-out"
+            }}
+          >
+            {isUserDataLoading ? (
+              <div
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  borderRadius: "50%",
+                  backgroundColor: "#D3D3D3"
+                }}
+              />
+            ) : userData?.profilePic ? (
+              <Image
+                src={getStorageImageUrl(userData.profilePic)}
+                alt="Profile Picture"
+                width={28}
+                height={28}
+                style={{
+                  objectFit: "cover",
+                  width: "100%",
+                  height: "100%",
+                  borderRadius: "50%",
+                }}
+              />
+            ) : (
+              <div
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  borderRadius: "50%",
+                  backgroundColor: "#D3D3D3"
+                }}
+              />
+            )}
+          </div>
+        </div>
       </aside>
     </>
   );
