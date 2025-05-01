@@ -11,7 +11,18 @@ import Image from 'next/image';
 import { getPetById } from "@/app/lib/api/pets";
 
 export default function MainContentNew() {
-  const [pet, setPet] = useState<any>(null);
+  type Pet = {
+    breed: string;
+    age: string;
+    weight: string;
+    sex: string;
+    sterilized: boolean;
+    petpicture: string;
+    name: string;
+  };
+
+  const [pet, setPet] = useState<Pet | null>(null);
+
   const [loading, setLoading] = useState(true);
   const petId = Cookies.get('petId');
 
@@ -75,8 +86,8 @@ export default function MainContentNew() {
 
   return (
     <main className="p-[5px] md:p-[50px] h-full bg-[#F9F9F9]">
-      <div className="flex items-center gap-2 bg-[#F9F9F9]">
-        <h1 className="text-3xl font-bold">Snowball</h1>
+      <div className="flex items-center gap-2 bg-[#F9F9F9] ">
+        <h1 className="text-3xl font-bold">{pet?.breed || ""}</h1>
         <Image
           src="/img/dashboard/paw.svg"
           alt="Snowball"
