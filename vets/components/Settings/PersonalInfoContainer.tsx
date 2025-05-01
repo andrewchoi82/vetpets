@@ -95,7 +95,7 @@ export default function PersonalInfoContainer({
       />
     </button>
   );
-  
+
   return (
     <div
       style={{
@@ -131,8 +131,8 @@ export default function PersonalInfoContainer({
                     placeholder="Phone Number"
                     style={{ flex: 1, padding: "8px", border: "1px solid #DFDFDF", borderRadius: "5px", color: "#4C4C4C" }}
                   />
-                  <button onClick={() => handleSave("phoneNumber")} style={buttonStyle("#0ea5e9")}>Save</button>
-                  <button onClick={handleCancel} style={buttonStyle("#ef4444")}>Cancel</button>
+                  <button onClick={() => handleSave("phoneNumber")} style={primaryButtonStyle}>Save</button>
+                  <button onClick={handleCancel} style={cancelLinkStyle}>Cancel</button>
                 </div>
               </div>
             ) : (
@@ -208,19 +208,22 @@ export default function PersonalInfoContainer({
   );
 }
 
-// Common styles
-const buttonStyle = (bg: string) => ({
-  padding: "8px 12px",
-  backgroundColor: bg,
-  color: "white",
+// Shared button styles
+const primaryButtonStyle = {
+  padding: "8px 20px",
+  backgroundColor: "#004d81",
+  color: "#fff",
   border: "none",
-  borderRadius: "5px",
+  borderRadius: "8px",
   cursor: "pointer",
-});
+};
 
-const editIconStyle = {
-  color: "#9CA3AF",
-  fontSize: "18px",
+const cancelLinkStyle = {
+  background: "none",
+  border: "none",
+  color: "#004d81",
+  textDecoration: "underline",
+  fontSize: "16px",
   cursor: "pointer",
 };
 
@@ -236,8 +239,8 @@ const InputRow = ({ field, label, value, handleChange, handleSave, handleCancel 
         placeholder={label}
         style={{ flex: 1, padding: "8px", border: "1px solid #DFDFDF", borderRadius: "5px", color: "#4C4C4C" }}
       />
-      <button onClick={() => handleSave(field)} style={buttonStyle("#0ea5e9")}>Save</button>
-      <button onClick={handleCancel} style={buttonStyle("#ef4444")}>Cancel</button>
+      <button onClick={() => handleSave(field)} style={primaryButtonStyle}>Save</button>
+      <button onClick={handleCancel} style={cancelLinkStyle}>Cancel</button>
     </div>
   </div>
 );
@@ -256,8 +259,8 @@ const SelectRow = ({ field, label, value, handleChange, handleSave, handleCancel
           <option key={opt} value={opt}>{opt}</option>
         ))}
       </select>
-      <button onClick={() => handleSave(field)} style={buttonStyle("#0ea5e9")}>Save</button>
-      <button onClick={handleCancel} style={buttonStyle("#ef4444")}>Cancel</button>
+      <button onClick={() => handleSave(field)} style={primaryButtonStyle}>Save</button>
+      <button onClick={handleCancel} style={cancelLinkStyle}>Cancel</button>
     </div>
   </div>
 );

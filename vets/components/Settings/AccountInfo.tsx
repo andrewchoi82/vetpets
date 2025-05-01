@@ -152,8 +152,8 @@ export default function AccountInfo({
                       color: "#4C4C4C",
                     }}
                   />
-                  <button onClick={() => handleSave("username")} style={buttonStyle("#0ea5e9")}>Save</button>
-                  <button onClick={handleCancel} style={buttonStyle("#ef4444")}>Cancel</button>
+                  <button onClick={() => handleSave("username")} style={primaryButtonStyle}>Save</button>
+                  <button onClick={handleCancel} style={cancelLinkStyle}>Cancel</button>
                 </div>
               </div>
             ) : (
@@ -209,8 +209,8 @@ export default function AccountInfo({
                     }}
                   />
                   <div style={{ display: "flex", gap: "10px", justifyContent: "flex-end" }}>
-                    <button onClick={() => handleSave("password")} style={buttonStyle("#0ea5e9")}>Save</button>
-                    <button onClick={handleCancel} style={buttonStyle("#ef4444")}>Cancel</button>
+                    <button onClick={() => handleSave("password")} style={primaryButtonStyle}>Save</button>
+                    <button onClick={handleCancel} style={cancelLinkStyle}>Cancel</button>
                   </div>
                 </div>
               </div>
@@ -230,11 +230,20 @@ export default function AccountInfo({
   );
 }
 
-const buttonStyle = (bg: string) => ({
-  padding: "8px 12px",
-  backgroundColor: bg,
-  color: "white",
+const primaryButtonStyle = {
+  padding: "8px 20px",
+  backgroundColor: "#004d81",
+  color: "#fff",
   border: "none",
-  borderRadius: "5px",
+  borderRadius: "8px",
   cursor: "pointer",
-});
+};
+
+const cancelLinkStyle = {
+  background: "none",
+  border: "none",
+  color: "#004d81",
+  textDecoration: "underline",
+  fontSize: "16px",
+  cursor: "pointer",
+};

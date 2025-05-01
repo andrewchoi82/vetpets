@@ -200,32 +200,8 @@ export default function BasicInfoContainer({
                       color: "#4C4C4C",
                     }}
                   />
-                  <button
-                    onClick={() => handleSave("fullName")}
-                    style={{
-                      padding: "8px 12px",
-                      backgroundColor: "#0ea5e9",
-                      color: "white",
-                      border: "none",
-                      borderRadius: "5px",
-                      cursor: "pointer",
-                    }}
-                  >
-                    Save
-                  </button>
-                  <button
-                    onClick={handleCancel}
-                    style={{
-                      padding: "8px 12px",
-                      backgroundColor: "#ef4444",
-                      color: "white",
-                      border: "none",
-                      borderRadius: "5px",
-                      cursor: "pointer",
-                    }}
-                  >
-                    Cancel
-                  </button>
+                  <button onClick={() => handleSave("fullName")} style={primaryButtonStyle}>Save</button>
+                  <button onClick={handleCancel} style={cancelLinkStyle}>Cancel</button>
                 </div>
               </div>
             ) : (
@@ -266,32 +242,8 @@ export default function BasicInfoContainer({
                       color: "#4C4C4C",
                     }}
                   />
-                  <button
-                    onClick={() => handleSave("birthday")}
-                    style={{
-                      padding: "8px 12px",
-                      backgroundColor: "#0ea5e9",
-                      color: "white",
-                      border: "none",
-                      borderRadius: "5px",
-                      cursor: "pointer",
-                    }}
-                  >
-                    Save
-                  </button>
-                  <button
-                    onClick={handleCancel}
-                    style={{
-                      padding: "8px 12px",
-                      backgroundColor: "#ef4444",
-                      color: "white",
-                      border: "none",
-                      borderRadius: "5px",
-                      cursor: "pointer",
-                    }}
-                  >
-                    Cancel
-                  </button>
+                  <button onClick={() => handleSave("birthday")} style={primaryButtonStyle}>Save</button>
+                  <button onClick={handleCancel} style={cancelLinkStyle}>Cancel</button>
                 </div>
               </div>
             ) : (
@@ -336,32 +288,8 @@ export default function BasicInfoContainer({
                     <option value="Female">Female</option>
                     <option value="Prefer not to say">Prefer not to say</option>
                   </select>
-                  <button
-                    onClick={() => handleSave("sex")}
-                    style={{
-                      padding: "8px 12px",
-                      backgroundColor: "#0ea5e9",
-                      color: "white",
-                      border: "none",
-                      borderRadius: "5px",
-                      cursor: "pointer",
-                    }}
-                  >
-                    Save
-                  </button>
-                  <button
-                    onClick={handleCancel}
-                    style={{
-                      padding: "8px 12px",
-                      backgroundColor: "#ef4444",
-                      color: "white",
-                      border: "none",
-                      borderRadius: "5px",
-                      cursor: "pointer",
-                    }}
-                  >
-                    Cancel
-                  </button>
+                  <button onClick={() => handleSave("sex")} style={primaryButtonStyle}>Save</button>
+                  <button onClick={handleCancel} style={cancelLinkStyle}>Cancel</button>
                 </div>
               </div>
             ) : (
@@ -379,3 +307,21 @@ export default function BasicInfoContainer({
     </div>
   );
 }
+
+const primaryButtonStyle = {
+  padding: "8px 20px",
+  backgroundColor: "#004d81",
+  color: "#fff",
+  border: "none",
+  borderRadius: "8px",
+  cursor: "pointer",
+};
+
+const cancelLinkStyle = {
+  background: "none",
+  border: "none",
+  color: "#004d81",
+  textDecoration: "underline",
+  fontSize: "16px",
+  cursor: "pointer",
+};
