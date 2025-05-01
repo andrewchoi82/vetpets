@@ -7,6 +7,7 @@ import { supabase } from "@/app/lib/supabaseClient";
 import { useEffect, useState } from "react";
 import { SideBarContainerClient } from "../../../components/MainSideBar/SideBarContainerClient";
 import Image from "next/image";
+import UpcomingAppointmentCard from "@/components/Appointments/UpcomingAppointmentCard";
 
 export default function Appointments() {
   const [selectedTab, setSelectedTab] = useState<"upcoming" | "past">("upcoming");
@@ -141,7 +142,22 @@ export default function Appointments() {
           onClose={() => setIsModalOpen(false)}
           onSchedule={handleSchedule}
         />
-        <AppointmentsTable appointments={appointments} />
+        {selectedTab === "upcoming" ? (
+          <>
+            {appointments.length === 0 ? (
+              <div style={{ padding: "40px", fontStyle: "italic", color: "#4C4C4C" }}>
+                You have no scheduled appointments.
+              </div>
+            ) : (
+              appointments.map((appt) => (
+                <UpcomingAppointmentCard style={{ marginTop: 35 }} key={appt.apptId} appt={appt} />
+              ))
+            )}
+          </>
+        ) : (
+          <AppointmentsTable appointments={appointments} />
+        )}
+
       </div>
     </div>
   );
