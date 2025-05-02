@@ -2,6 +2,7 @@
 import Image from "next/image";
 import React, { useEffect, useState } from 'react'
 import { getImageUrl as getStorageImageUrl } from '@/app/lib/supabaseGetImage';
+import { createClient } from '@supabase/supabase-js';
 
 
 import MessageText from "./MessageText";
@@ -30,6 +31,12 @@ interface User {
     username: string | null;
     profilePic: string | null;
 }
+
+// Initialize Supabase client
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
 
 //takes in prop of the setpagestate from page.tsx of message to change which modal is rendered
 export default function MessagesSide({ setPageState }: MessageOverviewProps) {
@@ -60,7 +67,7 @@ export default function MessagesSide({ setPageState }: MessageOverviewProps) {
     const currId = Cookies.get('userId');
     const petId = Cookies.get('petId');
 
-    
+
 
 
     //this currently sets the sample appointment data to the state
@@ -85,12 +92,18 @@ export default function MessagesSide({ setPageState }: MessageOverviewProps) {
                 if (userCurr && userCurr.userType == 1) {
                     const res = await fetch(`/api/conversations?petId=${petId}`);
                     data = await res.json();
-                    setMessageData(data);
+                    // Sort initial data by lastMessageTime
+                    setMessageData(data.sort((a: Conversation, b: Conversation) => 
+                        new Date(b.lastMessageTime).getTime() - new Date(a.lastMessageTime).getTime()
+                    ));
                 }
                 else if (userCurr && userCurr.userType == 2) {
                     const res = await fetch(`/api/conversations/doctor?doctorId=${currId}`);
                     data = await res.json();
-                    setMessageData(data);
+                    // Sort initial data by lastMessageTime
+                    setMessageData(data.sort((a: Conversation, b: Conversation) => 
+                        new Date(b.lastMessageTime).getTime() - new Date(a.lastMessageTime).getTime()
+                    ));
 
                     // Fetch user data for each message when user is doctor
                     const userDataPromises = data.map(async (message: Conversation) => {
@@ -122,6 +135,80 @@ export default function MessagesSide({ setPageState }: MessageOverviewProps) {
                     const user = await res1.json();
                     setOtherEndUserData(user);
                 }
+
+                // Set up Supabase realtime subscription
+                const subscription = supabase
+                    .channel('conversations-changes')
+                    .on(
+                        'postgres_changes',
+                        {
+                            event: '*',
+                            schema: 'public',
+                            table: 'conversations',
+                            filter: userCurr.userType === 1 
+                                ? `petId=eq.${petId}`
+                                : `doctorId=eq.${currId}`
+                        },
+                        (payload) => {
+                            // Handle different types of changes
+                            switch (payload.eventType) {
+                                case 'INSERT':
+                                    setMessageData(prev => 
+                                        [...prev, payload.new as Conversation]
+                                            .sort((a, b) => 
+                                                new Date(b.lastMessageTime).getTime() - new Date(a.lastMessageTime).getTime()
+                                            )
+                                    );
+                                    break;
+                                case 'UPDATE':
+                                    setMessageData(prev => 
+                                        prev.map(conv => 
+                                            conv.convoId === payload.new.convoId 
+                                                ? { ...conv, ...payload.new as Conversation }
+                                                : conv
+                                        ).sort((a, b) => 
+                                            new Date(b.lastMessageTime).getTime() - new Date(a.lastMessageTime).getTime()
+                                        )
+                                    );
+                                    break;
+                                case 'DELETE':
+                                    setMessageData(prev => 
+                                        prev.filter(conv => conv.convoId !== payload.old.convoId)
+                                            .sort((a, b) => 
+                                                new Date(b.lastMessageTime).getTime() - new Date(a.lastMessageTime).getTime()
+                                            )
+                                    );
+                                    break;
+                            }
+                        }
+                    )
+                    .subscribe();
+
+                // Set up broadcast listener for conversation updates
+                const broadcastSubscription = supabase
+                    .channel('conversations-update')
+                    .on(
+                        'broadcast',
+                        { event: 'conversation-updated' },
+                        (payload) => {
+                            setMessageData(prev => 
+                                prev.map(conv => 
+                                    conv.convoId === payload.payload.convoId
+                                        ? { ...conv, lastMessageTime: payload.payload.lastMessageTime }
+                                        : conv
+                                ).sort((a, b) => 
+                                    new Date(b.lastMessageTime).getTime() - new Date(a.lastMessageTime).getTime()
+                                )
+                            );
+                        }
+                    )
+                    .subscribe();
+
+                // Return cleanup function
+                return () => {
+                    subscription.unsubscribe();
+                    broadcastSubscription.unsubscribe();
+                };
             }
             catch (error) {
                 console.error('Error fetching messages:', error);
@@ -131,7 +218,7 @@ export default function MessagesSide({ setPageState }: MessageOverviewProps) {
         };
 
         fetchMessages();
-    }, [convoNum]);
+    }, [convoNum, currId, petId]);
 
     const formatMessageDate = (dateString: string) => {
         // Parse the PostgreSQL timestamptz format
@@ -211,7 +298,7 @@ export default function MessagesSide({ setPageState }: MessageOverviewProps) {
             await fetch('/api/conversations/addNotification', {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
+                body: JSON.stringify({
                     convoId: newConvoId,
                     sentByUser: true
                 }),
@@ -244,7 +331,7 @@ export default function MessagesSide({ setPageState }: MessageOverviewProps) {
                                 key={message.convoId}
                                 className={`flex flex-row justify-center items-center w-full h-[11vh] rounded-xl border-solid border-[#DFDFDF] ${index === 0 ? 'border-b-[1px]' :
                                     'border-b-[1px]'
-                                    } ${onMessage && message.convoId === convoNum ? 'bg-[#004F82]': 'bg-[#F2F2F2] hover:bg-gray-200'} cursor-pointer`}
+                                    } ${onMessage && message.convoId === convoNum ? 'bg-[#004F82]' : 'bg-[#F2F2F2] hover:bg-gray-200'} cursor-pointer`}
                                 style={{ gap: '20px' }}
                                 onClick={() => {
                                     if (onMessage) {
@@ -260,26 +347,48 @@ export default function MessagesSide({ setPageState }: MessageOverviewProps) {
                                     }
                                 }}
                             >
+
                                 <div className="flex justify-start items-center ml-[10px] w-[20px]">
-                                    {message.numUnreadMessages != 0 && <div
-                                        style={{
-                                            backgroundColor: "#004D81",
-                                            color: "#fff",
-                                            fontSize: "12px",
-                                            width: "20px",
-                                            height: "20px",
-                                            borderRadius: "50%",
-                                            display: "flex",
-                                            alignItems: "center",
-                                            justifyContent: "center",
-                                            fontWeight: 500,
-                                        }}
-                                    >
-                                        {message.numUnreadMessages}
-                                    </div>}
+                                    {currUserData?.userType === 1 && message.numUnreadMessages !== 0 && (
+                                        <div
+                                            style={{
+                                                backgroundColor: "#004D81",
+                                                color: "#fff",
+                                                fontSize: "12px",
+                                                width: "20px",
+                                                height: "20px",
+                                                borderRadius: "50%",
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "center",
+                                                fontWeight: 500,
+                                            }}
+                                        >
+                                            {message.numUnreadMessages}
+                                        </div>
+                                    )}
+
+                                    {currUserData?.userType === 2 && message.numUnreadDoctor !== 0 && (
+                                        <div
+                                            style={{
+                                                backgroundColor: "#004D81",
+                                                color: "#fff",
+                                                fontSize: "12px",
+                                                width: "20px",
+                                                height: "20px",
+                                                borderRadius: "50%",
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "center",
+                                                fontWeight: 500,
+                                            }}
+                                        >
+                                            {message.numUnreadDoctor}
+                                        </div>
+                                    )}
                                 </div>
                                 <Image
-                                    src={currUserData?.userType === 1 
+                                    src={currUserData?.userType === 1
                                         ? (otherEndUserData?.profilePic ? getStorageImageUrl(otherEndUserData.profilePic) : "/img/message/sarah.svg")
                                         : (messageUserData[message.convoId]?.profilePic ? getStorageImageUrl(messageUserData[message.convoId].profilePic || "") : "/img/message/sarah.svg")
                                     }
@@ -374,8 +483,8 @@ export default function MessagesSide({ setPageState }: MessageOverviewProps) {
                                         </div>
                                     </div>
                                 </div>
-                                <MessageText 
-                                    convoID={-2} 
+                                <MessageText
+                                    convoID={-2}
                                     onCreateConversation={handleCreateConversation}
                                     isNewConversation={true}
                                 />

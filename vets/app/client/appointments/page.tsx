@@ -8,6 +8,7 @@ import { SideBarContainerClient } from "../../../components/MainSideBar/SideBarC
 import Image from "next/image";
 import UpcomingAppointmentCard from "@/components/Appointments/UpcomingAppointmentCard";
 import ScheduleAppointmentPage from "@/components/Appointments/ScheduleAppointmentPage";
+import TempPastAppointment from "@/components/Appointments/TempPastAppointments";
 
 export default function Appointments() {
   const [selectedTab, setSelectedTab] = useState<"upcoming" | "past" | null>("upcoming");
@@ -18,19 +19,18 @@ export default function Appointments() {
   const [loading, setLoading] = useState(true);
   const [schedulingMode, setSchedulingMode] = useState(false);
   const [showConfirmed, setShowConfirmed] = useState(false);
+  const [selectedPastAppointment, setSelectedPastAppointment] = useState<any | null>(null);
 
   const petId = 1;
 
   useEffect(() => {
     fetchAllAppointmentData();
-  }, []); // Only fetch once when component mounts
+  }, []);
 
   const fetchAllAppointmentData = async () => {
     setLoading(true);
     try {
       const today = new Date().toISOString().split('T')[0];
-      
-      // Fetch all appointments in one query
       const { data: allData, error } = await supabase
         .from('appointments')
         .select(`
@@ -53,7 +53,6 @@ export default function Appointments() {
 
       if (error) throw error;
 
-      // Split the data into upcoming and past appointments
       const upcoming = allData.filter(appt => appt.date >= today);
       const past = allData.filter(appt => appt.date < today);
 
@@ -68,7 +67,6 @@ export default function Appointments() {
   const handleSchedule = async (newAppointment: any) => {
     setSchedulingMode(false);
     setSelectedTab(null);
-    // Force the upcoming appointments content to show even when tab is unselected
     setAllAppointments(prev => ({
       ...prev,
       upcoming: [...prev.upcoming]
@@ -76,10 +74,9 @@ export default function Appointments() {
   };
 
   const handleTabSelect = (tab: "upcoming" | "past") => {
-    if (schedulingMode) {
-      setSchedulingMode(false);
-    }
+    if (schedulingMode) setSchedulingMode(false);
     setSelectedTab(tab);
+    setSelectedPastAppointment(null);
   };
 
   const handleScheduleClick = () => {
@@ -91,12 +88,7 @@ export default function Appointments() {
     return (
       <div style={{ display: "flex", height: "100vh", overflow: "hidden" }}>
         <SideBarContainerClient selectedPage="Appointments" />
-        <div style={{ 
-          flex: 1, 
-          position: "relative", 
-          backgroundColor: "#f9f9f9", 
-          marginLeft: "120px" 
-        }}>
+        <div style={{ flex: 1, position: "relative", backgroundColor: "#f9f9f9", marginLeft: "120px" }}>
           <div style={{
             position: "absolute",
             top: 0,
@@ -114,9 +106,7 @@ export default function Appointments() {
               alt="Loading..."
               width={80}
               height={80}
-              style={{
-                animation: "spin 1.5s linear infinite"
-              }}
+              style={{ animation: "spin 1.5s linear infinite" }}
             />
           </div>
 
@@ -136,11 +126,11 @@ export default function Appointments() {
   return (
     <div style={{ display: "flex", height: "100vh", overflow: "hidden" }}>
       <SideBarContainerClient selectedPage="Appointments" />
-      <div style={{ 
-        flex: 1, 
-        display: "flex", 
-        flexDirection: "column", 
-        background: "#fff", 
+      <div style={{
+        flex: 1,
+        display: "flex",
+        flexDirection: "column",
+        background: "#fff",
         overflowY: "auto",
         marginLeft: "120px"
       }}>
@@ -150,6 +140,7 @@ export default function Appointments() {
           setSelectedTab={handleTabSelect}
           onScheduleClick={handleScheduleClick}
         />
+
         {schedulingMode ? (
           <div style={{ marginTop: "30px" }}>
             <ScheduleAppointmentPage
@@ -162,11 +153,11 @@ export default function Appointments() {
           </div>
         ) : !selectedTab ? (
           allAppointments.upcoming.length === 0 ? (
-            <div style={{ 
-              display: "flex", 
-              flexDirection: "column", 
-              alignItems: "center", 
-              justifyContent: "center", 
+            <div style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
               padding: "40px",
               color: "#4C4C4C",
               fontStyle: "italic"
@@ -195,11 +186,11 @@ export default function Appointments() {
           )
         ) : selectedTab === "upcoming" ? (
           currentAppointments.length === 0 ? (
-            <div style={{ 
-              display: "flex", 
-              flexDirection: "column", 
-              alignItems: "center", 
-              justifyContent: "center", 
+            <div style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
               padding: "40px",
               color: "#4C4C4C",
               fontStyle: "italic"
@@ -227,12 +218,17 @@ export default function Appointments() {
             ))
           )
         ) : selectedTab === "past" ? (
-          currentAppointments.length === 0 ? (
-            <div style={{ 
-              display: "flex", 
-              flexDirection: "column", 
-              alignItems: "center", 
-              justifyContent: "center", 
+          selectedPastAppointment ? (
+            <TempPastAppointment
+              appt={selectedPastAppointment}
+              onClose={() => setSelectedPastAppointment(null)}
+            />
+          ) : currentAppointments.length === 0 ? (
+            <div style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
               padding: "40px",
               color: "#4C4C4C",
               fontStyle: "italic"
@@ -240,7 +236,10 @@ export default function Appointments() {
               You have no past appointments.
             </div>
           ) : (
-            <AppointmentsTable appointments={currentAppointments} />
+            <AppointmentsTable
+              appointments={currentAppointments}
+              onRowClick={(appt) => setSelectedPastAppointment(appt)}
+            />
           )
         ) : null}
       </div>

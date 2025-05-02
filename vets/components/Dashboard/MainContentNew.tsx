@@ -100,16 +100,18 @@ export default function MainContentNew() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-[#F9F9F9]">
-          <Image
-                    src={(!pet?.pet_picture || pet?.pet_picture==="") ? "/img/message/doggg.png" : getImageUrl(pet?.pet_picture)}
-                    alt="Snowball"
-            width={250}
-            height={284}
-            className="w-64 max-h-72 h-72 object-cover rounded-xl shadow-md mx-auto md:mx-0"
-          />
+        <div className="flex gap-[min(30px,2vw)] bg-[#F9F9F9]">
+          <div className="w-[40%]">
+            <Image
+              src={(!pet?.pet_picture || pet?.pet_picture==="") ? "/img/message/doggg.png" : getImageUrl(pet?.pet_picture)}
+              alt="Snowball"
+              width={250}
+              height={284}
+              className="w-full h-[284px] object-cover rounded-xl shadow-md"
+            />
+          </div>
 
-          <div className="bg-white rounded-xl shadow-md p-6 flex flex-col mr-[8px] md:mr-0 max-h-72 h-72">
+          <div className="w-[60%] bg-white rounded-xl shadow-md p-6 flex flex-col h-[284px]">
             <div className="mt-4 space-y-4 w-full">
               <InfoItem icon="/img/dashboard/dashboardAge.svg" label="Age" value={pet?.age||""} />
               <InfoItem icon="/img/dashboard/sex-icon.svg" label="Gender" value={pet?.sex||""} />
@@ -141,11 +143,52 @@ export default function MainContentNew() {
 }
 
 function InfoItem({ icon, label, value }: { icon: string; label: string; value: string }) {
+  const formatValue = (label: string, value: string) => {
+    if (!value) return "N/A";
+    
+    switch (label) {
+      case "Age":
+        // Convert to years and months if possible
+        const ageNum = parseFloat(value);
+        if (!isNaN(ageNum)) {
+          const years = Math.floor(ageNum);
+          const months = Math.round((ageNum - years) * 12);
+          if (years === 0) {
+            return `${months} month${months !== 1 ? 's' : ''}`;
+          } else if (months === 0) {
+            return `${years} year${years !== 1 ? 's' : ''}`;
+          }
+          return `${years} year${years !== 1 ? 's' : ''}, ${months} month${months !== 1 ? 's' : ''}`;
+        }
+        return value;
+      
+      case "Weight":
+        // Convert to pounds with one decimal place
+        const weightNum = parseFloat(value);
+        if (!isNaN(weightNum)) {
+          return `${weightNum.toFixed(1)} lb${weightNum !== 1 ? 's' : ''}`;
+        }
+        return value;
+      
+      case "Gender":
+        return value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
+      
+      case "Breed":
+        return value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
+      
+      case "Sterilized":
+        return value === "true" ? "Yes" : "No";
+      
+      default:
+        return value;
+    }
+  };
+
   return (
     <div className="flex items-center">
       <Image src={icon} alt="icon" width={20} height={20} className="w-4 h-4 md:w-5 md:h-5 mr-4 md:mr-6" />
       <span className="text-Text-Main text-sm md:text-base font-medium leading-loose">{label}:</span>
-      <span className="text-Text-Main text-sm md:text-base font-normal leading-loose ml-1">{value || "N/A"}</span>
+      <span className="text-Text-Main text-sm md:text-base font-normal leading-loose ml-1">{formatValue(label, value)}</span>
     </div>
   );
 }

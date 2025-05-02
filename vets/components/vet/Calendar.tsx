@@ -45,6 +45,53 @@ export default function Calendar() {
   const [selectedView, setSelectedView] = useState<"schedule" | "manage">("schedule");
   const currId = Cookies.get("userId");
 
+  // Add state for working hours and appointment durations
+  const [workingHours, setWorkingHours] = useState([
+    { day: 'Sunday', from: '9:00', to: '17:00' },
+    { day: 'Monday', from: '8:00', to: '18:00' },
+    { day: 'Tuesday', from: '8:00', to: '18:00' },
+    { day: 'Wednesday', from: '8:00', to: '18:00' },
+    { day: 'Thursday', from: '8:00', to: '18:00' },
+    { day: 'Friday', from: '8:00', to: '17:00' }
+  ]);
+
+  const [appointmentDurations, setAppointmentDurations] = useState([
+    { label: 'Vaccinations', color: 'bg-[#F0CDE9]', duration: '30' },
+    { label: 'Preventative treatment', color: 'bg-[#C2E3EC]', duration: '45' },
+    { label: 'Check-up', color: 'bg-[#FFD8A8]', duration: '30' },
+    { label: 'Routine wellness', color: 'bg-[#D0F3D4]', duration: '45' },
+    { label: 'Illness/Injury', color: 'bg-[#DCD6FF]', duration: '60' },
+    { label: 'Surgery consultation', color: 'bg-[#FCB1A7]', duration: '60' },
+    { label: 'Other', color: 'bg-[#9CA5B1]', duration: '30' }
+  ]);
+
+  const [newTypeLabel, setNewTypeLabel] = useState('');
+  const [showNewTypeInput, setShowNewTypeInput] = useState(false);
+
+  // Add handlers for updating values
+  const handleWorkingHoursChange = (index: number, field: 'from' | 'to', value: string) => {
+    const updatedHours = [...workingHours];
+    updatedHours[index] = { ...updatedHours[index], [field]: value };
+    setWorkingHours(updatedHours);
+  };
+
+  const handleAppointmentDurationChange = (index: number, value: string) => {
+    const updatedDurations = [...appointmentDurations];
+    updatedDurations[index] = { ...updatedDurations[index], duration: value };
+    setAppointmentDurations(updatedDurations);
+  };
+
+  const handleAddNewType = () => {
+    if (newTypeLabel.trim()) {
+      setAppointmentDurations([
+        ...appointmentDurations,
+        { label: newTypeLabel, color: 'bg-[#9CA5B1]', duration: '30' }
+      ]);
+      setNewTypeLabel('');
+      setShowNewTypeInput(false);
+    }
+  };
+
   const tabs: TabItem[] = [
     {
       label: "Schedule",
@@ -247,13 +294,23 @@ export default function Calendar() {
             {/* Working Hours Card */}
             <div className="w-[400px] bg-white rounded-lg shadow-md border border-gray-200 p-6">
               <h2 className="text-lg text-[#4C4C4C] mb-4">Working hours</h2>
-              {['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'].map((day) => (
+              {workingHours.map(({ day, from, to }, index) => (
                 <div key={day} className="flex items-center justify-between mb-3">
                   <div className="w-24 text-gray-700">{day}</div>
                   <div className="flex items-center gap-2">
-                    <input type="text" placeholder="From" className="w-20 px-2 text-[#919191] text-center py-1 border border-gray-200 rounded-md text-sm" />
+                    <input 
+                      type="text" 
+                      defaultValue={from} 
+                      onChange={(e) => handleWorkingHoursChange(index, 'from', e.target.value)}
+                      className="w-20 px-2 text-[#919191] text-center py-1 border border-gray-200 rounded-md text-sm" 
+                    />
                     <span className="text-lg">→</span>
-                    <input type="text" placeholder="To" className="w-20 px-2 text-[#919191] text-center py-1 border border-gray-200 rounded-md text-sm" />
+                    <input 
+                      type="text" 
+                      defaultValue={to} 
+                      onChange={(e) => handleWorkingHoursChange(index, 'to', e.target.value)}
+                      className="w-20 px-2 text-[#919191] text-center py-1 border border-gray-200 rounded-md text-sm" 
+                    />
                   </div>
                 </div>
               ))}
@@ -262,23 +319,60 @@ export default function Calendar() {
             {/* Appointment Duration Card */}
             <div className="w-[400px] bg-white rounded-lg shadow-md border border-gray-200 p-6">
               <h2 className="text-lg text-[#4C4C4C] mb-4">Appointment duration</h2>
-              {[
-                { label: 'Vaccinations', color: 'bg-[#F0CDE9]' },
-                { label: 'Preventative treatment', color: 'bg-[#C2E3EC]' },
-                { label: 'Check-up', color: 'bg-[#FFD8A8]' },
-                { label: 'Routine wellness', color: 'bg-[#D0F3D4]' },
-                { label: 'Illness/Injury', color: 'bg-[#DCD6FF]' },
-                { label: 'Surgery consultation', color: 'bg-[#FCB1A7]' },
-                { label: 'Other', color: 'bg-[#9CA5B1]' },
-              ].map(({ label, color }) => (
+              {appointmentDurations.map(({ label, color, duration }, index) => (
                 <div key={label} className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2">
                     <div className={`w-3 h-3 rounded-full ${color}`}></div>
                     <span className="text-gray-700 text-sm">{label}</span>
                   </div>
-                  <input type="text" placeholder="Duration (min)" className="text-center text-[#919191] border-gray-200 w-32 px-2 py-1 border rounded-md text-sm" />
+                  <input 
+                    type="text" 
+                    defaultValue={duration} 
+                    onChange={(e) => handleAppointmentDurationChange(index, e.target.value)}
+                    className="text-center text-[#919191] border-gray-200 w-32 px-2 py-1 border rounded-md text-sm" 
+                  />
                 </div>
               ))}
+              
+              {showNewTypeInput ? (
+                <div className="flex items-center justify-between mt-4">
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full bg-[#9CA5B1]"></div>
+                    <input
+                      type="text"
+                      value={newTypeLabel}
+                      onChange={(e) => setNewTypeLabel(e.target.value)}
+                      placeholder="Enter new type"
+                      className="text-gray-700 text-sm border border-gray-200 rounded-md px-2 py-1"
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={handleAddNewType}
+                      className="px-3 py-1 bg-[#004F82] text-white rounded-md text-sm hover:bg-[#003a60]"
+                    >
+                      Add
+                    </button>
+                    <button
+                      onClick={() => {
+                        setShowNewTypeInput(false);
+                        setNewTypeLabel('');
+                      }}
+                      className="px-3 py-1 bg-gray-200 text-gray-700 rounded-md text-sm hover:bg-gray-300"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <button
+                  onClick={() => setShowNewTypeInput(true)}
+                  className="mt-4 flex items-center gap-2 text-[#004F82] text-sm hover:text-[#003a60]"
+                >
+                  <span>+</span>
+                  <span>Add Type</span>
+                </button>
+              )}
             </div>
           </div>
         </div>

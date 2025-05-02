@@ -2,15 +2,15 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, use } from "react";
 import { SideBarItem } from "./SideBarItem";
 import { getImageUrl as getStorageImageUrl } from '@/app/lib/supabaseGetImage';
+import { supabase } from '@/app/lib/supabaseClient';
 import Cookies from 'js-cookie';
 
 export interface SideBarContainerProps {
   selectedPage: string;
 }
-
 interface MenuItem {
   path: string;
   text: string;
@@ -20,11 +20,14 @@ interface MenuItem {
 
 export const SideBarContainerClient = ({ selectedPage }: SideBarContainerProps) => {
   const router = useRouter();
+  const [numUnreadMessages, setNumUnreadMessages] = useState<number>(0);
+  const [numUnreadDoctor, setNumUnreadDoctor] = useState<number>(0);
   const [isContainerHovered, setIsContainerHovered] = useState<boolean>(false);
   const [currentSelected, setCurrentSelected] = useState<string>(selectedPage);
   const [userData, setUserData] = useState<any>(null);
   const [isUserDataLoading, setIsUserDataLoading] = useState(true);
   const currId = Cookies.get("userId");
+  const petId = Cookies.get("petId");
   const [showProfilePopup, setShowProfilePopup] = useState(false);
   const popupRef = useRef<HTMLDivElement>(null);
   const profileRef = useRef<HTMLDivElement>(null);
@@ -44,6 +47,44 @@ export const SideBarContainerClient = ({ selectedPage }: SideBarContainerProps) 
       setCurrentSelected(pathToName[currentPath]);
     }
   }, []);
+
+  useEffect(() => {
+      if (!petId) return;
+  
+      fetchNotificationCount();
+    
+      const channel = supabase
+        .channel('conversations_notifications')
+        .on(
+          'postgres_changes',
+          {
+            event: 'UPDATE',
+            schema: 'public',
+            table: 'conversations',
+          },
+          (payload) => {
+            console.log("🔄 Conversation updated:", payload);
+            fetchNotificationCount(); 
+          }
+        )
+        .subscribe();
+    
+      return () => {
+        supabase.removeChannel(channel);
+      };
+    }, [petId]);
+    
+    const fetchNotificationCount = async () => {
+      try {
+        const res = await fetch(`/api/conversations/getTotalNotification/client?petId=${petId}`);
+        const data = await res.json();
+        setNumUnreadMessages(data.totalUnreadMessages);
+      } catch (error) {
+        console.error("Failed to fetch unread count:", error);
+      }
+    };
+  
+
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -84,7 +125,7 @@ export const SideBarContainerClient = ({ selectedPage }: SideBarContainerProps) 
   const topMenuItems: MenuItem[] = [
     { path: "/img/sidebar-options/nonSelectedVersion/dashboard.svg", text: "Dashboard", href: "/" },
     { path: "/img/sidebar-options/nonSelectedVersion/appointments.svg", text: "Appointments", href: "/client/appointments" },
-    { path: "/img/sidebar-options/nonSelectedVersion/messages.svg", text: "Messages", href: "/client/message", notificationCount: 2 },
+    { path: "/img/sidebar-options/nonSelectedVersion/messages.svg", text: "Messages", href: "/client/message", notificationCount: numUnreadMessages},
     { path: "/img/sidebar-options/nonSelectedVersion/health-records.svg", text: "Health Records", href: "/client/health-records" },
     { path: "/img/sidebar-options/nonSelectedVersion/billing.svg", text: "Billings", href: "/client/billings" }
   ];
