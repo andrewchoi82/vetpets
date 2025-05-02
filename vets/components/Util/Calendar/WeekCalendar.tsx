@@ -47,6 +47,8 @@ export default function WeekCalendar({ onDateSelect, onTimeSelect }: {
     if (!stillInWeek) {
       setSelectedDate(null);
       setSelectedTime(null);
+      onDateSelect("");  // Notify parent that date is cleared
+      onTimeSelect("");  // Notify parent that time is cleared
     }
   };
  
@@ -69,6 +71,8 @@ export default function WeekCalendar({ onDateSelect, onTimeSelect }: {
     if (!stillInWeek) {
       setSelectedDate(null);
       setSelectedTime(null);
+      onDateSelect("");  // Notify parent that date is cleared
+      onTimeSelect("");  // Notify parent that time is cleared
     }
   };
 
