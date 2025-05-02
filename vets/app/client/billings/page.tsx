@@ -1,6 +1,6 @@
 "use client";
 
-import { Header } from "@/components/MainHeader/Header";
+import { HeaderNew } from "@/components/MainHeader/HeaderNew";
 import { SideBarContainerClient } from "@/components/MainSideBar/SideBarContainerClient";
 import BillingsHeader from "@/components/Billings/BillingsHeader";
 import BillingsTable from "@/components/Billings/BillingsTable";
@@ -117,7 +117,7 @@ export default function Billings() {
         overflowY: "auto",
         marginLeft: "120px"
       }}>
-        <Header title="" showSearchBar={true} />
+        <HeaderNew title="" showSearchBar={true} />
         <BillingsHeader 
           selectedTab={selectedTab} 
           setSelectedTabAction={setSelectedTab} 
