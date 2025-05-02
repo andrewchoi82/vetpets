@@ -50,6 +50,15 @@ interface TestResult {
   result: string;
 }
 
+interface RecordsTableProps {
+  selectedTab: "vaccinations" | "test results" | "medications" | "medical history";
+  setSelectedTabAction: (tab: "vaccinations" | "test results" | "medications" | "medical history") => void;
+  tabChange: boolean;
+  setTabChange: (value: boolean) => void;
+  records: any[];
+}
+
+
 export default function RecordsTable({ selectedTab, setSelectedTabAction, tabChange, setTabChange }: RecordsHeaderProps) {
   const [vaccinationsData, setVaccinationsData] = useState<Vaccination[]>([]);
   const [medicationsData, setMedicationsData] = useState<Medication[]>([]);

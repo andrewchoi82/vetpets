@@ -10,7 +10,7 @@ interface TabItem {
 
 interface SelectTabProps {
   tabs: TabItem[];
-  selectedTab: string;
+  selectedTab: string | null;
   onSelectTab: (value: string) => void;
 }
 
@@ -29,6 +29,7 @@ export const SelectTab = ({ tabs, selectedTab, onSelectTab }: SelectTabProps) =>
             height: "33px",
             gap: "10px",
             borderRadius: "100px",
+            // When selectedTab is null, ensure all tabs show as non-selected
             background: selectedTab === tab.value ? "#004F82" : "#FFFFFF",
             color: selectedTab === tab.value ? "#FFFFFF" : "#4B5563",
             border: `1px solid ${selectedTab === tab.value ? "#004F82" : "#D1D5DB"}`,
