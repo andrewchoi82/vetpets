@@ -201,10 +201,10 @@ export default function TempPastAppointment({
           }}
         >
           <div style={{ fontSize: 17, fontWeight: 500, color: "#4C4C4C", marginBottom: 16 }}>
-            Doctor's Notes
+            Appointment Summary
           </div>
           <div style={{ fontSize: 15, color: "#4C4C4C", lineHeight: "1.6" }}>
-            {appt?.doctorNotes ?? "No additional notes provided for this appointment."}
+            {appt?.doctorNotes ?? "On this day, you brought in your dog, Max, for a routine wellness checkup. The veterinarian conducted a full physical examination and confirmed that Max is in good overall health. His weight is stable, his heart and lungs sounded normal, and his coat appeared healthy. He received his annual rabies and distemper vaccinations, along with a preventative treatment for fleas and ticks. You mentioned some occasional scratching, so the vet recommended a mild allergy supplement and advised monitoring his condition. Max was well-behaved throughout the visit and is scheduled to return in six months for his next check-up."}
           </div>
         </div>
       </div>

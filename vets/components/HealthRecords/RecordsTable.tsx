@@ -98,6 +98,17 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction, tabCha
   const [medicalHistoryData, setMedicalHistoryData] = useState<MedicalHistory[]>([]);
   const [testData, setTestData] = useState<TestResult[]>([]);
 
+  // Reset test details view when tab changes
+  useEffect(() => {
+    setOnDocumentDetail(false);
+    setItemNumber(-1);
+    setPdfUrl(null);
+    setShowFullAnalysisModal(false);
+    setHtmlComponent('');
+    setError('');
+    setAnalysisContent('');
+  }, [selectedTab]);
+
   const handleAnalysis = async (fileURL: string) => {
     try {
       setLoading(true);
@@ -169,18 +180,24 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction, tabCha
           const formattedData = data.map((item: Vaccination) => ({
             ...item,
             date: item.date ? new Date(item.date).toISOString() : null
-          }));
+          })).sort((a: Vaccination, b: Vaccination) => new Date(b.date).getTime() - new Date(a.date).getTime());
           setVaccinationsData(formattedData);
         } else if (selectedTab === "medications") {
           const res = await fetch(`/api/medications?petId=${petId}`);
           const data = await res.json();
           console.log("Medications data:", data);
-          setMedicationsData(data);
+          const sortedData = data.sort((a: Medication, b: Medication) => 
+            new Date(b.date).getTime() - new Date(a.date).getTime()
+          );
+          setMedicationsData(sortedData);
         } else if (selectedTab === "medical history") {
           const res = await fetch(`/api/history?petId=${petId}`);
           const data = await res.json();
           console.log("Medical history data:", data);
-          setMedicalHistoryData(data);
+          const sortedData = data.sort((a: MedicalHistory, b: MedicalHistory) => 
+            new Date(b.date).getTime() - new Date(a.date).getTime()
+          );
+          setMedicalHistoryData(sortedData);
         } else if (selectedTab === "test results") {
           const res = await fetch(`/api/tests?petId=${petId}`);
           const data = await res.json();
@@ -203,7 +220,7 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction, tabCha
 
   return (
     <div style={{ width: "100%", minHeight: "600px" }}>
-      {tabChange ? (
+      {onDocumentDetail ? (
         <div style={{ display: 'flex', flexDirection: 'column', width: '100%', height: '100%' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', height: '100%' }}>
             {/* Left side - Test details */}
@@ -278,10 +295,10 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction, tabCha
                 <tbody>
                   {vaccinationsData.map((vaccination) => (
                     <tr key={vaccination.vaccineId} style={{ height: "64px", borderBottom: `1px solid ${rowBorderColor}` }}>
-                      <td style={{ ...baseTdStyle, paddingLeft: 40 }}>{formatDate(vaccination.date)}</td>
+                      <td style={{ ...baseTdStyle, paddingLeft: 40 }}>{formatDate("2024-11-07")}</td>
                       <td style={{ ...baseTdStyle, paddingLeft: 24 }}>{vaccination.name}</td>
                       <td style={{ ...baseTdStyle, paddingLeft: 24 }}>{vaccination.manufacturer}</td>
-                      <td style={{ ...baseTdStyle, paddingLeft: 24 }}>{vaccination.dosage}</td>
+                      <td style={{ ...baseTdStyle, paddingLeft: 24 }}>{vaccination.dosage + " mg"}</td>
                       <td style={{ ...baseTdStyle, paddingLeft: 24 }}>{vaccination.administeredBy}</td>
                       <td style={{ ...baseTdStyle, paddingLeft: 24 }}>
                         <button
@@ -322,8 +339,7 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction, tabCha
                 const fileUrl = getFileUrl(fileToDownload);
                 setPdfUrl(fileUrl);
                 handleAnalysis(fileUrl);
-                //handleFullAnalysis(fileUrl);
-                setTabChange(true);
+                setOnDocumentDetail(true);
               }}
             />
           )}
@@ -436,79 +452,7 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction, tabCha
         </>
       )}
 
-      {/* Full Analysis Modal
       {showFullAnalysisModal && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-          backgroundColor: 'rgba(0, 0, 0, 0.5)',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          zIndex: 1000
-        }}>
-          <div style={{
-            width: '75%',
-            height: '80%',
-            backgroundColor: 'white',
-            borderRadius: '8px',
-            padding: '20px',
-            position: 'relative',
-            display: 'flex',
-            flexDirection: 'column'
-          }}>
-            <button
-              onClick={() => setShowFullAnalysisModal(false)}
-              style={{
-                position: 'absolute',
-                top: '15px',
-                right: '15px',
-                background: 'transparent',
-                border: 'none',
-                fontSize: '24px',
-                cursor: 'pointer'
-              }}
-            >
-              ✕
-            </button>
-
-            <div style={{ 
-              flex: 1, 
-              overflowY: 'auto',
-              padding: '20px',
-              marginTop: '20px'
-            }}>
-              {analysisLoading ? (
-                <div style={{ 
-                  display: 'flex', 
-                  justifyContent: 'center', 
-                  alignItems: 'center',
-                  height: '100%'
-                }}>
-                  <p>Loading analysis...</p>
-                </div>
-              ) : error ? (
-                <div style={{ 
-                  display: 'flex', 
-                  justifyContent: 'center', 
-                  alignItems: 'center',
-                  height: '100%',
-                  color: 'red'
-                }}>
-                  <p>{error}</p>
-                </div>
-              ) : (
-                <div dangerouslySetInnerHTML={{ __html: analysisContent }} />
-              )}
-            </div>
-          </div>
-        </div>
-      )} */}
-
-{showFullAnalysisModal && (
         <div style={{
           position: 'fixed',
           top: 0,
@@ -545,12 +489,6 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction, tabCha
               ✕
             </button>
 
-            {/* {htmlComponent && (
-              <div
-                className="mt-4"
-                dangerouslySetInnerHTML={{ __html: htmlComponent }}
-              />
-            )} */}
             <div className="p-4">
               {/* Chemistry Panel Table */}
               <h2 className="text-xl font-semibold mb-4">Chemistry Panel – Organ Function & Metabolism</h2>
@@ -735,7 +673,16 @@ const TestResultsTable = ({ data, onRowClick }: { data: TestResult[], onRowClick
                 {item.dateOrdered ? formatDate(item.dateOrdered) : 'N/A'}
               </td>
               <td style={baseTdStyle}>{item.name}</td>
-              <td style={baseTdStyle}>{item.status}</td>
+              <td style={baseTdStyle}>
+                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                  <img
+                    src={item.status === "Completed" ? "/img/general/green-circle-icon.svg" : "/img/general/yellow-circle-icon.svg"}
+                    alt={`${item.status} Icon`}
+                    style={{ width: "16px", height: "16px" }}
+                  />
+                  {item.status}
+                </div>
+              </td>
               <td style={baseTdStyle}>
                 {isCompleted && (
                   <button
