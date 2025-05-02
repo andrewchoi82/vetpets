@@ -100,16 +100,18 @@ export default function MainContentNew() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-[#F9F9F9]">
-          <Image
-                    src={(!pet?.pet_picture || pet?.pet_picture==="") ? "/img/message/doggg.png" : getImageUrl(pet?.pet_picture)}
-                    alt="Snowball"
-            width={250}
-            height={284}
-            className="w-64 max-h-72 h-72 object-cover rounded-xl shadow-md mx-auto md:mx-0"
-          />
+        <div className="flex gap-[min(30px,2vw)] bg-[#F9F9F9]">
+          <div className="w-[40%]">
+            <Image
+              src={(!pet?.pet_picture || pet?.pet_picture==="") ? "/img/message/doggg.png" : getImageUrl(pet?.pet_picture)}
+              alt="Snowball"
+              width={250}
+              height={284}
+              className="w-full h-[284px] object-cover rounded-xl shadow-md"
+            />
+          </div>
 
-          <div className="bg-white rounded-xl shadow-md p-6 flex flex-col mr-[8px] md:mr-0 max-h-72 h-72">
+          <div className="w-[60%] bg-white rounded-xl shadow-md p-6 flex flex-col h-[284px]">
             <div className="mt-4 space-y-4 w-full">
               <InfoItem icon="/img/dashboard/dashboardAge.svg" label="Age" value={pet?.age||""} />
               <InfoItem icon="/img/dashboard/sex-icon.svg" label="Gender" value={pet?.sex||""} />
