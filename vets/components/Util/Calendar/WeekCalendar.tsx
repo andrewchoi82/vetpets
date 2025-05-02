@@ -14,7 +14,10 @@ const getWeekDates = (ref = new Date()): Date[] => {
   });
 };
 
-export default function WeekCalendar() {
+export default function WeekCalendar({ onDateSelect, onTimeSelect }: {
+  onDateSelect: (date: string) => void;
+  onTimeSelect: (time: string) => void;
+}) {
   const [weekDates, setWeekDates] = useState(getWeekDates());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
@@ -117,6 +120,7 @@ export default function WeekCalendar() {
             onClick={() => {
               setSelectedDate(date);
               setSelectedTime(null);
+              onDateSelect(date.toLocaleDateString());
             }}
             style={{
               borderRadius: 8,
@@ -162,7 +166,10 @@ export default function WeekCalendar() {
           {timeSlots.map((slot) => (
             <button
               key={slot}
-              onClick={() => setSelectedTime(slot)}
+              onClick={() => {
+                setSelectedTime(slot);
+                onTimeSelect(slot);
+              }}
               style={{
                 padding: "10px 16px",
                 borderRadius: 6,
