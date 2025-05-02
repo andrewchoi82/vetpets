@@ -59,11 +59,7 @@ interface RecordsTableProps {
 }
 
 
-export default function RecordsTable({ selectedTab, setSelectedTabAction, tabChange, setTabChange }: RecordsHeaderProps) {
-  const [vaccinationsData, setVaccinationsData] = useState<Vaccination[]>([]);
-  const [medicationsData, setMedicationsData] = useState<Medication[]>([]);
-  const [medicalHistoryData, setMedicalHistoryData] = useState<MedicalHistory[]>([]);
-  const [testData, setTestData] = useState<TestResult[]>([]);
+export default function RecordsTable({ selectedTab, setSelectedTabAction, tabChange, setTabChange, records }: RecordsTableProps) {
   const [onDocumentDetail, setOnDocumentDetail] = useState(false);
   const [itemNumber, setItemNumber] = useState(-1);
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
@@ -131,35 +127,6 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction, tabCha
     }
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      if (!petId) return;
-      try {
-        if (selectedTab === "vaccinations") {
-          const res = await fetch(`/api/vaccinations?petId=${petId}`);
-          const data = await res.json();
-          setVaccinationsData(data);
-        } else if (selectedTab === "medications") {
-          const res = await fetch(`/api/medications?petId=${petId}`);
-          const data = await res.json();
-          setMedicationsData(data);
-        } else if (selectedTab === "medical history") {
-          const res = await fetch(`/api/history?petId=${petId}`);
-          const data = await res.json();
-          setMedicalHistoryData(data);
-        } else if (selectedTab === "test results") {
-          const res = await fetch(`/api/tests?petId=${petId}`);
-          const data = await res.json();
-          setTestData(data);
-        }
-      } catch (err) {
-        console.error("Fetch error:", err);
-      }
-    };
-
-    fetchData();
-  }, [selectedTab]);
-
   return (
     <div style={{ width: "100%", minHeight: "600px" }}>
       {onDocumentDetail ? (
@@ -222,14 +189,14 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction, tabCha
       ) : (
         <>
           {selectedTab === "vaccinations" && (
-            <VaccinationTable data={vaccinationsData} />
+            <VaccinationTable data={records} />
           )}
           {selectedTab === "test results" && (
             <TestResultsTable 
-              data={testData} 
+              data={records} 
               onRowClick={(index) => {
                 setItemNumber(index);
-                const fileToDownload = testData[index].result;
+                const fileToDownload = records[index].result;
                 const fileUrl = getFileUrl(fileToDownload);
                 setPdfUrl(fileUrl);
                 handleAnalysis(fileUrl);
@@ -239,10 +206,10 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction, tabCha
             />
           )}
           {selectedTab === "medications" && (
-            <MedicationsTable data={medicationsData} />
+            <MedicationsTable data={records} />
           )}
           {selectedTab === "medical history" && (
-            <MedicalHistoryTable data={medicalHistoryData} />
+            <MedicalHistoryTable data={records} />
           )}
         </>
       )}

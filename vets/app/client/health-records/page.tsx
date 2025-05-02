@@ -6,7 +6,6 @@ import RecordsHeader from "@/components/HealthRecords/RecordsHeader";
 import RecordsTable from "@/components/HealthRecords/RecordsTable";
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { supabase } from "@/app/lib/supabaseClient";
 import Cookies from "js-cookie";
 
 export default function HealthRecords() {
@@ -34,42 +33,20 @@ export default function HealthRecords() {
       const petId = Cookies.get('petId');
       if (!petId) throw new Error('No pet ID found');
 
-      // Fetch all types of records in parallel
+      // Fetch all types of records in parallel using API routes
       const [vaccinationsRes, testResultsRes, medicationsRes, medicalHistoryRes] = await Promise.all([
-        supabase
-          .from('vaccinations')
-          .select('*')
-          .eq('petId', petId)
-          .order('date', { ascending: false }),
-        supabase
-          .from('test_results')
-          .select('*')
-          .eq('petId', petId)
-          .order('date', { ascending: false }),
-        supabase
-          .from('medications')
-          .select('*')
-          .eq('petId', petId)
-          .order('date', { ascending: false }),
-        supabase
-          .from('medical_history')
-          .select('*')
-          .eq('petId', petId)
-          .order('date', { ascending: false })
+        fetch(`/api/vaccinations?petId=${petId}`).then(res => res.json()),
+        fetch(`/api/tests?petId=${petId}`).then(res => res.json()),
+        fetch(`/api/medications?petId=${petId}`).then(res => res.json()),
+        fetch(`/api/history?petId=${petId}`).then(res => res.json())
       ]);
-
-      // Check for errors
-      if (vaccinationsRes.error) throw vaccinationsRes.error;
-      if (testResultsRes.error) throw testResultsRes.error;
-      if (medicationsRes.error) throw medicationsRes.error;
-      if (medicalHistoryRes.error) throw medicalHistoryRes.error;
 
       // Update state with all fetched data
       setAllRecords({
-        vaccinations: vaccinationsRes.data || [],
-        test_results: testResultsRes.data || [],
-        medications: medicationsRes.data || [],
-        medical_history: medicalHistoryRes.data || []
+        vaccinations: vaccinationsRes || [],
+        test_results: testResultsRes || [],
+        medications: medicationsRes || [],
+        medical_history: medicalHistoryRes || []
       });
     } catch (error) {
       console.error("Error fetching health records:", error);
