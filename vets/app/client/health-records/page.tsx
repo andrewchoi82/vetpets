@@ -145,13 +145,27 @@ export default function HealthRecords() {
           tabChange={false}
           setTabChange={() => {}} // No longer needed since we fetch all data at once
         />
-        <RecordsTable
-          selectedTab={selectedTab}
-          setSelectedTabAction={setSelectedTab}
-          tabChange={false}
-          setTabChange={() => {}} // No longer needed since we fetch all data at once
-          records={currentRecords}
-        />
+        {currentRecords.length === 0 ? (
+          <div style={{ 
+            display: "flex", 
+            flexDirection: "column", 
+            alignItems: "center", 
+            justifyContent: "center", 
+            padding: "40px",
+            color: "#4C4C4C",
+            fontStyle: "italic"
+          }}>
+            {`No ${selectedTab} records found.`}
+          </div>
+        ) : (
+          <RecordsTable
+            selectedTab={selectedTab}
+            setSelectedTabAction={setSelectedTab}
+            tabChange={false}
+            setTabChange={() => {}} // No longer needed since we fetch all data at once
+            records={currentRecords}
+          />
+        )}
       </div>
     </div>
   );

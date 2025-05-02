@@ -167,8 +167,31 @@ export default function Appointments() {
           </div>
         ) : selectedTab === "upcoming" ? (
           currentAppointments.length === 0 ? (
-            <div style={{ padding: "40px", fontStyle: "italic", color: "#4C4C4C" }}>
-              You have no scheduled appointments.
+            <div style={{ 
+              display: "flex", 
+              flexDirection: "column", 
+              alignItems: "center", 
+              justifyContent: "center", 
+              padding: "40px",
+              color: "#4C4C4C",
+              fontStyle: "italic"
+            }}>
+              You have no upcoming appointments.
+              <button
+                onClick={handleScheduleClick}
+                style={{
+                  marginTop: "15px",
+                  padding: "8px 16px",
+                  backgroundColor: "#004d81",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "5px",
+                  cursor: "pointer",
+                  fontSize: "14px"
+                }}
+              >
+                Schedule Appointment
+              </button>
             </div>
           ) : (
             currentAppointments.map((appt) => (
@@ -176,7 +199,21 @@ export default function Appointments() {
             ))
           )
         ) : selectedTab === "past" ? (
-          <AppointmentsTable appointments={currentAppointments} />
+          currentAppointments.length === 0 ? (
+            <div style={{ 
+              display: "flex", 
+              flexDirection: "column", 
+              alignItems: "center", 
+              justifyContent: "center", 
+              padding: "40px",
+              color: "#4C4C4C",
+              fontStyle: "italic"
+            }}>
+              You have no past appointments.
+            </div>
+          ) : (
+            <AppointmentsTable appointments={currentAppointments} />
+          )
         ) : null}
       </div>
     </div>

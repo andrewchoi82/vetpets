@@ -122,11 +122,27 @@ export default function Billings() {
           selectedTab={selectedTab} 
           setSelectedTabAction={setSelectedTab} 
         />
-        <BillingsTable 
-          selectedTab={selectedTab} 
-          setSelectedTabAction={setSelectedTab}
-          billings={currentBillings}
-        />
+        {currentBillings.length === 0 ? (
+          <div style={{ 
+            display: "flex", 
+            flexDirection: "column", 
+            alignItems: "center", 
+            justifyContent: "center", 
+            padding: "40px",
+            color: "#4C4C4C",
+            fontStyle: "italic"
+          }}>
+            {selectedTab === "current bills" 
+              ? "You have no current bills."
+              : "You have no payment history."}
+          </div>
+        ) : (
+          <BillingsTable 
+            selectedTab={selectedTab} 
+            setSelectedTabAction={setSelectedTab}
+            billings={currentBillings}
+          />
+        )}
       </div>
     </div>
   );
