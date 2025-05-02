@@ -12,7 +12,14 @@ export async function GET(req: NextRequest) {
     .eq('petId', petId);
 
   if (error) return NextResponse.json({ error: error.message }, { status: 400 });
-  return NextResponse.json(data);
+
+  // Format dates before sending response
+  const formattedData = data.map((item: any) => ({
+    ...item,
+    date: item.date ? new Date(item.date).toISOString() : null
+  }));
+
+  return NextResponse.json(formattedData);
 }
 
 export async function POST(req: NextRequest) {

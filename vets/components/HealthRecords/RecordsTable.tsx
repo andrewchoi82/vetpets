@@ -136,6 +136,24 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction, tabCha
     }
   };
 
+  const handleDownload = async (details: string) => {
+    try {
+      const fileUrl = getFileUrl(details);
+      const response = await fetch(fileUrl);
+      const blob = await response.blob();
+      const blobUrl = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = blobUrl;
+      a.download = details;
+      a.style.display = 'none';
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(blobUrl);
+      document.body.removeChild(a);
+    } catch (error) {
+      console.error('Error downloading file:', error);
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -149,7 +167,11 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction, tabCha
           const res = await fetch(`/api/vaccinations?petId=${petId}`);
           const data = await res.json();
           console.log("Vaccinations data:", data);
-          setVaccinationsData(data);
+          const formattedData = data.map((item: Vaccination) => ({
+            ...item,
+            date: item.date ? new Date(item.date).toISOString() : null
+          }));
+          setVaccinationsData(formattedData);
         } else if (selectedTab === "medications") {
           const res = await fetch(`/api/medications?petId=${petId}`);
           const data = await res.json();
@@ -164,7 +186,12 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction, tabCha
           const res = await fetch(`/api/tests?petId=${petId}`);
           const data = await res.json();
           console.log("Test results data:", data);
-          setTestData(data);
+          const formattedData = data.map((item: TestResult) => ({
+            ...item,
+            dateOrdered: item.dateOrdered ? new Date(item.dateOrdered).toISOString() : null,
+            dateExpected: item.dateExpected ? new Date(item.dateExpected).toISOString() : null
+          }));
+          setTestData(formattedData);
         }
       } catch (err) {
         console.error("Fetch error:", err);
@@ -597,91 +624,105 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction, tabCha
 }
 
 // Vaccinations Table
-const VaccinationTable = ({ data }: { data: Vaccination[] }) => (
-  <table style={{ width: "100%", borderCollapse: "collapse" }}>
-    <thead>
-      <tr style={{ borderBottom: "1px solid #d1d5db" }}>
-        <th style={{ ...baseThStyle, width: "176px", paddingLeft: "40px" }}>Date</th>
-        <th style={{ ...baseThStyle, width: "142px" }}>Vaccine</th>
-        <th style={{ ...baseThStyle, width: "136px" }}>Manufacturer</th>
-        <th style={{ ...baseThStyle, width: "70px" }}>Dosage</th>
-        <th style={{ ...baseThStyle,}}>Administered by</th>
-      </tr>
-    </thead>
-    <tbody>
-      {data.map((item) => (
-        <tr key={item.vaccineId} style={{ height: "64px", borderBottom: "1px solid #e5e5e5" }}>
-          <td style={{ ...baseTdStyle, paddingLeft: 40 }}>{new Date().toLocaleDateString()}</td>
-          <td style={{ ...baseTdStyle }}>{item.name}</td>
-          <td style={{ ...baseTdStyle }}>{item.manufacturer}</td>
-          <td style={{ ...baseTdStyle }}>{item.dosage} mL</td>
-          <td style={{ ...baseTdStyle }}>{item.administeredBy}</td>
+const VaccinationTable = ({ data }: { data: Vaccination[] }) => {
+  console.log("Rendering VaccinationTable with data:", data);
+  return (
+    <table style={{ width: "100%", borderCollapse: "collapse" }}>
+      <thead>
+        <tr style={{ borderBottom: "1px solid #d1d5db" }}>
+          <th style={{ ...baseThStyle, width: "176px", paddingLeft: "40px" }}>Date</th>
+          <th style={{ ...baseThStyle, width: "142px" }}>Vaccine</th>
+          <th style={{ ...baseThStyle, width: "136px" }}>Manufacturer</th>
+          <th style={{ ...baseThStyle, width: "70px" }}>Dosage</th>
+          <th style={{ ...baseThStyle,}}>Administered by</th>
         </tr>
-      ))}
-    </tbody>
-  </table>
-);
+      </thead>
+      <tbody>
+        {data.map((item) => {
+          console.log("Processing vaccination item:", item);
+          return (
+            <tr key={item.vaccineId} style={{ height: "64px", borderBottom: "1px solid #e5e5e5" }}>
+              <td style={{ ...baseTdStyle, paddingLeft: 40 }}>
+                {item.date ? formatDate(item.date) : 'N/A'}
+              </td>
+              <td style={{ ...baseTdStyle }}>{item.name}</td>
+              <td style={{ ...baseTdStyle }}>{item.manufacturer}</td>
+              <td style={{ ...baseTdStyle }}>{item.dosage} mL</td>
+              <td style={{ ...baseTdStyle }}>{item.administeredBy}</td>
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
+  );
+};
 
 // Test Results Table
-const TestResultsTable = ({ data, onRowClick }: { data: TestResult[], onRowClick: (index: number) => void }) => (
-  <table style={{ width: "100%", borderCollapse: "collapse" }}>
-    <thead>
-      <tr style={{ borderBottom: "1px solid #d1d5db" }}>
-        <th style={{ ...baseThStyle, width: "176px", paddingLeft: "40px" }}>Date</th>
-        <th style={{ ...baseThStyle, width: "142px" }}>Test</th>
-        <th style={{ ...baseThStyle, width: "136px" }}>Status</th>
-        <th style={{ ...baseThStyle, width: "70px" }}></th>
-      </tr>
-    </thead>
-    <tbody>
-      {data.map((item, index) => {
-        const isCompleted = item.status === "Completed";
-        return (
-          <tr 
-            key={item.testId} 
-            style={{ 
-              height: "64px", 
-              borderBottom: "1px solid #e5e5e5",
-              cursor: isCompleted ? "pointer" : "default"
-            }}
-            onClick={() => isCompleted && onRowClick(index)}
-          >
-            <td style={{ ...baseTdStyle, paddingLeft: 40 }}>{item.dateOrdered}</td>
-            <td style={{ ...baseTdStyle }}>{item.name}</td>
-            <td style={{ ...baseTdStyle }}>{item.status}</td>
-            <td style={{ ...baseTdStyle }}>
-              {isCompleted && (
-                <button
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "6px",
-                    border: "none",
-                    background: "transparent",
-                    color: "#374151",
-                    cursor: "pointer",
-                    padding: 0,
-                  }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onRowClick(index);
-                  }}
-                >
-                  <img
-                    src="/img/health-records/details-icon.svg"
-                    alt="Details Icon"
-                    style={{ width: "17px", height: "17px" }}
-                  />
-                  <span style={{ textDecoration: "underline", marginLeft: "17px", fontSize: 17 }}>Results</span>
-                </button>
-              )}
-            </td>
-          </tr>
-        );
-      })}
-    </tbody>
-  </table>
-);
+const TestResultsTable = ({ data, onRowClick }: { data: TestResult[], onRowClick: (index: number) => void }) => {
+  console.log("Rendering TestResultsTable with data:", data);
+  return (
+    <table style={{ width: "100%", borderCollapse: "collapse" }}>
+      <thead>
+        <tr style={{ borderBottom: "1px solid #d1d5db" }}>
+          <th style={{ ...baseThStyle, width: "176px", paddingLeft: "40px" }}>Date</th>
+          <th style={{ ...baseThStyle, width: "142px" }}>Test</th>
+          <th style={{ ...baseThStyle, width: "136px" }}>Status</th>
+          <th style={{ ...baseThStyle, width: "70px" }}></th>
+        </tr>
+      </thead>
+      <tbody>
+        {data.map((item, index) => {
+          console.log("Processing test result item:", item);
+          const isCompleted = item.status === "Completed";
+          return (
+            <tr 
+              key={item.testId} 
+              style={{ 
+                height: "64px", 
+                borderBottom: "1px solid #e5e5e5",
+                cursor: isCompleted ? "pointer" : "default"
+              }}
+              onClick={() => isCompleted && onRowClick(index)}
+            >
+              <td style={{ ...baseTdStyle, paddingLeft: 40 }}>
+                {item.dateOrdered ? formatDate(item.dateOrdered) : 'N/A'}
+              </td>
+              <td style={{ ...baseTdStyle }}>{item.name}</td>
+              <td style={{ ...baseTdStyle }}>{item.status}</td>
+              <td style={{ ...baseTdStyle }}>
+                {isCompleted && (
+                  <button
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "6px",
+                      border: "none",
+                      background: "transparent",
+                      color: "#374151",
+                      cursor: "pointer",
+                      padding: 0,
+                    }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onRowClick(index);
+                    }}
+                  >
+                    <img
+                      src="/img/health-records/details-icon.svg"
+                      alt="Details Icon"
+                      style={{ width: "17px", height: "17px" }}
+                    />
+                    <span style={{ textDecoration: "underline", marginLeft: "17px", fontSize: 17 }}>Results</span>
+                  </button>
+                )}
+              </td>
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
+  );
+};
 
 
 // Medications Table
@@ -744,4 +785,16 @@ const baseThStyle = {
   fontWeight: 500,
   color: "#6B7280",
   textAlign: "left" as const,
+};
+
+const baseTdStyle = {
+  height: "64px",
+  fontSize: "15px",
+  fontWeight: 400,
+  fontFamily: "Inter",
+  color: "#4C4C4C",
+  lineHeight: "220%",
+  fontStyle: "normal",
+  textAlign: "left" as const,
+  verticalAlign: "middle" as const,
 };
