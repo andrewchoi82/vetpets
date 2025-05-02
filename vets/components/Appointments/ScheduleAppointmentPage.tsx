@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import WeekCalendar from "../Util/Calendar/WeekCalendar";
+import AppointmentConfirmation from "./AppointmentConfirmation";
 
 export default function ScheduleAppointmentPage({ onSubmit, onCancel }: {
   onSubmit: (appointment: any) => void;
@@ -10,6 +11,7 @@ export default function ScheduleAppointmentPage({ onSubmit, onCancel }: {
   const [selectedTime, setSelectedTime] = useState("");
   const [reason, setReason] = useState("");
   const [notes, setNotes] = useState("");
+  const [showConfirmation, setShowConfirmation] = useState(false);
 
   const availableTimes = [
     "9:00 am", "9:30 am", "10:00 am", "10:30 am", "11:00 am", "11:30 am",
@@ -21,7 +23,10 @@ export default function ScheduleAppointmentPage({ onSubmit, onCancel }: {
       alert("Please fill out all required fields.");
       return;
     }
+    setShowConfirmation(true);
+  };
 
+  const handleConfirm = () => {
     const newAppointment = {
       date: selectedDate,
       time: selectedTime,
@@ -32,6 +37,20 @@ export default function ScheduleAppointmentPage({ onSubmit, onCancel }: {
 
     onSubmit(newAppointment);
   };
+
+  if (showConfirmation) {
+    return (
+      <AppointmentConfirmation
+        appointmentReason={reason}
+        clinic="Los Angeles Vet Clinic"
+        clinicAddress="1544 W Slauson Ave, Los Angeles, CA 90047"
+        dateTime={`${selectedDate} at ${selectedTime}`}
+        petName="Snowball"
+        onConfirm={handleConfirm}
+        onBack={() => setShowConfirmation(false)}
+      />
+    );
+  }
 
   return (
     <div style={{ padding: "0 24px", display: "flex", flexDirection: "column", gap: 20 }}>
@@ -77,7 +96,7 @@ export default function ScheduleAppointmentPage({ onSubmit, onCancel }: {
             style={{ ...inputStyle }}
           >
             <option value="">Select</option>
-            <option value="Annual Check-Up">Annual Check-Up</option>
+            <option value="Annual Check-Up & Vaccination">Annual Check-Up & Vaccination</option>
             <option value="Vaccination">Vaccination</option>
             <option value="Injury">Injury</option>
             <option value="Other">Other</option>
@@ -106,7 +125,7 @@ export default function ScheduleAppointmentPage({ onSubmit, onCancel }: {
 
         <div style={{ minWidth: 300, flex: 1 }}>
           <div style={{ display: "flex", flexDirection: "column" }}>
-            <WeekCalendar />
+            <WeekCalendar onDateSelect={setSelectedDate} onTimeSelect={setSelectedTime} />
             <div style={{ marginTop: 20, marginLeft: 120 }}>
               <button
                 style={{
@@ -118,10 +137,13 @@ export default function ScheduleAppointmentPage({ onSubmit, onCancel }: {
                   gap: 10,
                   flexShrink: 0,
                   borderRadius: 5,
-                  background: "#004D81",
-                  color: "white"
+                  background: !selectedDate || !selectedTime || !reason ? "#E5E7EB" : "#004D81",
+                  color: "white",
+                  border: "none",
+                  cursor: !selectedDate || !selectedTime || !reason ? "not-allowed" : "pointer",
                 }}
                 onClick={handleNext}
+                disabled={!selectedDate || !selectedTime || !reason}
               >
                 Next
               </button>
