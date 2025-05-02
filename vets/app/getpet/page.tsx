@@ -211,7 +211,9 @@ export default function GetPet() {
   `}</style>
 
           <div className="flex gap-6 px-2 pb-2" style={{ overflowY: "visible" }}>
-            {pets.map((pet) => (
+            {pets
+              .sort((a, b) => a.petId - b.petId)
+              .map((pet) => (
               <div
                 key={pet.petId}
                 onClick={() => handlePetSelection(pet.petId)}
