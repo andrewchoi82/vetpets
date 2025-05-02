@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
 import { SideBarItem } from "@/components/MainSideBar/SideBarItem";
 import { getImageUrl as getStorageImageUrl } from '@/app/lib/supabaseGetImage';
+import { supabase } from '@/app/lib/supabaseClient';
 import Cookies from 'js-cookie';
 
 export interface SideBarContainerProps {
@@ -22,6 +23,7 @@ export const SideBarContainerVets = ({ selectedPage }: SideBarContainerProps) =>
   const router = useRouter();
   const [isContainerHovered, setIsContainerHovered] = useState<boolean>(false);
   const [currentSelected, setCurrentSelected] = useState<string>(selectedPage);
+  const [numUnreadMessages, setNumUnreadMessages] = useState<number>(0);
   const [userData, setUserData] = useState<any>(null);
   const [isUserDataLoading, setIsUserDataLoading] = useState(true);
   const currId = Cookies.get("userId");
@@ -34,6 +36,42 @@ export const SideBarContainerVets = ({ selectedPage }: SideBarContainerProps) =>
     "/vet/messages": "Messages",
     "/vet/calendar": "Calendar",
     "/vet/settings": "Settings",
+  };
+
+  useEffect(() => {
+    if (!currId) return;
+
+    fetchNotificationCount();
+  
+    const channel = supabase
+      .channel('conversations_notifications')
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'conversations',
+        },
+        (payload) => {
+          console.log("🔄 Conversation updated:", payload);
+          fetchNotificationCount(); 
+        }
+      )
+      .subscribe();
+  
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [currId]);
+  
+  const fetchNotificationCount = async () => {
+    try {
+      const res = await fetch(`/api/conversations/getTotalNotification/doctor?doctorId=${currId}`);
+      const data = await res.json();
+      setNumUnreadMessages(data.totalUnreadMessages);
+    } catch (error) {
+      console.error("Failed to fetch unread count:", error);
+    }
   };
 
   useEffect(() => {
@@ -81,7 +119,7 @@ export const SideBarContainerVets = ({ selectedPage }: SideBarContainerProps) =>
 
   const menuItems: MenuItem[] = [
     { path: "/img/vet/sidebar-options/nonSelectedVersion/clients.svg", text: "Clients", href: "/vet/" },
-    { path: "/img/vet/sidebar-options/nonSelectedVersion/messages.svg", text: "Messages", href: "/vet/messages", notificationCount: 2 },
+    { path: "/img/vet/sidebar-options/nonSelectedVersion/messages.svg", text: "Messages", href: "/vet/messages", notificationCount: numUnreadMessages },
     { path: "/img/vet/sidebar-options/nonSelectedVersion/calendar.svg", text: "Calendar", href: "/vet/calendar" },
   ];
 
