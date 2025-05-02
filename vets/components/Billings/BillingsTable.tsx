@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Cookies from "js-cookie";
+import { formatDate } from "@/app/lib/dateUtils";
 
 interface BillingsTableProps {
   selectedTab: "current bills" | "payment history";
@@ -39,11 +40,7 @@ export default function BillingsTable({ selectedTab, setSelectedTabAction, billi
             return (
               <tr key={index} style={{ height: "64px", borderBottom: "1px solid #e5e5e5" }}>
                 <td style={{ ...baseTdStyle, paddingLeft: "40px" }}>
-                  {new Date(bill.date).toLocaleDateString("en-US", {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  })}
+                  {formatDate(bill.date)}
                 </td>
                 <td style={baseTdStyle}>{bill.name}</td>
                 <td style={baseTdStyle}>${bill.cost.toFixed(2)}</td>
