@@ -60,7 +60,7 @@ export default function MessagesSide({ setPageState }: MessageOverviewProps) {
     const [otherEndUserData, setOtherEndUserData] = useState<User | null>(null);
     const [messageUserData, setMessageUserData] = useState<{ [key: string]: User }>({});
 
-    const [subject, setSubject] = useState("Vaccine Update");
+    const [subject, setSubject] = useState("");
     const [isSubjectEditable, setIsSubjectEditable] = useState(false);
     const [doctorData, setDoctorData] = useState<User | null>(null);
 
@@ -92,18 +92,10 @@ export default function MessagesSide({ setPageState }: MessageOverviewProps) {
                 if (userCurr && userCurr.userType == 1) {
                     const res = await fetch(`/api/conversations?petId=${petId}`);
                     data = await res.json();
-                    // Sort initial data by lastMessageTime
-                    setMessageData(data.sort((a: Conversation, b: Conversation) => 
-                        new Date(b.lastMessageTime).getTime() - new Date(a.lastMessageTime).getTime()
-                    ));
                 }
                 else if (userCurr && userCurr.userType == 2) {
                     const res = await fetch(`/api/conversations/doctor?doctorId=${currId}`);
                     data = await res.json();
-                    // Sort initial data by lastMessageTime
-                    setMessageData(data.sort((a: Conversation, b: Conversation) => 
-                        new Date(b.lastMessageTime).getTime() - new Date(a.lastMessageTime).getTime()
-                    ));
 
                     // Fetch user data for each message when user is doctor
                     const userDataPromises = data.map(async (message: Conversation) => {
@@ -121,6 +113,13 @@ export default function MessagesSide({ setPageState }: MessageOverviewProps) {
                     setMessageUserData(userDataMap);
                 }
 
+                // Sort and set initial data
+                if (data) {
+                    setMessageData(data.sort((a: Conversation, b: Conversation) => 
+                        new Date(b.lastMessageTime).getTime() - new Date(a.lastMessageTime).getTime()
+                    ));
+                }
+
                 // For userType 1, keep the old flow
                 if (userCurr && userCurr.userType == 1 && data && data.length > 0) {
                     let otherEndId;
@@ -136,7 +135,7 @@ export default function MessagesSide({ setPageState }: MessageOverviewProps) {
                     setOtherEndUserData(user);
                 }
 
-                // Set up Supabase realtime subscription
+                // Set up Supabase realtime subscription with optimized filters
                 const subscription = supabase
                     .channel('conversations-changes')
                     .on(
@@ -149,10 +148,18 @@ export default function MessagesSide({ setPageState }: MessageOverviewProps) {
                                 ? `petId=eq.${petId}`
                                 : `doctorId=eq.${currId}`
                         },
-                        (payload) => {
+                        async (payload) => {
                             // Handle different types of changes
                             switch (payload.eventType) {
                                 case 'INSERT':
+                                    // For new conversations, fetch user data if needed
+                                    if (userCurr.userType === 2) {
+                                        const newUser = await fetch(`/api/me?userId=${payload.new.userId}`).then(res => res.json());
+                                        setMessageUserData(prev => ({
+                                            ...prev,
+                                            [payload.new.convoId]: newUser
+                                        }));
+                                    }
                                     setMessageData(prev => 
                                         [...prev, payload.new as Conversation]
                                             .sort((a, b) => 
@@ -178,13 +185,20 @@ export default function MessagesSide({ setPageState }: MessageOverviewProps) {
                                                 new Date(b.lastMessageTime).getTime() - new Date(a.lastMessageTime).getTime()
                                             )
                                     );
+                                    if (userCurr.userType === 2) {
+                                        setMessageUserData(prev => {
+                                            const newData = { ...prev };
+                                            delete newData[payload.old.convoId];
+                                            return newData;
+                                        });
+                                    }
                                     break;
                             }
                         }
                     )
                     .subscribe();
 
-                // Set up broadcast listener for conversation updates
+                // Set up broadcast listener for conversation updates with optimized handling
                 const broadcastSubscription = supabase
                     .channel('conversations-update')
                     .on(
@@ -294,7 +308,7 @@ export default function MessagesSide({ setPageState }: MessageOverviewProps) {
                 })
             });
 
-            // Update conversation notifications
+            // Update conversation notifications and trigger real-time update
             await fetch('/api/conversations/addNotification', {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
@@ -303,6 +317,33 @@ export default function MessagesSide({ setPageState }: MessageOverviewProps) {
                     sentByUser: true
                 }),
             });
+
+            // Reset subject
+            setSubject("");
+
+            // Update the conversation in the database to trigger real-time updates
+            await supabase
+                .from('conversations')
+                .update({
+                    numUnreadMessages: "1",
+                    numUnreadDoctor: "0",
+                    lastMessageTime: new Date().toISOString().replace('T', ' ').substring(0, 19) + '+00'
+                })
+                .eq('convoId', newConvoId);
+
+            // Also send a broadcast for immediate UI updates
+            await supabase
+                .channel('conversations-changes')
+                .send({
+                    type: 'broadcast',
+                    event: 'conversation-notification-updated',
+                    payload: {
+                        convoId: newConvoId,
+                        numUnreadMessages: "1",
+                        numUnreadDoctor: "0",
+                        lastMessageTime: new Date().toISOString().replace('T', ' ').substring(0, 19) + '+00'
+                    }
+                });
 
             setConvoNum(newConvoId);
             setOnMessage(true);
@@ -387,16 +428,26 @@ export default function MessagesSide({ setPageState }: MessageOverviewProps) {
                                         </div>
                                     )}
                                 </div>
-                                <Image
-                                    src={currUserData?.userType === 1
-                                        ? (otherEndUserData?.profilePic ? getStorageImageUrl(otherEndUserData.profilePic) : "/img/message/sarah.svg")
-                                        : (messageUserData[message.convoId]?.profilePic ? getStorageImageUrl(messageUserData[message.convoId].profilePic || "") : "/img/message/sarah.svg")
-                                    }
-                                    alt="Profile Picture"
-                                    width={52}
-                                    height={52}
-                                    className="rounded-[100%]"
-                                />
+                                <div style={{ 
+                                    width: "52px", 
+                                    height: "52px", 
+                                    borderRadius: "50%", 
+                                    overflow: "hidden",
+                                    position: "relative"
+                                }}>
+                                    <Image
+                                        src={currUserData?.userType === 1
+                                            ? (otherEndUserData?.profilePic ? getStorageImageUrl(otherEndUserData.profilePic) : "/img/message/sarah.svg")
+                                            : (messageUserData[message.convoId]?.profilePic ? getStorageImageUrl(messageUserData[message.convoId].profilePic || "") : "/img/message/sarah.svg")
+                                        }
+                                        alt="Profile Picture"
+                                        fill
+                                        style={{ 
+                                            objectFit: "cover",
+                                            objectPosition: "center"
+                                        }}
+                                    />
+                                </div>
                                 <div className="flex flex-col w-[200px]">
                                     <div className={`${onMessage && message.convoId === convoNum ? 'text-white' : 'text-[#919191]'} font-medium`}>
                                         {message.name}
@@ -472,13 +523,18 @@ export default function MessagesSide({ setPageState }: MessageOverviewProps) {
                                                     value={subject}
                                                     onChange={(e) => setSubject(e.target.value)}
                                                     onBlur={() => setIsSubjectEditable(false)}
-                                                    className="border-none outline-none bg-transparent"
+                                                    className="border-none outline-none bg-transparent w-full"
                                                     autoFocus
+                                                    placeholder="Enter subject..."
                                                 />
                                             ) : (
-                                                <span onClick={() => setIsSubjectEditable(true)}>
-                                                    Subject: {subject}
-                                                </span>
+                                                <div 
+                                                    onClick={() => setIsSubjectEditable(true)}
+                                                    className="flex items-center cursor-pointer w-full"
+                                                >
+                                                    <span className="text-[#919191]">Subject:</span>
+                                                    <span className="ml-2">{subject || "Click to add subject"}</span>
+                                                </div>
                                             )}
                                         </div>
                                     </div>
@@ -487,6 +543,8 @@ export default function MessagesSide({ setPageState }: MessageOverviewProps) {
                                     convoID={-2}
                                     onCreateConversation={handleCreateConversation}
                                     isNewConversation={true}
+                                    subject={subject}
+                                    setSubject={setSubject}
                                 />
                             </div>
                         ) : (
