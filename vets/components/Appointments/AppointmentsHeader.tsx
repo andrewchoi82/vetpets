@@ -5,7 +5,7 @@ import Image from "next/image";
 import { SelectTab } from "../Util/SelectTab";
 
 interface AppointmentsHeaderProps {
-  selectedTab: "upcoming" | "past";
+  selectedTab: "upcoming" | "past" | null;
   setSelectedTab: (tab: "upcoming" | "past") => void;
   onScheduleClick: () => void;
 }
@@ -15,7 +15,8 @@ export default function AppointmentsHeader({
   setSelectedTab,
   onScheduleClick,
 }: AppointmentsHeaderProps) {
-  const getIconPath = (tabValue: "upcoming" | "past", isSelected: boolean) => {
+  const getIconPath = (tabValue: "upcoming" | "past") => {
+    const isSelected = selectedTab === tabValue;
     const folder = isSelected ? "selected" : "nonSelected";
     const filename = `${tabValue}-appointments.svg`;
     return `/img/appointments/${folder}/${filename}`;
@@ -27,7 +28,7 @@ export default function AppointmentsHeader({
       value: "upcoming",
       icon: (
         <Image
-          src={getIconPath("upcoming", selectedTab === "upcoming")}
+          src={getIconPath("upcoming")}
           alt="Upcoming"
           width={19}
           height={14}
@@ -39,7 +40,7 @@ export default function AppointmentsHeader({
       value: "past",
       icon: (
         <Image
-          src={getIconPath("past", selectedTab === "past")}
+          src={getIconPath("past")}
           alt="Past"
           width={20}
           height={14}
@@ -58,7 +59,15 @@ export default function AppointmentsHeader({
         borderBottom: "1px solid #e5e7eb",
       }}
     >
-      <div style={{ display: "flex", flexDirection: "column", width: "100%", marginTop: 20, marginBottom: 20 }}>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          width: "100%",
+          marginTop: 20,
+          marginBottom: 20,
+        }}
+      >
         {/* Title and paw icon */}
         <div style={{ display: "flex", alignItems: "center" }}>
           <div style={{ fontSize: 22, fontWeight: 500 }}>Appointments</div>
@@ -131,7 +140,6 @@ export default function AppointmentsHeader({
         </svg>
         Schedule appointment
       </button>
-
     </div>
   );
 }

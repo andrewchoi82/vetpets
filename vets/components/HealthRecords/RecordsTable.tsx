@@ -50,55 +50,36 @@ interface TestResult {
   result: string;
 }
 
-export default function RecordsTable({ selectedTab, setSelectedTabAction, tabChange, setTabChange }: RecordsHeaderProps) {
-  const [vaccinationsData, setVaccinationsData] = useState<Vaccination[]>([]);
-  const [medicationsData, setMedicationsData] = useState<Medication[]>([]);
-  const [medicalHistoryData, setMedicalHistoryData] = useState<MedicalHistory[]>([]);
-  const [testData, setTestData] = useState<TestResult[]>([]);
-  const petId = Cookies.get("petId");
+interface RecordsTableProps {
+  selectedTab: "vaccinations" | "test results" | "medications" | "medical history";
+  setSelectedTabAction: (tab: "vaccinations" | "test results" | "medications" | "medical history") => void;
+  tabChange: boolean;
+  setTabChange: (value: boolean) => void;
+  records: any[];
+}
 
-  useEffect(() => {
-    const fetchData = async () => {
-      if (!petId) return;
-      try {
-        if (selectedTab === "vaccinations") {
-          const res = await fetch(`/api/vaccinations?petId=${petId}`);
-          const data = await res.json();
-          setVaccinationsData(data);
-        } else if (selectedTab === "medications") {
-          const res = await fetch(`/api/medications?petId=${petId}`);
-          const data = await res.json();
-          setMedicationsData(data);
-        } else if (selectedTab === "medical history") {
-          const res = await fetch(`/api/history?petId=${petId}`);
-          const data = await res.json();
-          setMedicalHistoryData(data);
-        } else if (selectedTab === "test results") {
-          const res = await fetch(`/api/tests?petId=${petId}`);
-          const data = await res.json();
-          setTestData(data);
-        }
-      } catch (err) {
-        console.error("Fetch error:", err);
-      }
-    };
-
-    fetchData();
-  }, [selectedTab]);
+export default function RecordsTable({ 
+  selectedTab, 
+  setSelectedTabAction, 
+  tabChange, 
+  setTabChange,
+  records 
+}: RecordsTableProps) {
+  const petId = Cookies.get("petId") || "1";
 
   return (
     <div style={{ width: "100%", minHeight: "600px" }}>
       {selectedTab === "vaccinations" && (
-        <VaccinationTable data={vaccinationsData} />
+        <VaccinationTable data={records as Vaccination[]} />
       )}
       {selectedTab === "test results" && (
-        <TestResultsTable data={testData} />
+        <TestResultsTable data={records as TestResult[]} />
       )}
       {selectedTab === "medications" && (
-        <MedicationsTable data={medicationsData} />
+        <MedicationsTable data={records as Medication[]} />
       )}
       {selectedTab === "medical history" && (
-        <MedicalHistoryTable data={medicalHistoryData} />
+        <MedicalHistoryTable data={records as MedicalHistory[]} />
       )}
     </div>
   );

@@ -1,65 +1,67 @@
 "use client";
 import AppointmentsHeader from "../../../components/Appointments/AppointmentsHeader";
 import AppointmentsTable from "../../../components/Appointments/AppointmentsTable";
-import ScheduleAppointmentBox from "../../../components/Appointments/ScheduleAppointmentBox";
 import { Header } from "../../../components/MainHeader/Header";
 import { supabase } from "@/app/lib/supabaseClient";
 import { useEffect, useState } from "react";
 import { SideBarContainerClient } from "../../../components/MainSideBar/SideBarContainerClient";
 import Image from "next/image";
 import UpcomingAppointmentCard from "@/components/Appointments/UpcomingAppointmentCard";
+import ScheduleAppointmentPage from "@/components/Appointments/ScheduleAppointmentPage";
 
 export default function Appointments() {
-  const [selectedTab, setSelectedTab] = useState<"upcoming" | "past">("upcoming");
-  const [appointments, setAppointments] = useState<any[]>([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedTab, setSelectedTab] = useState<"upcoming" | "past" | null>("upcoming");
+  const [allAppointments, setAllAppointments] = useState<{
+    upcoming: any[];
+    past: any[];
+  }>({ upcoming: [], past: [] });
   const [loading, setLoading] = useState(true);
+  const [schedulingMode, setSchedulingMode] = useState(false);
+
   const petId = 1;
 
   useEffect(() => {
-    fetchAppointmentData();
-  }, [selectedTab]);
+    fetchAllAppointmentData();
+  }, []); // Only fetch once when component mounts
 
-  const fetchAppointmentData = async () => {
+  const fetchAllAppointmentData = async () => {
     setLoading(true);
-
-    const today = new Date().toISOString().split('T')[0];
-    let query = supabase
-      .from('appointments')
-      .select(`
-        apptId,
-        date,
-        time,
-        name,
-        status,
-        pets (
-          petId,
-          doctorId,
-          users!pets_doctorId_fkey (
-            firstName,
-            lastName
+    try {
+      const today = new Date().toISOString().split('T')[0];
+      
+      // Fetch all appointments in one query
+      const { data: allData, error } = await supabase
+        .from('appointments')
+        .select(`
+          apptId,
+          date,
+          time,
+          name,
+          status,
+          pets (
+            petId,
+            doctorId,
+            users!pets_doctorId_fkey (
+              firstName,
+              lastName
+            )
           )
-        )
-      `)
-      .eq('petId', petId);
+        `)
+        .eq('petId', petId)
+        .order('date', { ascending: false });
 
-    if (selectedTab === "upcoming") {
-      query = query.gte('date', today);
-    } else {
-      query = query.lt('date', today);
-    }
+      if (error) throw error;
 
-    query = query.order('date', { ascending: false });
+      // Split the data into upcoming and past appointments
+      const upcoming = allData.filter(appt => appt.date >= today);
+      const past = allData.filter(appt => appt.date < today);
 
-    const { data, error } = await query;
-
-    if (error) {
+      setAllAppointments({ upcoming, past });
+    } catch (error) {
       console.error("Error fetching appointments:", error);
-    } else {
-      setAppointments(data);
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   const handleSchedule = async (newAppointment: any) => {
@@ -70,10 +72,24 @@ export default function Appointments() {
         body: JSON.stringify({ ...newAppointment, petId }),
       });
       if (!response.ok) throw new Error("Failed to schedule appointment");
-      fetchAppointmentData();
+      setSchedulingMode(false);
+      setSelectedTab("upcoming");
+      fetchAllAppointmentData(); // Refresh all data
     } catch (error) {
       console.log("Error scheduling appointment:", error);
     }
+  };
+
+  const handleTabSelect = (tab: "upcoming" | "past") => {
+    if (schedulingMode) {
+      setSchedulingMode(false);
+    }
+    setSelectedTab(tab);
+  };
+
+  const handleScheduleClick = () => {
+    setSchedulingMode(true);
+    setSelectedTab(null);
   };
 
   if (loading) {
@@ -120,6 +136,8 @@ export default function Appointments() {
     );
   }
 
+  const currentAppointments = selectedTab ? allAppointments[selectedTab] : [];
+
   return (
     <div style={{ display: "flex", height: "100vh", overflow: "hidden" }}>
       <SideBarContainerClient selectedPage="Appointments" />
@@ -134,30 +152,32 @@ export default function Appointments() {
         <Header title="" showSearchBar={true} />
         <AppointmentsHeader
           selectedTab={selectedTab}
-          setSelectedTab={setSelectedTab}
-          onScheduleClick={() => setIsModalOpen(true)}
+          setSelectedTab={handleTabSelect}
+          onScheduleClick={handleScheduleClick}
         />
-        <ScheduleAppointmentBox
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          onSchedule={handleSchedule}
-        />
-        {selectedTab === "upcoming" ? (
-          <>
-            {appointments.length === 0 ? (
-              <div style={{ padding: "40px", fontStyle: "italic", color: "#4C4C4C" }}>
-                You have no scheduled appointments.
-              </div>
-            ) : (
-              appointments.map((appt) => (
-                <UpcomingAppointmentCard style={{ marginTop: 35 }} key={appt.apptId} appt={appt} />
-              ))
-            )}
-          </>
-        ) : (
-          <AppointmentsTable appointments={appointments} />
-        )}
-
+        {schedulingMode ? (
+          <div style={{ marginTop: "30px" }}>
+            <ScheduleAppointmentPage
+              onSubmit={handleSchedule}
+              onCancel={() => {
+                setSchedulingMode(false);
+                setSelectedTab("upcoming");
+              }}
+            />
+          </div>
+        ) : selectedTab === "upcoming" ? (
+          currentAppointments.length === 0 ? (
+            <div style={{ padding: "40px", fontStyle: "italic", color: "#4C4C4C" }}>
+              You have no scheduled appointments.
+            </div>
+          ) : (
+            currentAppointments.map((appt) => (
+              <UpcomingAppointmentCard key={appt.apptId} appt={appt} style={{ marginTop: 35 }} />
+            ))
+          )
+        ) : selectedTab === "past" ? (
+          <AppointmentsTable appointments={currentAppointments} />
+        ) : null}
       </div>
     </div>
   );
