@@ -9,11 +9,12 @@ export const SearchBar = () => {
         display: "flex",
         alignItems: "center",
         border: "1px solid #ddd",
-        borderRadius: "9999px",
         padding: "10px 15px",
-        width: "500px",
+        width: "320px",
         backgroundColor: "#fff",
+        
       }}
+      className=" rounded-lg shadow-[0px_4px_20px_0px_rgba(0,0,0,0.03)]"
     >
       <Image
         src="/img/header/search-bar-icon.svg"

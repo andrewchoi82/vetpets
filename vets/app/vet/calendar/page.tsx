@@ -1,6 +1,6 @@
 "use client"
 
-import { Header } from "@/components/MainHeader/Header";
+import { HeaderNew } from "@/components/MainHeader/HeaderNew";
 import MainContent from "@/components/Dashboard/MainContent";
 import { SideBarContainerVets } from "@/components/MainSideBar/SideBarContainerVets";
 import ClientsHeader from "@/components/vet/Clients/ClientsHeader";
@@ -22,12 +22,13 @@ export default function Clients() {
         flexDirection: "column", 
         background: "#fff", 
         overflowY: "auto",
-        marginLeft: "120px" 
+        marginLeft: "120px",
+        padding: "0" 
       }}>
-        <Header title="Clients" showSearchBar={false}/>
-
-        <ClientsHeader/>
-        <Calendar />
+        <HeaderNew title="Clients" showSearchBar={false}/>
+        <div style={{ marginTop: "-20px" }}>
+          <Calendar />
+        </div>
       </div>
     </div>
   );

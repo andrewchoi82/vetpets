@@ -9,6 +9,10 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const router = useRouter();
 
+  const handleGoToCreate = ()=>{
+    router.push("/signup");
+  }
+
   const handleLogin = async () => {
     const res = await fetch("/api/auth/login", {
       method: "POST",
@@ -49,7 +53,7 @@ export default function Login() {
         display: "flex",
         height: "100vh",
         width: "100%",
-        background: "white", // Plain white background as base
+        background: "white",
         position: "relative",
         fontFamily: "Inter, sans-serif",
       }}
@@ -65,118 +69,14 @@ export default function Login() {
         </div>
       </div>
 
-      {/* Login Panel */}
-      <div style={{ width: "40%", paddingLeft: "138px", paddingTop: "225px" }}>
-        <div
-          style={{
-            width: "142px",
-            height: "52px",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            color: "#4C4C4C",
-            fontSize: "35px",
-            fontWeight: 600,
-            lineHeight: "220%",
-            marginBottom: "32px",
-          }}
-        >
-          Login
-        </div>
-
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          style={{
-            display: "flex",
-            width: "321px",
-            height: "48px",
-            padding: "15px 20px",
-            alignItems: "center",
-            gap: "10px",
-            borderRadius: "10px",
-            border: "1px solid #DFDFDF",
-            background: "#FFF",
-            boxShadow: "0px 4px 20px 0px rgba(0, 0, 0, 0.03)",
-            marginBottom: "16px",
-            fontSize: "14px",
-          }}
-        />
-
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          style={{
-            display: "flex",
-            width: "321px",
-            height: "48px",
-            padding: "15px 20px",
-            alignItems: "center",
-            gap: "10px",
-            borderRadius: "10px",
-            border: "1px solid #DFDFDF",
-            background: "#FFF",
-            boxShadow: "0px 4px 20px 0px rgba(0, 0, 0, 0.03)",
-            marginBottom: "24px",
-            fontSize: "14px",
-          }}
-        />
-
-        <button
-          onClick={handleLogin}
-          style={{
-            display: "flex",
-            width: "321px",
-            height: "48px",
-            padding: "15px 20px",
-            justifyContent: "center",
-            alignItems: "center",
-            gap: "10px",
-            borderRadius: "10px",
-            background: "#004F82",
-            color: "white",
-            fontSize: "16px",
-            fontWeight: 500,
-            border: "none",
-            boxShadow: "0px 4px 20px 0px rgba(0, 0, 0, 0.03)",
-            cursor: "pointer",
-            marginBottom: "16px",
-          }}
-        >
-          Login
-        </button>
-
-        <button
-          style={{
-            display: "flex",
-            width: "321px", /* Changed from 176px to 321px to match login button width */
-            height: "32px",
-            justifyContent: "center",
-            alignItems: "center",
-            color: "#2563EB",
-            background: "none",
-            border: "none",
-            fontSize: "12px",
-            textDecoration: "underline",
-            cursor: "pointer",
-          }}
-        >
-          Forgot your password?
-        </button>
-      </div>
-
-      {/* Right: Floating Circles with individual gradients */}
+      {/* Left: Floating Circles with individual gradients */}
       <div 
         style={{ 
           flex: 1, 
           position: "relative", 
-          right: 0,
+          left: 0,
           overflow: "hidden",
-          background: "radial-gradient(circle at 50% 50%,rgb(192, 234, 243) 20%, white 80%)",
+          background: "radial-gradient(circle at 50% 50%,rgb(192, 234, 243) 10%, white 60%)",
         }}
       >
         {/* Central circles layout based on mockup measurements */}
@@ -240,6 +140,147 @@ export default function Login() {
             />
           )
         )}
+      </div>
+
+      {/* Login Panel */}
+      <div style={{ 
+        width: "40%", 
+        paddingRight: "16%", 
+        paddingTop: "225px", 
+        display: "flex", 
+        justifyContent: "flex-end"
+      }}>
+        <div style={{ width: "321px" }}>
+          <div
+            style={{
+              width: "142px",
+              height: "52px",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              color: "#4C4C4C",
+              fontSize: "35px",
+              fontWeight: 600,
+              lineHeight: "220%",
+              marginBottom: "32px",
+            }}
+          >
+            Login
+          </div>
+
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            style={{
+              display: "flex",
+              width: "100%",
+              height: "48px",
+              padding: "15px 20px",
+              alignItems: "center",
+              gap: "10px",
+              borderRadius: "10px",
+              border: "1px solid #DFDFDF",
+              background: "#FFF",
+              boxShadow: "0px 4px 20px 0px rgba(0, 0, 0, 0.03)",
+              marginBottom: "16px",
+              fontSize: "14px",
+            }}
+          />
+
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            style={{
+              display: "flex",
+              width: "100%",
+              height: "48px",
+              padding: "15px 20px",
+              alignItems: "center",
+              gap: "10px",
+              borderRadius: "10px",
+              border: "1px solid #DFDFDF",
+              background: "#FFF",
+              boxShadow: "0px 4px 20px 0px rgba(0, 0, 0, 0.03)",
+              fontSize: "14px",
+            }}
+          />
+
+          <button
+            style={{
+              display: "flex",
+              width: "100%",
+              height: "32px",
+              justifyContent: "end",
+              alignItems: "top",
+              color: "#004F82",
+              background: "none",
+              border: "none",
+              fontSize: "12px",
+              cursor: "pointer",
+              padding: "10px",
+              marginBottom: "14px"
+
+            }}
+          >
+            Forgot Password?
+          </button>
+
+          <button
+            onClick={handleLogin}
+            style={{
+              display: "flex",
+              width: "100%",
+              height: "48px",
+              padding: "15px 20px",
+              justifyContent: "center",
+              alignItems: "center",
+              gap: "10px",
+              borderRadius: "10px",
+              background: "#004F82",
+              color: "white",
+              fontSize: "16px",
+              fontWeight: 500,
+              border: "none",
+              boxShadow: "0px 4px 20px 0px rgba(0, 0, 0, 0.03)",
+              cursor: "pointer",
+              marginBottom: "8px"
+            }}
+          >
+            Login
+          </button>
+          <div
+            style={{
+              display: "flex",
+              width: "100%",
+              height: "32px",
+              justifyContent: "center",
+              alignItems: "center",
+              color: "#004F82",
+              fontSize: "12px",
+            }}
+          >
+            Don't have an account?
+            <button
+              onClick={handleGoToCreate}
+              style={{
+                marginLeft: "5px",
+                color: "#004F82",
+                background: "none",
+                border: "none",
+                fontSize: "12px",
+                cursor: "pointer",
+                textDecoration: "underline",
+                padding: "0"
+              }}
+            >
+              Sign Up
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );
