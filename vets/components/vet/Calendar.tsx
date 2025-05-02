@@ -168,26 +168,32 @@ export default function Calendar() {
               }}
             />
           </div>
+          
+          {selectedView === "schedule" && (
+  <>
+    <div className="text-black text-3xl font-normal leading-[55px]">
+      {format(weekStart, "MMMM yyyy")}
+    </div>
 
-          <div className="text-black text-3xl font-normal leading-[55px]">
-            {format(weekStart, "MMMM yyyy")}
-          </div>
+    <div className="flex items-center gap-2">
+      <button onClick={previousWeek} className="p-2 text-[#004F82] hover:bg-gray-100 rounded">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+        </svg>
+      </button>
+      <h2 className="text-xl font-normal">
+        {format(weekStart, "MMM d")} - {format(weekEnd, "MMM d")}
+      </h2>
+      <button onClick={nextWeek} className="p-2 text-[#004F82] hover:bg-gray-100 rounded">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+        </svg>
+      </button>
+    </div>
+  </>
+)}
 
-          <div className="flex items-center gap-2">
-            <button onClick={previousWeek} className="p-2 text-[#004F82] hover:bg-gray-100 rounded">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
-              </svg>
-            </button>
-            <h2 className="text-xl font-normal">
-              {format(weekStart, "MMM d")} - {format(weekEnd, "MMM d")}
-            </h2>
-            <button onClick={nextWeek} className="p-2 text-[#004F82] hover:bg-gray-100 rounded">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-              </svg>
-            </button>
-          </div>
+
         </div>
       </div>
 
@@ -236,9 +242,45 @@ export default function Calendar() {
           </div>
         </>
       ) : (
-        <div className="w-full h-[calc(100vh-200px)] bg-black flex items-center justify-center">
-          <div className="w-96 h-96 relative bg-white rounded-lg shadow-[0px_4px_20px_0px_rgba(0,0,0,0.03)] border border-Box-stroke" />
-            <div className="w-[478px] h-96 relative bg-white rounded-lg shadow-[0px_4px_20px_0px_rgba(0,0,0,0.03)] border border-Box-stroke" />
+        <div className="w-full h-[calc(100vh-200px)] flex items-start justify-start">
+          <div className="flex gap-8">
+            {/* Working Hours Card */}
+            <div className="w-[400px] bg-white rounded-lg shadow-md border border-gray-200 p-6">
+              <h2 className="text-lg text-[#4C4C4C] mb-4">Working hours</h2>
+              {['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'].map((day) => (
+                <div key={day} className="flex items-center justify-between mb-3">
+                  <div className="w-24 text-gray-700">{day}</div>
+                  <div className="flex items-center gap-2">
+                    <input type="text" placeholder="From" className="w-20 px-2 text-[#919191] text-center py-1 border border-gray-200 rounded-md text-sm" />
+                    <span className="text-lg">→</span>
+                    <input type="text" placeholder="To" className="w-20 px-2 text-[#919191] text-center py-1 border border-gray-200 rounded-md text-sm" />
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Appointment Duration Card */}
+            <div className="w-[400px] bg-white rounded-lg shadow-md border border-gray-200 p-6">
+              <h2 className="text-lg text-[#4C4C4C] mb-4">Appointment duration</h2>
+              {[
+                { label: 'Vaccinations', color: 'bg-[#F0CDE9]' },
+                { label: 'Preventative treatment', color: 'bg-[#C2E3EC]' },
+                { label: 'Check-up', color: 'bg-[#FFD8A8]' },
+                { label: 'Routine wellness', color: 'bg-[#D0F3D4]' },
+                { label: 'Illness/Injury', color: 'bg-[#DCD6FF]' },
+                { label: 'Surgery consultation', color: 'bg-[#FCB1A7]' },
+                { label: 'Other', color: 'bg-[#9CA5B1]' },
+              ].map(({ label, color }) => (
+                <div key={label} className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <div className={`w-3 h-3 rounded-full ${color}`}></div>
+                    <span className="text-gray-700 text-sm">{label}</span>
+                  </div>
+                  <input type="text" placeholder="Duration (min)" className="text-center text-[#919191] border-gray-200 w-32 px-2 py-1 border rounded-md text-sm" />
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       )}
     </div>
