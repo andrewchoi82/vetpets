@@ -12,10 +12,12 @@ interface MessageTextProp {
     convoID: number;
     onCreateConversation?: (message: string) => Promise<void>;
     isNewConversation?: boolean;
+    subject?: string;
+    setSubject?: (subject: string) => void;
 }
 
 //takes in prop of the setpagestate from page.tsx of message to change which modal is rendered
-export default function MessageText({ convoID, onCreateConversation, isNewConversation }: MessageTextProp) {
+export default function MessageText({ convoID, onCreateConversation, isNewConversation, subject, setSubject }: MessageTextProp) {
 
 
     interface Conversation {
@@ -64,6 +66,7 @@ export default function MessageText({ convoID, onCreateConversation, isNewConver
     const [pendingFiles, setPendingFiles] = useState<File[]>([]);
     const [pendingImages, setPendingImages] = useState<File[]>([]);
     const [isUploading, setIsUploading] = useState(false);
+    const [isSubjectEditable, setIsSubjectEditable] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     const currId = Cookies.get('userId');

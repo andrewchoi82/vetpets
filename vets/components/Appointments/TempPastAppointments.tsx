@@ -122,7 +122,7 @@ export default function TempPastAppointment({
           >
             <div style={{ flex: 1, minWidth: 140 }}>
               <div style={{ color: "#919191", fontSize: 15, marginBottom: 5 }}>Booked For</div>
-              <div style={{ fontSize: 17, color: "#4C4C4C" }}>Snowball</div>
+              <div style={{ fontSize: 17, color: "#4C4C4C" }}>Joey</div>
             </div>
 
             <div style={{ flex: 1, minWidth: 140 }}>
