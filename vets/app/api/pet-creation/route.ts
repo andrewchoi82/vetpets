@@ -69,6 +69,7 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const requestId = searchParams.get('requestId');
   const userId = searchParams.get('userId');
+  const baseUrl = process.env.API_BASE_URL;
 
   if (!requestId) return NextResponse.json({ error: 'requestId is required' }, { status: 400 });
   if (!userId) return NextResponse.json({ error: 'userId is required' }, { status: 400 });
@@ -122,7 +123,7 @@ export async function GET(req: NextRequest) {
 
     console.log(userId);
     // Create pet using petInfo
-    const petResponse = await fetch('http://localhost:3000/api/pets', {
+    const petResponse = await fetch(`${baseUrl}/api/pets`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -149,7 +150,7 @@ export async function GET(req: NextRequest) {
 
     // Create vaccinations
     for (const vaccination of content.vaccinations) {
-      const vaccinationResponse = await fetch('http://localhost:3000/api/vaccinations', {
+      const vaccinationResponse = await fetch(`${baseUrl}/api/vaccinations`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -174,7 +175,7 @@ export async function GET(req: NextRequest) {
 
     // Create medications
     for (const medication of content.medications) {
-      const medicationResponse = await fetch('http://localhost:3000/api/medications', {
+      const medicationResponse = await fetch(`${baseUrl}/api/medications`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -199,7 +200,7 @@ export async function GET(req: NextRequest) {
 
     // Create tests
     for (const test of content.tests) {
-      const testResponse = await fetch('http://localhost:3000/api/tests', {
+      const testResponse = await fetch(`${baseUrl}/api/tests`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -224,7 +225,7 @@ export async function GET(req: NextRequest) {
 
     // Create medical history
     for (const history of content.medicalHistory) {
-      const historyResponse = await fetch('http://localhost:3000/api/history', {
+      const historyResponse = await fetch(`${baseUrl}/api/history`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
