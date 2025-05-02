@@ -1,5 +1,5 @@
 "use client";
-import { Header } from "@/components/MainHeader/Header";
+import { HeaderNew } from "@/components/MainHeader/HeaderNew";
 import { SideBarContainerClient } from "@/components/MainSideBar/SideBarContainerClient";
 import { useEffect, useState } from "react";
 import BasicInfoContainer from "@/components/Settings/BasicInfoContainer";
@@ -8,6 +8,7 @@ import AccountInfo from "@/components/Settings/AccountInfo";
 import { getImageUrl as getStorageImageUrl } from '@/app/lib/supabaseGetImage';
 import Cookies from 'js-cookie';
 import { SideBarContainerVets } from "../MainSideBar/SideBarContainerVets";
+import Image from "next/image";
 
 export default function SettingsVet() {
   const [userData, setUserData] = useState<any>(null);
@@ -98,7 +99,48 @@ export default function SettingsVet() {
   };
 
   if (loading) {
-    return <div>Loading user data...</div>;
+    return (
+      <div style={{ display: "flex", height: "100vh", overflow: "hidden" }}>
+        <SideBarContainerVets selectedPage="Settings" />
+        
+        <div style={{ 
+          flex: 1, 
+          position: "relative", 
+          backgroundColor: "#fff", 
+          marginLeft: "120px" 
+        }}>
+          <div style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            backgroundColor: "#ffffff",
+            zIndex: 10
+          }}>
+            <Image
+              src="/img/vetrail-logo.svg"
+              alt="Loading..."
+              width={80}
+              height={80}
+              style={{
+                animation: "spin 1.5s linear infinite"
+              }}
+            />
+          </div>
+
+          <style jsx>{`
+            @keyframes spin {
+              0% { transform: rotate(0deg); }
+              100% { transform: rotate(360deg); }
+            }
+          `}</style>
+        </div>
+      </div>
+    );
   }
 
   if (!userData) {
@@ -109,8 +151,15 @@ export default function SettingsVet() {
     <div style={{ display: "flex", height: "100vh", overflow: "hidden" }}>
       <SideBarContainerVets selectedPage="Settings" />
 
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", background: "#fff", overflowY: "auto" }}>
-        <Header title="Settings" showSearchBar={true} />
+      <div style={{ 
+        flex: 1, 
+        display: "flex", 
+        flexDirection: "column", 
+        background: "#fff", 
+        overflowY: "auto",
+        marginLeft: "120px" // Add margin to avoid overlap with the sidebar
+      }}>
+        <HeaderNew title="Settings" showSearchBar={true} />
         
         {updateSuccess !== null && (
           <div 
@@ -126,6 +175,17 @@ export default function SettingsVet() {
             {updateSuccess ? "Successfully updated your information!" : "Failed to update information. Please try again."}
           </div>
         )}
+
+        <div style={{ display: "flex", alignItems: "center", marginTop: "20px", marginLeft: "20px" }}>
+          <div style={{ fontSize: 22, fontWeight: 500 }}>Profile</div>
+          <Image
+            src="/img/paw.svg"
+            alt="Paw Icon"
+            width={20}
+            height={20}
+            style={{ marginLeft: 9 }}
+          />
+        </div>
         
         <BasicInfoContainer
           style={{ marginTop: "20px", marginLeft: "20px" }}
