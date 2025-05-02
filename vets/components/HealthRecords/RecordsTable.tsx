@@ -267,7 +267,7 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction, tabCha
             <div style={{ width: "100%" }}>
               <table style={{ width: "100%", borderCollapse: "collapse" }}>
                 <thead>
-                  <tr style={{ borderBottom: "1px solid #d1d5db" }}>
+                  <tr style={{ borderBottom: `1px solid ${tableBorderColor}` }}>
                     <th style={{ ...baseThStyle, paddingLeft: 40, width: "170px" }}>Date</th>
                     <th style={{ ...baseThStyle, paddingLeft: 24, width: "160px" }}>Vaccine</th>
                     <th style={{ ...baseThStyle, paddingLeft: 24, width: "220px" }}>Manufacturer</th>
@@ -278,13 +278,13 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction, tabCha
                 </thead>
                 <tbody>
                   {vaccinationsData.map((vaccination) => (
-                    <tr key={vaccination.vaccineId} style={{ height: "64px", borderBottom: "1px solid #e5e5e5" }}>
-                      <td style={{ paddingLeft: 40, color: "#111827" }}>{formatDate(vaccination.date)}</td>
-                      <td style={{ paddingLeft: 24, color: "#111827" }}>{vaccination.name}</td>
-                      <td style={{ paddingLeft: 24, color: "#111827" }}>{vaccination.manufacturer}</td>
-                      <td style={{ paddingLeft: 24, color: "#111827" }}>{vaccination.dosage}</td>
-                      <td style={{ paddingLeft: 24, color: "#111827" }}>{vaccination.administeredBy}</td>
-                      <td style={{ paddingLeft: 24 }}>
+                    <tr key={vaccination.vaccineId} style={{ height: "64px", borderBottom: `1px solid ${rowBorderColor}` }}>
+                      <td style={{ ...baseTdStyle, paddingLeft: 40 }}>{formatDate(vaccination.date)}</td>
+                      <td style={{ ...baseTdStyle, paddingLeft: 24 }}>{vaccination.name}</td>
+                      <td style={{ ...baseTdStyle, paddingLeft: 24 }}>{vaccination.manufacturer}</td>
+                      <td style={{ ...baseTdStyle, paddingLeft: 24 }}>{vaccination.dosage}</td>
+                      <td style={{ ...baseTdStyle, paddingLeft: 24 }}>{vaccination.administeredBy}</td>
+                      <td style={{ ...baseTdStyle, paddingLeft: 24 }}>
                         <button
                           style={{
                             display: "flex",
@@ -292,7 +292,9 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction, tabCha
                             gap: "6px",
                             border: "none",
                             background: "transparent",
-                            color: "#374151",
+                            color: "#4C4C4C",
+                            fontSize: "15px",
+                            fontWeight: 400,
                             cursor: "pointer",
                             padding: 0,
                           }}
@@ -330,7 +332,7 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction, tabCha
             <div style={{ width: "100%" }}>
               <table style={{ width: "100%", borderCollapse: "collapse" }}>
                 <thead>
-                  <tr style={{ borderBottom: "1px solid #d1d5db" }}>
+                  <tr style={{ borderBottom: `1px solid ${tableBorderColor}` }}>
                     <th style={{ ...baseThStyle, paddingLeft: 40, width: "160px" }}>Date</th>
                     <th style={{ ...baseThStyle, paddingLeft: 24, width: "170px" }}>Medication</th>
                     <th style={{ ...baseThStyle, paddingLeft: 24, width: "200px" }}>Frequency</th>
@@ -346,17 +348,17 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction, tabCha
                       : "/img/general/green-circle-icon.svg";
 
                     return (
-                      <tr key={medication.medicationId} style={{ height: "64px", borderBottom: "1px solid #e5e5e5" }}>
-                        <td style={{ paddingLeft: 40, color: "#111827" }}>{formatDate(medication.date)}</td>
-                        <td style={{ paddingLeft: 24, color: "#111827" }}>{medication.medication}</td>
-                        <td style={{ paddingLeft: 24, color: "#111827" }}>{medication.frequency}</td>
-                        <td style={{ paddingLeft: 24 }}>
-                          <div style={{ display: "flex", alignItems: "center", gap: "8px", color: "#111827" }}>
+                      <tr key={medication.medicationId} style={{ height: "64px", borderBottom: `1px solid ${rowBorderColor}` }}>
+                        <td style={{ ...baseTdStyle, paddingLeft: 40 }}>{formatDate(medication.date)}</td>
+                        <td style={{ ...baseTdStyle, paddingLeft: 24 }}>{medication.medication}</td>
+                        <td style={{ ...baseTdStyle, paddingLeft: 24 }}>{medication.frequency}</td>
+                        <td style={{ ...baseTdStyle, paddingLeft: 24 }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                             <img src={iconSrc} alt={`${medication.status} Icon`} style={{ width: "16px", height: "16px" }} />
                             {medication.status}
                           </div>
                         </td>
-                        <td style={{ paddingLeft: 24 }}>
+                        <td style={{ ...baseTdStyle, paddingLeft: 24 }}>
                           <button
                             style={{
                               display: "flex",
@@ -364,7 +366,9 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction, tabCha
                               gap: "6px",
                               border: "none",
                               background: "transparent",
-                              color: "#374151",
+                              color: "#4C4C4C",
+                              fontSize: "15px",
+                              fontWeight: 400,
                               cursor: "pointer",
                               padding: 0,
                             }}
@@ -389,7 +393,7 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction, tabCha
             <div style={{ width: "100%" }}>
               <table style={{ width: "100%", borderCollapse: "collapse" }}>
                 <thead>
-                  <tr style={{ borderBottom: "1px solid #d1d5db" }}>
+                  <tr style={{ borderBottom: `1px solid ${tableBorderColor}` }}>
                     <th style={{ ...baseThStyle, paddingLeft: 40, width: "160px" }}>Date</th>
                     <th style={{ ...baseThStyle, paddingLeft: 24, width: "360px" }}>Category</th>
                     <th style={{ ...baseThStyle, paddingLeft: 24, width: "120px" }}></th>
@@ -397,10 +401,10 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction, tabCha
                 </thead>
                 <tbody>
                   {medicalHistoryData.map((history) => (
-                    <tr key={history.historyId} style={{ height: "64px", borderBottom: "1px solid #e5e5e5" }}>
-                      <td style={{ paddingLeft: 40, color: "#111827" }}>{formatDate(history.date)}</td>
-                      <td style={{ paddingLeft: 24, color: "#111827" }}>{history.category}</td>
-                      <td style={{ paddingLeft: 24 }}>
+                    <tr key={history.historyId} style={{ height: "64px", borderBottom: `1px solid ${rowBorderColor}` }}>
+                      <td style={{ ...baseTdStyle, paddingLeft: 40 }}>{formatDate(history.date)}</td>
+                      <td style={{ ...baseTdStyle, paddingLeft: 24 }}>{history.category}</td>
+                      <td style={{ ...baseTdStyle, paddingLeft: 24 }}>
                         <button
                           style={{
                             display: "flex",
@@ -408,7 +412,9 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction, tabCha
                             gap: "6px",
                             border: "none",
                             background: "transparent",
-                            color: "#374151",
+                            color: "#4C4C4C",
+                            fontSize: "15px",
+                            fontWeight: 400,
                             cursor: "pointer",
                             padding: 0,
                           }}
@@ -623,32 +629,75 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction, tabCha
   );
 }
 
+// Common styles
+const baseThStyle = {
+  height: "64px",
+  fontSize: "17px",
+  fontWeight: 400,
+  fontFamily: "SF Pro",
+  color: "#919191",
+  lineHeight: "220%",
+  fontStyle: "normal",
+  textAlign: "left" as const,
+  verticalAlign: "middle" as const,
+};
+
+const baseTdStyle = {
+  height: "64px",
+  fontSize: "15px",
+  fontWeight: 400,
+  fontFamily: "Inter",
+  color: "#4C4C4C",
+  lineHeight: "220%",
+  fontStyle: "normal",
+  textAlign: "left" as const,
+  verticalAlign: "middle" as const,
+};
+
+// Table border colors
+const tableBorderColor = "#d1d5db";
+const rowBorderColor = "#e5e5e5";
+
+// Button styles
+const buttonStyle = {
+  display: "flex",
+  alignItems: "center",
+  gap: "6px",
+  border: "none",
+  background: "transparent",
+  color: "#4C4C4C",
+  fontSize: "15px",
+  fontWeight: 400,
+  cursor: "pointer",
+  padding: 0,
+};
+
 // Vaccinations Table
 const VaccinationTable = ({ data }: { data: Vaccination[] }) => {
   console.log("Rendering VaccinationTable with data:", data);
   return (
     <table style={{ width: "100%", borderCollapse: "collapse" }}>
       <thead>
-        <tr style={{ borderBottom: "1px solid #d1d5db" }}>
+        <tr style={{ borderBottom: `1px solid ${tableBorderColor}` }}>
           <th style={{ ...baseThStyle, width: "176px", paddingLeft: "40px" }}>Date</th>
           <th style={{ ...baseThStyle, width: "142px" }}>Vaccine</th>
           <th style={{ ...baseThStyle, width: "136px" }}>Manufacturer</th>
           <th style={{ ...baseThStyle, width: "70px" }}>Dosage</th>
-          <th style={{ ...baseThStyle,}}>Administered by</th>
+          <th style={{ ...baseThStyle }}>Administered by</th>
         </tr>
       </thead>
       <tbody>
         {data.map((item) => {
           console.log("Processing vaccination item:", item);
           return (
-            <tr key={item.vaccineId} style={{ height: "64px", borderBottom: "1px solid #e5e5e5" }}>
-              <td style={{ ...baseTdStyle, paddingLeft: 40 }}>
+            <tr key={item.vaccineId} style={{ height: "64px", borderBottom: `1px solid ${rowBorderColor}` }}>
+              <td style={{ ...baseTdStyle, paddingLeft: "40px" }}>
                 {item.date ? formatDate(item.date) : 'N/A'}
               </td>
-              <td style={{ ...baseTdStyle }}>{item.name}</td>
-              <td style={{ ...baseTdStyle }}>{item.manufacturer}</td>
-              <td style={{ ...baseTdStyle }}>{item.dosage} mL</td>
-              <td style={{ ...baseTdStyle }}>{item.administeredBy}</td>
+              <td style={baseTdStyle}>{item.name}</td>
+              <td style={baseTdStyle}>{item.manufacturer}</td>
+              <td style={baseTdStyle}>{item.dosage} mL</td>
+              <td style={baseTdStyle}>{item.administeredBy}</td>
             </tr>
           );
         })}
@@ -663,7 +712,7 @@ const TestResultsTable = ({ data, onRowClick }: { data: TestResult[], onRowClick
   return (
     <table style={{ width: "100%", borderCollapse: "collapse" }}>
       <thead>
-        <tr style={{ borderBottom: "1px solid #d1d5db" }}>
+        <tr style={{ borderBottom: `1px solid ${tableBorderColor}` }}>
           <th style={{ ...baseThStyle, width: "176px", paddingLeft: "40px" }}>Date</th>
           <th style={{ ...baseThStyle, width: "142px" }}>Test</th>
           <th style={{ ...baseThStyle, width: "136px" }}>Status</th>
@@ -679,29 +728,20 @@ const TestResultsTable = ({ data, onRowClick }: { data: TestResult[], onRowClick
               key={item.testId} 
               style={{ 
                 height: "64px", 
-                borderBottom: "1px solid #e5e5e5",
+                borderBottom: `1px solid ${rowBorderColor}`,
                 cursor: isCompleted ? "pointer" : "default"
               }}
               onClick={() => isCompleted && onRowClick(index)}
             >
-              <td style={{ ...baseTdStyle, paddingLeft: 40 }}>
+              <td style={{ ...baseTdStyle, paddingLeft: "40px" }}>
                 {item.dateOrdered ? formatDate(item.dateOrdered) : 'N/A'}
               </td>
-              <td style={{ ...baseTdStyle }}>{item.name}</td>
-              <td style={{ ...baseTdStyle }}>{item.status}</td>
-              <td style={{ ...baseTdStyle }}>
+              <td style={baseTdStyle}>{item.name}</td>
+              <td style={baseTdStyle}>{item.status}</td>
+              <td style={baseTdStyle}>
                 {isCompleted && (
                   <button
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "6px",
-                      border: "none",
-                      background: "transparent",
-                      color: "#374151",
-                      cursor: "pointer",
-                      padding: 0,
-                    }}
+                    style={buttonStyle}
                     onClick={(e) => {
                       e.stopPropagation();
                       onRowClick(index);
@@ -710,9 +750,9 @@ const TestResultsTable = ({ data, onRowClick }: { data: TestResult[], onRowClick
                     <img
                       src="/img/health-records/details-icon.svg"
                       alt="Details Icon"
-                      style={{ width: "17px", height: "17px" }}
+                      style={{ width: "18px", height: "18px", marginTop: "4px" }}
                     />
-                    <span style={{ textDecoration: "underline", marginLeft: "17px", fontSize: 17 }}>Results</span>
+                    <span style={{ textDecoration: "underline" }}>Results</span>
                   </button>
                 )}
               </td>
@@ -724,12 +764,11 @@ const TestResultsTable = ({ data, onRowClick }: { data: TestResult[], onRowClick
   );
 };
 
-
 // Medications Table
 const MedicationsTable = ({ data }: { data: Medication[] }) => (
   <table style={{ width: "100%", borderCollapse: "collapse" }}>
     <thead>
-      <tr style={{ borderBottom: "1px solid #d1d5db" }}>
+      <tr style={{ borderBottom: `1px solid ${tableBorderColor}` }}>
         <th style={{ ...baseThStyle, width: "176px", paddingLeft: "40px" }}>Date</th>
         <th style={{ ...baseThStyle, width: "142px" }}>Medication</th>
         <th style={{ ...baseThStyle, width: "136px" }}>Frequency</th>
@@ -739,12 +778,35 @@ const MedicationsTable = ({ data }: { data: Medication[] }) => (
     </thead>
     <tbody>
       {data.map((item) => (
-        <tr key={item.medicationId} style={{ height: "64px", borderBottom: "1px solid #e5e5e5" }}>
-          <td style={{ ...baseTdStyle, paddingLeft: 40 }}>{item.date}</td>
-          <td style={{ ...baseTdStyle }}>{item.medication}</td>
-          <td style={{ ...baseTdStyle }}>{item.frequency}</td>
-          <td style={{ ...baseTdStyle }}>{item.status}</td>
-          <td style={{ ...baseTdStyle }}></td>
+        <tr key={item.medicationId} style={{ height: "64px", borderBottom: `1px solid ${rowBorderColor}` }}>
+          <td style={{ ...baseTdStyle, paddingLeft: "40px" }}>
+            {item.date ? formatDate(item.date) : 'N/A'}
+          </td>
+          <td style={baseTdStyle}>{item.medication}</td>
+          <td style={baseTdStyle}>{item.frequency}</td>
+          <td style={baseTdStyle}>
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <img
+                src={item.status === "Ongoing" ? "/img/general/yellow-circle-icon.svg" : "/img/general/green-circle-icon.svg"}
+                alt={`${item.status} Icon`}
+                style={{ width: "16px", height: "16px", marginTop: "1px" }}
+              />
+              {item.status}
+            </div>
+          </td>
+          <td style={baseTdStyle}>
+            <button
+              style={buttonStyle}
+              onClick={() => handleDownload(item.details)}
+            >
+              <img
+                src="/img/health-records/details-icon.svg"
+                alt="Download Icon"
+                style={{ width: "18px", height: "18px", marginTop: "4px" }}
+              />
+              <span style={{ textDecoration: "underline" }}>Instructions</span>
+            </button>
+          </td>
         </tr>
       ))}
     </tbody>
@@ -755,46 +817,38 @@ const MedicationsTable = ({ data }: { data: Medication[] }) => (
 const MedicalHistoryTable = ({ data }: { data: MedicalHistory[] }) => (
   <table style={{ width: "100%", borderCollapse: "collapse" }}>
     <thead>
-      <tr style={{ borderBottom: "1px solid #d1d5db" }}>
+      <tr style={{ borderBottom: `1px solid ${tableBorderColor}` }}>
         <th style={{ ...baseThStyle, width: "176px", paddingLeft: "40px" }}>Date</th>
         <th style={{ ...baseThStyle, width: "142px" }}>Category</th>
-        <th style={{ ...baseThStyle, width: "136px" }}></th> {/* reserve empty */}
+        <th style={{ ...baseThStyle, width: "136px" }}></th>
         <th style={{ ...baseThStyle, width: "70px" }}></th>
         <th style={{ ...baseThStyle }}></th>
       </tr>
     </thead>
     <tbody>
       {data.map((item) => (
-        <tr key={item.historyId} style={{ height: "64px", borderBottom: "1px solid #e5e5e5" }}>
-          <td style={{ ...baseTdStyle, paddingLeft: 40 }}>{item.date}</td>
-          <td style={{ ...baseTdStyle }}>{item.category}</td>
-          <td style={{ ...baseTdStyle }}></td>
-          <td style={{ ...baseTdStyle }}></td>
-          <td style={{ ...baseTdStyle }}></td>
+        <tr key={item.historyId} style={{ height: "64px", borderBottom: `1px solid ${rowBorderColor}` }}>
+          <td style={{ ...baseTdStyle, paddingLeft: "40px" }}>
+            {item.date ? formatDate(item.date) : 'N/A'}
+          </td>
+          <td style={baseTdStyle}>{item.category}</td>
+          <td style={baseTdStyle}></td>
+          <td style={baseTdStyle}></td>
+          <td style={baseTdStyle}>
+            <button
+              style={buttonStyle}
+              onClick={() => handleDownload(item.details)}
+            >
+              <img
+                src="/img/health-records/details-icon.svg"
+                alt="Download Icon"
+                style={{ width: "18px", height: "18px", marginTop: "4px" }}
+              />
+              <span style={{ textDecoration: "underline" }}>Details</span>
+            </button>
+          </td>
         </tr>
       ))}
     </tbody>
   </table>
 );
-
-// Common styles
-const baseThStyle = {
-  paddingTop: "20px",
-  paddingBottom: "8px",
-  fontSize: "17px",
-  fontWeight: 500,
-  color: "#6B7280",
-  textAlign: "left" as const,
-};
-
-const baseTdStyle = {
-  height: "64px",
-  fontSize: "15px",
-  fontWeight: 400,
-  fontFamily: "Inter",
-  color: "#4C4C4C",
-  lineHeight: "220%",
-  fontStyle: "normal",
-  textAlign: "left" as const,
-  verticalAlign: "middle" as const,
-};
