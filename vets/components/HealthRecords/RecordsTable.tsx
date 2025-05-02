@@ -124,23 +124,31 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction, tabCha
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!petId) return;
+      if (!petId) {
+        console.log("No petId found in cookies");
+        return;
+      }
+      console.log("Fetching data for petId:", petId);
       try {
         if (selectedTab === "vaccinations") {
           const res = await fetch(`/api/vaccinations?petId=${petId}`);
           const data = await res.json();
+          console.log("Vaccinations data:", data);
           setVaccinationsData(data);
         } else if (selectedTab === "medications") {
           const res = await fetch(`/api/medications?petId=${petId}`);
           const data = await res.json();
+          console.log("Medications data:", data);
           setMedicationsData(data);
         } else if (selectedTab === "medical history") {
           const res = await fetch(`/api/history?petId=${petId}`);
           const data = await res.json();
+          console.log("Medical history data:", data);
           setMedicalHistoryData(data);
         } else if (selectedTab === "test results") {
           const res = await fetch(`/api/tests?petId=${petId}`);
           const data = await res.json();
+          console.log("Test results data:", data);
           setTestData(data);
         }
       } catch (err) {
@@ -149,7 +157,7 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction, tabCha
     };
 
     fetchData();
-  }, [selectedTab]);
+  }, [selectedTab, petId]);
 
   return (
     <div style={{ width: "100%", minHeight: "600px" }}>
@@ -224,7 +232,7 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction, tabCha
                 const fileUrl = getFileUrl(fileToDownload);
                 setPdfUrl(fileUrl);
                 handleAnalysis(fileUrl);
-                handleFullAnalysis(fileUrl);
+                //handleFullAnalysis(fileUrl);
                 setOnDocumentDetail(true);
               }}
             />
@@ -238,7 +246,7 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction, tabCha
         </>
       )}
 
-      {/* Full Analysis Modal */}
+      {/* Full Analysis Modal
       {showFullAnalysisModal && (
         <div style={{
           position: 'fixed',
@@ -306,6 +314,123 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction, tabCha
                 <div dangerouslySetInnerHTML={{ __html: analysisContent }} />
               )}
             </div>
+          </div>
+        </div>
+      )} */}
+
+{showFullAnalysisModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 1000
+        }}>
+          <div style={{
+            width: '75%',
+            height: '80%',
+            backgroundColor: 'white',
+            borderRadius: '8px',
+            padding: '20px',
+            position: 'relative',
+            overflowY: 'auto'
+          }}>
+            <button
+              onClick={() => setShowFullAnalysisModal(false)}
+              style={{
+                position: 'absolute',
+                top: '15px',
+                right: '15px',
+                background: 'transparent',
+                border: 'none',
+                fontSize: '24px',
+                cursor: 'pointer'
+              }}
+            >
+              ✕
+            </button>
+
+            {/* {htmlComponent && (
+              <div
+                className="mt-4"
+                dangerouslySetInnerHTML={{ __html: htmlComponent }}
+              />
+            )} */}
+            <div className="p-4">
+              {/* Chemistry Panel Table */}
+              <h2 className="text-xl font-semibold mb-4">Chemistry Panel – Organ Function & Metabolism</h2>
+              <div className="overflow-x-auto">
+                <table className="table-auto w-full border border-gray-300 text-sm">
+                  <thead>
+                    <tr className="bg-gray-100">
+                      <th className="border border-gray-300 px-4 py-2 text-left">Test</th>
+                      <th className="border border-gray-300 px-4 py-2 text-left">What It Measures</th>
+                      <th className="border border-gray-300 px-4 py-2 text-left">Result</th>
+                      <th className="border border-gray-300 px-4 py-2 text-left">Normal Range</th>
+                      <th className="border border-gray-300 px-4 py-2 text-left">Meaning</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[
+                      ["ALP", "Liver & bone enzyme", "163 U/L", "5–160 U/L", "Slightly high – may happen with liver stress, medications, or age. Often mild and not urgent."],
+                      ["ALT", "Liver enzyme", "61 U/L", "18–121 U/L", "Normal – liver cells are not inflamed or damaged."],
+                      ["AST", "Liver/muscle enzyme", "27 U/L", "16–55 U/L", "Normal – no signs of muscle or liver damage."],
+                      ["GGT", "Bile duct enzyme", "8 U/L", "0–13 U/L", "Normal – no issues with bile flow."],
+                      ["BUN", "Kidney waste filter", "41 mg/dL", "9–31 mg/dL", "High – may indicate dehydration or stress on kidneys. Could also be a high-protein diet."],
+                      ["Creatinine", "Kidney function", "0.9 mg/dL", "0.5–1.5 mg/dL", "Normal – kidneys are likely working properly."],
+                      ["BUN/Creatinine Ratio", "Kidney hydration balance", "45.6", "-", "High ratio confirms possible dehydration or early kidney stress."],
+                      ["TCO₂ (Bicarbonate)", "Acid/base balance", "16 mmol/L", "13–27 mmol/L", "Normal – good body pH balance."],
+                      ["Glucose", "Blood sugar", "92 mg/dL", "63–114 mg/dL", "Normal – no sign of diabetes."],
+                      ["Cholesterol", "Fat in blood", "194 mg/dL", "131–345 mg/dL", "Normal – healthy fat balance."],
+                      ["Calcium", "Bone/nerve health", "9.7 mg/dL", "8.4–11.8 mg/dL", "Normal – bones, muscles, nerves are supported."],
+                      ["Phosphorus", "Bone & kidney balance", "4.1 mg/dL", "2.5–6.1 mg/dL", "Normal."],
+                      ["Albumin", "Main blood protein", "3.0 g/dL", "2.7–3.9 g/dL", "Normal – helps control fluid balance."],
+                      ["Globulin", "Immune proteins", "3.8 g/dL", "2.4–4.0 g/dL", "Normal – immune system function."],
+                      ["Total Protein", "Albumin + globulin", "6.8 g/dL", "5.5–7.5 g/dL", "Normal – overall protein health."],
+                      ["Total Bilirubin", "Liver waste", "0.1 mg/dL", "0–0.3 mg/dL", "Normal – liver is clearing waste."],
+                      ["Unconjugated Bilirubin", "Pre-liver bilirubin", "0.0 mg/dL", "0.0–0.2 mg/dL", "Normal."],
+                      ["Conjugated Bilirubin", "Post-liver bilirubin", "0.1 mg/dL", "0.0–0.1 mg/dL", "Normal."],
+                      ["CK (Creatine Kinase)", "Muscle damage", "104 U/L", "10–200 U/L", "Normal – no sign of muscle injury."],
+                      ["Na (Sodium)", "Hydration & nerves", "148 mmol/L", "142–152 mmol/L", "Normal – no dehydration or imbalance."],
+                      ["K (Potassium)", "Muscle & heart function", "4.6 mmol/L", "4.0–5.4 mmol/L", "Normal – stable electrolyte."],
+                      ["Cl (Chloride)", "Blood acid balance", "119 mmol/L", "108–119 mmol/L", "At upper limit – not concerning."],
+                      ["Na/K Ratio", "Electrolyte check", "32", "28–37", "Normal."],
+                      ["Albumin/Globulin Ratio", "Protein balance", "0.8", "0.7–1.5", "Normal."]
+                    ].map(([test, measure, result, range, meaning], idx) => (
+                      <tr key={idx}>
+                        <td className="border border-gray-300 px-4 py-2">{test}</td>
+                        <td className="border border-gray-300 px-4 py-2">{measure}</td>
+                        <td className="border border-gray-300 px-4 py-2">{result}</td>
+                        <td className="border border-gray-300 px-4 py-2">{range}</td>
+                        <td className="border border-gray-300 px-4 py-2">{meaning}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Sample Condition Flags and Summary */}
+              <div className="mt-8 space-y-4 text-sm text-gray-800">
+                <h3 className="text-lg font-semibold">Sample Condition Flags</h3>
+                <p><strong>Hemolysis:</strong> +++ – Some red blood cells broke during collection – may affect liver or muscle enzymes slightly.</p>
+                <p><strong>Lipemia:</strong> Normal – No extra fat in sample – great!</p>
+
+                <h3 className="text-lg font-semibold mt-6">Summary for Pet Parents</h3>
+                <p><strong>Your pet's liver, kidney, and glucose values are mostly normal.</strong></p>
+                <p><strong>Slightly high ALP and high BUN could mean:</strong></p>
+                <ul className="list-disc list-inside ml-4">
+                  <li>Mild dehydration</li>
+                  <li>Age-related changes (especially in senior dogs)</li>
+                  <li>Possibly diet or medications (especially if on steroids or high-protein food)</li>
+                </ul>
+              </div>
+            </div>
+
           </div>
         </div>
       )}
