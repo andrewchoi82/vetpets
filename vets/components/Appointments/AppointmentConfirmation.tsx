@@ -123,7 +123,8 @@ export default function AppointmentConfirmation({
               color: "white",
               border: "none",
               fontSize: "13px",
-              fontWeight: "500"
+              fontWeight: "500",
+              cursor: "pointer"
             }}
           >
             Confirm
