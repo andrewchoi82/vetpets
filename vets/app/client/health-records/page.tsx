@@ -1,6 +1,6 @@
 "use client";
 
-import { Header } from "@/components/MainHeader/Header";
+import { HeaderNew } from "@/components/MainHeader/HeaderNew";
 import { SideBarContainerClient } from "@/components/MainSideBar/SideBarContainerClient";
 import RecordsHeader from "@/components/HealthRecords/RecordsHeader";
 import RecordsTable from "@/components/HealthRecords/RecordsTable";
@@ -117,7 +117,7 @@ export default function HealthRecords() {
         overflowY: "auto",
         marginLeft: "120px"
       }}>
-        <Header title="" showSearchBar={true} />
+        <HeaderNew title="" showSearchBar={true} />
         <RecordsHeader
           selectedTab={selectedTab}
           setSelectedTabAction={setSelectedTab}

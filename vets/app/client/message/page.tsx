@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import React, { useEffect, useState } from 'react';
-import { Header } from "@/components/MainHeader/Header";
+import { HeaderNew } from "@/components/MainHeader/HeaderNew";
 import { SideBarContainerClient } from "@/components/MainSideBar/SideBarContainerClient";
 import MessagesSide from "@/components/Messages/MessagesSide";
 
@@ -75,7 +75,7 @@ export default function Message() {
         overflow: "hidden",
         marginLeft: "120px" 
       }}>
-        <Header title="Messages" showSearchBar={true} />
+        <HeaderNew title="Messages" showSearchBar={true} />
         <div style={{ flex: 1, overflow: "hidden" }}>
           {pageState.view === 'overview' && (
             <MessagesSide setPageState={setPageState} />
