@@ -10,6 +10,8 @@ import Cookies from "js-cookie";
 
 export default function HealthRecords() {
   const [selectedTab, setSelectedTab] = useState<"vaccinations" | "test results" | "medications" | "medical history">("vaccinations");
+  const [tabChange, setTabChange] = useState(false);
+
   const [allRecords, setAllRecords] = useState<{
     vaccinations: any[];
     test_results: any[];
@@ -119,8 +121,8 @@ export default function HealthRecords() {
         <RecordsHeader
           selectedTab={selectedTab}
           setSelectedTabAction={setSelectedTab}
-          tabChange={false}
-          setTabChange={() => {}} // No longer needed since we fetch all data at once
+          tabChange={tabChange}
+          setTabChange={setTabChange} // No longer needed since we fetch all data at once
         />
         {currentRecords.length === 0 ? (
           <div style={{ 
@@ -138,8 +140,8 @@ export default function HealthRecords() {
           <RecordsTable
             selectedTab={selectedTab}
             setSelectedTabAction={setSelectedTab}
-            tabChange={false}
-            setTabChange={() => {}} // No longer needed since we fetch all data at once
+            tabChange={tabChange}
+            setTabChange={setTabChange} // No longer needed since we fetch all data at once
             records={currentRecords}
           />
         )}
