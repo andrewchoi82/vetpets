@@ -141,11 +141,52 @@ export default function MainContentNew() {
 }
 
 function InfoItem({ icon, label, value }: { icon: string; label: string; value: string }) {
+  const formatValue = (label: string, value: string) => {
+    if (!value) return "N/A";
+    
+    switch (label) {
+      case "Age":
+        // Convert to years and months if possible
+        const ageNum = parseFloat(value);
+        if (!isNaN(ageNum)) {
+          const years = Math.floor(ageNum);
+          const months = Math.round((ageNum - years) * 12);
+          if (years === 0) {
+            return `${months} month${months !== 1 ? 's' : ''}`;
+          } else if (months === 0) {
+            return `${years} year${years !== 1 ? 's' : ''}`;
+          }
+          return `${years} year${years !== 1 ? 's' : ''}, ${months} month${months !== 1 ? 's' : ''}`;
+        }
+        return value;
+      
+      case "Weight":
+        // Convert to pounds with one decimal place
+        const weightNum = parseFloat(value);
+        if (!isNaN(weightNum)) {
+          return `${weightNum.toFixed(1)} lb${weightNum !== 1 ? 's' : ''}`;
+        }
+        return value;
+      
+      case "Gender":
+        return value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
+      
+      case "Breed":
+        return value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
+      
+      case "Sterilized":
+        return value === "true" ? "Yes" : "No";
+      
+      default:
+        return value;
+    }
+  };
+
   return (
     <div className="flex items-center">
       <Image src={icon} alt="icon" width={20} height={20} className="w-4 h-4 md:w-5 md:h-5 mr-4 md:mr-6" />
       <span className="text-Text-Main text-sm md:text-base font-medium leading-loose">{label}:</span>
-      <span className="text-Text-Main text-sm md:text-base font-normal leading-loose ml-1">{value || "N/A"}</span>
+      <span className="text-Text-Main text-sm md:text-base font-normal leading-loose ml-1">{formatValue(label, value)}</span>
     </div>
   );
 }
