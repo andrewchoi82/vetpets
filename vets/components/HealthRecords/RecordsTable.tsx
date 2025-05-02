@@ -76,38 +76,9 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction, tabCha
   const [analysisContent, setAnalysisContent] = useState('');
   const petId = Cookies.get("petId");
   const [vaccinationsData, setVaccinationsData] = useState<Vaccination[]>([]);
-  const [testData, setTestData] = useState<TestResult[]>([]);
   const [medicationsData, setMedicationsData] = useState<Medication[]>([]);
   const [medicalHistoryData, setMedicalHistoryData] = useState<MedicalHistory[]>([]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      if (!petId) return;
-
-      setLoading(true);
-      try {
-        if (selectedTab === "vaccinations") {
-          const response = await fetch(`/api/vaccinations?petId=${petId}`);
-          const data = await response.json();
-          setVaccinationsData(data);
-        } else if (selectedTab === "medications") {
-          const response = await fetch(`/api/medications?petId=${petId}`);
-          const data = await response.json();
-          setMedicationsData(data);
-        } else if (selectedTab === "medical history") {
-          const response = await fetch(`/api/history?petId=${petId}`);
-          const data = await response.json();
-          setMedicalHistoryData(data);
-        }
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [selectedTab, petId]);
+  const [testData, setTestData] = useState<TestResult[]>([]);
 
   const handleAnalysis = async (fileURL: string) => {
     try {
@@ -165,24 +136,44 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction, tabCha
     }
   };
 
-  const handleDownload = async (details: string) => {
-    try {
-      const fileUrl = getFileUrl(details);
-      const response = await fetch(fileUrl);
-      const blob = await response.blob();
-      const blobUrl = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = blobUrl;
-      a.download = details;
-      a.style.display = 'none';
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(blobUrl);
-      document.body.removeChild(a);
-    } catch (error) {
-      console.error('Error downloading file:', error);
-    }
-  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!petId) {
+        console.log("No petId found in cookies");
+        return;
+      }
+      console.log("Fetching data for petId:", petId);
+      try {
+        if (selectedTab === "vaccinations") {
+          const res = await fetch(`/api/vaccinations?petId=${petId}`);
+          const data = await res.json();
+          console.log("Vaccinations data:", data);
+          setVaccinationsData(data);
+        } else if (selectedTab === "medications") {
+          const res = await fetch(`/api/medications?petId=${petId}`);
+          const data = await res.json();
+          console.log("Medications data:", data);
+          setMedicationsData(data);
+        } else if (selectedTab === "medical history") {
+          const res = await fetch(`/api/history?petId=${petId}`);
+          const data = await res.json();
+          console.log("Medical history data:", data);
+          setMedicalHistoryData(data);
+        } else if (selectedTab === "test results") {
+          const res = await fetch(`/api/tests?petId=${petId}`);
+          const data = await res.json();
+          console.log("Test results data:", data);
+          setTestData(data);
+        }
+      } catch (err) {
+        console.error("Fetch error:", err);
+      }
+    };
+
+    fetchData();
+  }, [selectedTab, petId]);
+
 
   return (
     <div style={{ width: "100%", minHeight: "600px" }}>
@@ -295,104 +286,18 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction, tabCha
             </div>
           )}
           {selectedTab === "test results" && (
-            <div style={{ width: "100%" }}>
-              <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                <thead>
-                  <tr style={{ borderBottom: "1px solid #d1d5db" }}>
-                    <th style={{ ...baseThStyle, paddingLeft: 40, width: "160px" }}>Date</th>
-                    <th style={{ ...baseThStyle, paddingLeft: 24, width: "170px" }}>Test</th>
-                    <th style={{ ...baseThStyle, paddingLeft: 24, width: "220px" }}>Status</th>
-                    <th style={{ ...baseThStyle, paddingLeft: 24, width: "120px" }}></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {testData.map((testResult, index) => {
-                    const isPending = testResult.result === "" || testResult.result === null;
-                    const isCompleted = testResult.result !== "" && testResult.result !== null;
-                    const iconSrc = isPending
-                      ? "/img/general/yellow-circle-icon.svg"
-                      : "/img/general/green-circle-icon.svg";
-
-                    return (
-                      <tr
-                        key={testResult.testId}
-                        style={{
-                          height: "64px",
-                          borderBottom: "1px solid #e5e5e5",
-                          cursor: isCompleted ? "pointer" : "default"
-                        }}
-                        onClick={isCompleted ? async () => {
-                          setItemNumber(index);
-                          const fileToDownload = index !== -1 ?
-                            testData[index].result :
-                            testResult.result;
-
-                          const fileUrl = getFileUrl(fileToDownload);
-                          setPdfUrl(fileUrl);
-                          handleAnalysis(fileUrl);
-                          handleFullAnalysis(fileUrl);
-                          setOnDocumentDetail(true);
-                        } : undefined}
-                      >
-                        <td style={{ paddingLeft: 40, color: "#111827" }}>{formatDate(testResult.dateOrdered)}</td>
-                        <td style={{ paddingLeft: 24, color: "#111827" }}>{testResult.name}</td>
-                        <td style={{ paddingLeft: 24 }}>
-                          <div style={{ display: "flex", alignItems: "center", gap: "8px", color: "#111827" }}>
-                            <img src={iconSrc} alt={`${testResult.status} Icon`} style={{ width: "16px", height: "16px" }} />
-                            {testResult.status}
-                          </div>
-                        </td>
-                        <td style={{ paddingLeft: 24 }}>
-                          {isCompleted && (
-                            <button
-                              style={{
-                                display: "flex",
-                                alignItems: "center",
-                                gap: "6px",
-                                border: "none",
-                                background: "transparent",
-                                color: "#374151",
-                                cursor: "pointer",
-                                padding: 0,
-                              }}
-                              onClick={async (e) => {
-                                e.stopPropagation();
-                                const fileToDownload = itemNumber !== -1 ?
-                                  testData[itemNumber].result :
-                                  testResult.result;
-                                try {
-                                  const fileUrl = getImageUrl(fileToDownload);
-                                  const response = await fetch(fileUrl);
-                                  const blob = await response.blob();
-                                  const blobUrl = window.URL.createObjectURL(blob);
-                                  const a = document.createElement('a');
-                                  a.href = blobUrl;
-                                  a.download = fileToDownload;
-                                  a.style.display = 'none';
-                                  document.body.appendChild(a);
-                                  a.click();
-                                  window.URL.revokeObjectURL(blobUrl);
-                                  document.body.removeChild(a);
-                                } catch (error) {
-                                  console.error("Error downloading file:", error);
-                                }
-                              }}
-                            >
-                              <img
-                                src="/img/health-records/details-icon.svg"
-                                alt="Download Icon"
-                                style={{ width: "17px", height: "17px" }}
-                              />
-                              <span style={{ textDecoration: "underline", marginLeft: "17px", fontSize: 17 }}>Results</span>
-                            </button>
-                          )}
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
+            <TestResultsTable 
+              data={records} 
+              onRowClick={(index) => {
+                setItemNumber(index);
+                const fileToDownload = records[index].result;
+                const fileUrl = getFileUrl(fileToDownload);
+                setPdfUrl(fileUrl);
+                handleAnalysis(fileUrl);
+                //handleFullAnalysis(fileUrl);
+                setOnDocumentDetail(true);
+              }}
+            />
           )}
           {selectedTab === "medications" && (
             <div style={{ width: "100%" }}>
@@ -499,7 +404,7 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction, tabCha
         </>
       )}
 
-      {/* Full Analysis Modal */}
+      {/* Full Analysis Modal
       {showFullAnalysisModal && (
         <div style={{
           position: 'fixed',
@@ -569,10 +474,267 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction, tabCha
             </div>
           </div>
         </div>
+      )} */}
+
+{showFullAnalysisModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 1000
+        }}>
+          <div style={{
+            width: '75%',
+            height: '80%',
+            backgroundColor: 'white',
+            borderRadius: '8px',
+            padding: '20px',
+            position: 'relative',
+            overflowY: 'auto'
+          }}>
+            <button
+              onClick={() => setShowFullAnalysisModal(false)}
+              style={{
+                position: 'absolute',
+                top: '15px',
+                right: '15px',
+                background: 'transparent',
+                border: 'none',
+                fontSize: '24px',
+                cursor: 'pointer'
+              }}
+            >
+              ✕
+            </button>
+
+            {/* {htmlComponent && (
+              <div
+                className="mt-4"
+                dangerouslySetInnerHTML={{ __html: htmlComponent }}
+              />
+            )} */}
+            <div className="p-4">
+              {/* Chemistry Panel Table */}
+              <h2 className="text-xl font-semibold mb-4">Chemistry Panel – Organ Function & Metabolism</h2>
+              <div className="overflow-x-auto">
+                <table className="table-auto w-full border border-gray-300 text-sm">
+                  <thead>
+                    <tr className="bg-gray-100">
+                      <th className="border border-gray-300 px-4 py-2 text-left">Test</th>
+                      <th className="border border-gray-300 px-4 py-2 text-left">What It Measures</th>
+                      <th className="border border-gray-300 px-4 py-2 text-left">Result</th>
+                      <th className="border border-gray-300 px-4 py-2 text-left">Normal Range</th>
+                      <th className="border border-gray-300 px-4 py-2 text-left">Meaning</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[
+                      ["ALP", "Liver & bone enzyme", "163 U/L", "5–160 U/L", "Slightly high – may happen with liver stress, medications, or age. Often mild and not urgent."],
+                      ["ALT", "Liver enzyme", "61 U/L", "18–121 U/L", "Normal – liver cells are not inflamed or damaged."],
+                      ["AST", "Liver/muscle enzyme", "27 U/L", "16–55 U/L", "Normal – no signs of muscle or liver damage."],
+                      ["GGT", "Bile duct enzyme", "8 U/L", "0–13 U/L", "Normal – no issues with bile flow."],
+                      ["BUN", "Kidney waste filter", "41 mg/dL", "9–31 mg/dL", "High – may indicate dehydration or stress on kidneys. Could also be a high-protein diet."],
+                      ["Creatinine", "Kidney function", "0.9 mg/dL", "0.5–1.5 mg/dL", "Normal – kidneys are likely working properly."],
+                      ["BUN/Creatinine Ratio", "Kidney hydration balance", "45.6", "-", "High ratio confirms possible dehydration or early kidney stress."],
+                      ["TCO₂ (Bicarbonate)", "Acid/base balance", "16 mmol/L", "13–27 mmol/L", "Normal – good body pH balance."],
+                      ["Glucose", "Blood sugar", "92 mg/dL", "63–114 mg/dL", "Normal – no sign of diabetes."],
+                      ["Cholesterol", "Fat in blood", "194 mg/dL", "131–345 mg/dL", "Normal – healthy fat balance."],
+                      ["Calcium", "Bone/nerve health", "9.7 mg/dL", "8.4–11.8 mg/dL", "Normal – bones, muscles, nerves are supported."],
+                      ["Phosphorus", "Bone & kidney balance", "4.1 mg/dL", "2.5–6.1 mg/dL", "Normal."],
+                      ["Albumin", "Main blood protein", "3.0 g/dL", "2.7–3.9 g/dL", "Normal – helps control fluid balance."],
+                      ["Globulin", "Immune proteins", "3.8 g/dL", "2.4–4.0 g/dL", "Normal – immune system function."],
+                      ["Total Protein", "Albumin + globulin", "6.8 g/dL", "5.5–7.5 g/dL", "Normal – overall protein health."],
+                      ["Total Bilirubin", "Liver waste", "0.1 mg/dL", "0–0.3 mg/dL", "Normal – liver is clearing waste."],
+                      ["Unconjugated Bilirubin", "Pre-liver bilirubin", "0.0 mg/dL", "0.0–0.2 mg/dL", "Normal."],
+                      ["Conjugated Bilirubin", "Post-liver bilirubin", "0.1 mg/dL", "0.0–0.1 mg/dL", "Normal."],
+                      ["CK (Creatine Kinase)", "Muscle damage", "104 U/L", "10–200 U/L", "Normal – no sign of muscle injury."],
+                      ["Na (Sodium)", "Hydration & nerves", "148 mmol/L", "142–152 mmol/L", "Normal – no dehydration or imbalance."],
+                      ["K (Potassium)", "Muscle & heart function", "4.6 mmol/L", "4.0–5.4 mmol/L", "Normal – stable electrolyte."],
+                      ["Cl (Chloride)", "Blood acid balance", "119 mmol/L", "108–119 mmol/L", "At upper limit – not concerning."],
+                      ["Na/K Ratio", "Electrolyte check", "32", "28–37", "Normal."],
+                      ["Albumin/Globulin Ratio", "Protein balance", "0.8", "0.7–1.5", "Normal."]
+                    ].map(([test, measure, result, range, meaning], idx) => (
+                      <tr key={idx}>
+                        <td className="border border-gray-300 px-4 py-2">{test}</td>
+                        <td className="border border-gray-300 px-4 py-2">{measure}</td>
+                        <td className="border border-gray-300 px-4 py-2">{result}</td>
+                        <td className="border border-gray-300 px-4 py-2">{range}</td>
+                        <td className="border border-gray-300 px-4 py-2">{meaning}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Sample Condition Flags and Summary */}
+              <div className="mt-8 space-y-4 text-sm text-gray-800">
+                <h3 className="text-lg font-semibold">Sample Condition Flags</h3>
+                <p><strong>Hemolysis:</strong> +++ – Some red blood cells broke during collection – may affect liver or muscle enzymes slightly.</p>
+                <p><strong>Lipemia:</strong> Normal – No extra fat in sample – great!</p>
+
+                <h3 className="text-lg font-semibold mt-6">Summary for Pet Parents</h3>
+                <p><strong>Your pet's liver, kidney, and glucose values are mostly normal.</strong></p>
+                <p><strong>Slightly high ALP and high BUN could mean:</strong></p>
+                <ul className="list-disc list-inside ml-4">
+                  <li>Mild dehydration</li>
+                  <li>Age-related changes (especially in senior dogs)</li>
+                  <li>Possibly diet or medications (especially if on steroids or high-protein food)</li>
+                </ul>
+              </div>
+            </div>
+
+          </div>
+        </div>
       )}
     </div>
   );
 }
+
+// Vaccinations Table
+const VaccinationTable = ({ data }: { data: Vaccination[] }) => (
+  <table style={{ width: "100%", borderCollapse: "collapse" }}>
+    <thead>
+      <tr style={{ borderBottom: "1px solid #d1d5db" }}>
+        <th style={{ ...baseThStyle, width: "176px", paddingLeft: "40px" }}>Date</th>
+        <th style={{ ...baseThStyle, width: "142px" }}>Vaccine</th>
+        <th style={{ ...baseThStyle, width: "136px" }}>Manufacturer</th>
+        <th style={{ ...baseThStyle, width: "70px" }}>Dosage</th>
+        <th style={{ ...baseThStyle,}}>Administered by</th>
+      </tr>
+    </thead>
+    <tbody>
+      {data.map((item) => (
+        <tr key={item.vaccineId} style={{ height: "64px", borderBottom: "1px solid #e5e5e5" }}>
+          <td style={{ ...baseTdStyle, paddingLeft: 40 }}>{new Date().toLocaleDateString()}</td>
+          <td style={{ ...baseTdStyle }}>{item.name}</td>
+          <td style={{ ...baseTdStyle }}>{item.manufacturer}</td>
+          <td style={{ ...baseTdStyle }}>{item.dosage} mL</td>
+          <td style={{ ...baseTdStyle }}>{item.administeredBy}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+);
+
+// Test Results Table
+const TestResultsTable = ({ data, onRowClick }: { data: TestResult[], onRowClick: (index: number) => void }) => (
+  <table style={{ width: "100%", borderCollapse: "collapse" }}>
+    <thead>
+      <tr style={{ borderBottom: "1px solid #d1d5db" }}>
+        <th style={{ ...baseThStyle, width: "176px", paddingLeft: "40px" }}>Date</th>
+        <th style={{ ...baseThStyle, width: "142px" }}>Test</th>
+        <th style={{ ...baseThStyle, width: "136px" }}>Status</th>
+        <th style={{ ...baseThStyle, width: "70px" }}></th>
+      </tr>
+    </thead>
+    <tbody>
+      {data.map((item, index) => {
+        const isCompleted = item.status === "Completed";
+        return (
+          <tr 
+            key={item.testId} 
+            style={{ 
+              height: "64px", 
+              borderBottom: "1px solid #e5e5e5",
+              cursor: isCompleted ? "pointer" : "default"
+            }}
+            onClick={() => isCompleted && onRowClick(index)}
+          >
+            <td style={{ ...baseTdStyle, paddingLeft: 40 }}>{item.dateOrdered}</td>
+            <td style={{ ...baseTdStyle }}>{item.name}</td>
+            <td style={{ ...baseTdStyle }}>{item.status}</td>
+            <td style={{ ...baseTdStyle }}>
+              {isCompleted && (
+                <button
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "6px",
+                    border: "none",
+                    background: "transparent",
+                    color: "#374151",
+                    cursor: "pointer",
+                    padding: 0,
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onRowClick(index);
+                  }}
+                >
+                  <img
+                    src="/img/health-records/details-icon.svg"
+                    alt="Details Icon"
+                    style={{ width: "17px", height: "17px" }}
+                  />
+                  <span style={{ textDecoration: "underline", marginLeft: "17px", fontSize: 17 }}>Results</span>
+                </button>
+              )}
+            </td>
+          </tr>
+        );
+      })}
+    </tbody>
+  </table>
+);
+
+
+// Medications Table
+const MedicationsTable = ({ data }: { data: Medication[] }) => (
+  <table style={{ width: "100%", borderCollapse: "collapse" }}>
+    <thead>
+      <tr style={{ borderBottom: "1px solid #d1d5db" }}>
+        <th style={{ ...baseThStyle, width: "176px", paddingLeft: "40px" }}>Date</th>
+        <th style={{ ...baseThStyle, width: "142px" }}>Medication</th>
+        <th style={{ ...baseThStyle, width: "136px" }}>Frequency</th>
+        <th style={{ ...baseThStyle, width: "70px" }}>Status</th>
+        <th style={{ ...baseThStyle }}></th>
+      </tr>
+    </thead>
+    <tbody>
+      {data.map((item) => (
+        <tr key={item.medicationId} style={{ height: "64px", borderBottom: "1px solid #e5e5e5" }}>
+          <td style={{ ...baseTdStyle, paddingLeft: 40 }}>{item.date}</td>
+          <td style={{ ...baseTdStyle }}>{item.medication}</td>
+          <td style={{ ...baseTdStyle }}>{item.frequency}</td>
+          <td style={{ ...baseTdStyle }}>{item.status}</td>
+          <td style={{ ...baseTdStyle }}></td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+);
+
+// Medical History Table
+const MedicalHistoryTable = ({ data }: { data: MedicalHistory[] }) => (
+  <table style={{ width: "100%", borderCollapse: "collapse" }}>
+    <thead>
+      <tr style={{ borderBottom: "1px solid #d1d5db" }}>
+        <th style={{ ...baseThStyle, width: "176px", paddingLeft: "40px" }}>Date</th>
+        <th style={{ ...baseThStyle, width: "142px" }}>Category</th>
+        <th style={{ ...baseThStyle, width: "136px" }}></th> {/* reserve empty */}
+        <th style={{ ...baseThStyle, width: "70px" }}></th>
+        <th style={{ ...baseThStyle }}></th>
+      </tr>
+    </thead>
+    <tbody>
+      {data.map((item) => (
+        <tr key={item.historyId} style={{ height: "64px", borderBottom: "1px solid #e5e5e5" }}>
+          <td style={{ ...baseTdStyle, paddingLeft: 40 }}>{item.date}</td>
+          <td style={{ ...baseTdStyle }}>{item.category}</td>
+          <td style={{ ...baseTdStyle }}></td>
+          <td style={{ ...baseTdStyle }}></td>
+          <td style={{ ...baseTdStyle }}></td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+);
 
 // Common styles
 const baseThStyle = {
