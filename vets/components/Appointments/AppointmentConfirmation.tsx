@@ -21,68 +21,69 @@ export default function AppointmentConfirmation({
   onBack
 }: AppointmentConfirmationProps) {
   return (
-    <div style={{ padding: "0 24px", maxWidth: "800px", margin: "0 auto" }}>
+    <div style={{ padding: "0 24px", maxWidth: "600px", margin: "0" }}>
       <div style={{ 
-        fontSize: "24px", 
+        fontSize: "16px", 
         fontWeight: "500", 
         color: "#4C4C4C", 
-        marginBottom: "32px" 
+        marginBottom: "24px" 
       }}>
         Appointment confirmation
       </div>
 
       <div style={{ 
         backgroundColor: "white", 
-        borderRadius: "10px", 
-        padding: "32px",
+        borderRadius: "8px", 
+        padding: "24px",
         border: "1px solid #d1d5db"
       }}>
-        <div style={{ marginBottom: "24px" }}>
-          <div style={{ color: "#919191", marginBottom: "8px" }}>
+        <div style={{ marginBottom: "20px" }}>
+          <div style={{ color: "#919191", marginBottom: "6px", fontSize: "13px" }}>
             Appointment reason
           </div>
-          <div style={{ color: "#4C4C4C", fontSize: "16px" }}>
+          <div style={{ color: "#4C4C4C", fontSize: "14px" }}>
             {appointmentReason}
           </div>
         </div>
 
-        <div style={{ marginBottom: "24px" }}>
-          <div style={{ color: "#919191", marginBottom: "8px" }}>
+        <div style={{ marginBottom: "20px" }}>
+          <div style={{ color: "#919191", marginBottom: "6px", fontSize: "13px" }}>
             Clinic
           </div>
-          <div style={{ color: "#4C4C4C", fontSize: "16px" }}>
+          <div style={{ color: "#4C4C4C", fontSize: "14px" }}>
             {clinic}
           </div>
           <div style={{ 
             display: "flex", 
             alignItems: "center", 
-            gap: "8px",
+            gap: "6px",
             color: "#4C4C4C",
-            marginTop: "4px"
+            marginTop: "4px",
+            fontSize: "14px"
           }}>
             <img 
               src="/img/appointments/cursor.svg" 
               alt="Location" 
-              style={{ width: "16px", height: "16px" }}
+              style={{ width: "14px", height: "14px" }}
             />
             {clinicAddress}
           </div>
         </div>
 
-        <div style={{ marginBottom: "24px" }}>
-          <div style={{ color: "#919191", marginBottom: "8px" }}>
+        <div style={{ marginBottom: "20px" }}>
+          <div style={{ color: "#919191", marginBottom: "6px", fontSize: "13px" }}>
             Date & time
           </div>
-          <div style={{ color: "#4C4C4C", fontSize: "16px" }}>
+          <div style={{ color: "#4C4C4C", fontSize: "14px" }}>
             {dateTime}
           </div>
         </div>
 
-        <div style={{ marginBottom: "32px" }}>
-          <div style={{ color: "#919191", marginBottom: "8px" }}>
+        <div style={{ marginBottom: "24px" }}>
+          <div style={{ color: "#919191", marginBottom: "6px", fontSize: "13px" }}>
             Booked for
           </div>
-          <div style={{ color: "#4C4C4C", fontSize: "16px" }}>
+          <div style={{ color: "#4C4C4C", fontSize: "14px" }}>
             {petName}
           </div>
         </div>
@@ -90,18 +91,18 @@ export default function AppointmentConfirmation({
         <div style={{ 
           display: "flex", 
           justifyContent: "flex-end",
-          gap: "16px" 
+          gap: "12px" 
         }}>
           <button
             onClick={onBack}
             style={{
-              padding: "8px 16px",
-              borderRadius: "8px",
+              padding: "6px 12px",
+              borderRadius: "6px",
               border: "1px solid #004F82",
               color: "#004F82",
               backgroundColor: "white",
               cursor: "pointer",
-              fontSize: "14px",
+              fontSize: "13px",
               fontWeight: "500"
             }}
           >
@@ -111,18 +112,19 @@ export default function AppointmentConfirmation({
             onClick={onConfirm}
             style={{
               display: "flex",
-              width: "109px",
-              height: "34px",
+              width: "100px",
+              height: "32px",
               justifyContent: "center",
               alignItems: "center",
-              gap: "10px",
+              gap: "8px",
               flexShrink: 0,
               borderRadius: "5px",
               background: "#004D81",
               color: "white",
               border: "none",
-              fontSize: "14px",
-              fontWeight: "500"
+              fontSize: "13px",
+              fontWeight: "500",
+              cursor: "pointer"
             }}
           >
             Confirm
