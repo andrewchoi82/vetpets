@@ -90,7 +90,7 @@ export default function ClientsTable({ selected, setSelected }: ClientTableProps
               style={{ marginLeft: 9 }}
             />
           </div>
-          <div style={{ marginLeft: 10, marginTop: 20, marginBottom: 10 }}>
+          <div style={{ marginLeft: 10, marginTop: 20, marginBottom: 10, display: "flex", alignItems: "center", justifyContent: "space-between", paddingRight: "24px" }}>
              <div
                   style={{
                     display: "flex",
@@ -124,6 +124,55 @@ export default function ClientsTable({ selected, setSelected }: ClientTableProps
                     }}
                   />
                 </div>
+                <button
+                  onClick={() => router.push('/vet/create-pet')}
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "10px",
+                    padding: "0px 18px",
+                    height: "33px",
+                    borderRadius: "100px",
+                    border: "1px solid #DFDFDF",
+                    backgroundColor: "#FFFFFF",
+                    boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.03)",
+                    fontWeight: 500,
+                    fontSize: "15px",
+                    color: "#4C4C4C",
+                    cursor: "pointer",
+                    whiteSpace: "nowrap",
+                    marginRight: "30px",
+                    lineHeight: 1,
+                    transition: "all 0.2s ease-in-out",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = "#f9fafb";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = "#ffffff";
+                    e.currentTarget.style.transform = "scale(1)";
+                  }}
+                  onMouseDown={(e) => {
+                    e.currentTarget.style.transform = "scale(0.97)";
+                  }}
+                  onMouseUp={(e) => {
+                    e.currentTarget.style.transform = "scale(1)";
+                  }}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="17"
+                    height="17"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="#4C4C4C"
+                    strokeWidth="2"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+                  </svg>
+                  Add pet
+                </button>
           </div>
 
           <table style={{ width: "100%", borderCollapse: "collapse" }}>
