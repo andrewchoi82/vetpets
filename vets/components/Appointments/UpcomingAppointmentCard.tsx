@@ -30,6 +30,7 @@ export default function UpcomingAppointmentCard({ appt, style }: UpcomingAppoint
         backgroundColor: "#ffffff",
         overflow: "hidden",
         fontSize: 14,
+        fontFamily: "Inter",
         boxShadow: "0 1px 2px rgba(0,0,0,0.05)",
         ...style,
       }}
@@ -41,6 +42,7 @@ export default function UpcomingAppointmentCard({ appt, style }: UpcomingAppoint
           padding: "16px 20px 20px 20px",
           display: "flex",
           alignItems: "center",
+          fontFamily: "Inter",
           gap: 10,
         }}
       >
@@ -91,7 +93,7 @@ export default function UpcomingAppointmentCard({ appt, style }: UpcomingAppoint
               style={{
                 marginLeft: 6,
                 color: "#919191",
-                fontFamily: "SF Pro",
+                fontFamily: "Inter",
                 fontSize: 17,
                 fontWeight: 400,
                 lineHeight: "220%",
