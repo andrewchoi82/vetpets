@@ -5,25 +5,11 @@ import Cookies from "js-cookie";
 interface BillingsTableProps {
   selectedTab: "current bills" | "payment history";
   setSelectedTabAction: (tab: "current bills" | "payment history") => void;
+  billings: any[];
 }
 
-export default function RecordsTable({ selectedTab }: BillingsTableProps) {
-  const [billings, setBillings] = useState<any[]>([]);
+export default function BillingsTable({ selectedTab, setSelectedTabAction, billings }: BillingsTableProps) {
   const petId = Cookies.get("petId") || "1";
-
-  useEffect(() => {
-    const fetchBillings = async () => {
-      try {
-        const res = await fetch(`/api/billings?petId=${petId}`);
-        const data = await res.json();
-        setBillings(data);
-      } catch (error) {
-        console.error("Failed to fetch billings:", error);
-      }
-    };
-
-    fetchBillings();
-  }, []);
 
   const filteredBillings = billings.filter(
     (bill) =>

@@ -35,10 +35,10 @@ export default function Message() {
       }}>
         <HeaderNew  title="Messages" showSearchBar={true}/>
         <div style={{ flex: 1, overflow: "hidden" }}>
-        {pageState.view === 'overview' && (
+          {pageState.view === 'overview' && (
             <MessagesSide setPageState={setPageState} />
           )}
-         </div>
+        </div>
       </div>
     </div>
   );
