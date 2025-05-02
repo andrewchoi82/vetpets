@@ -94,7 +94,7 @@ export default function Appointments() {
         <div style={{ 
           flex: 1, 
           position: "relative", 
-          backgroundColor: "#fff", 
+          backgroundColor: "#f9f9f9", 
           marginLeft: "120px" 
         }}>
           <div style={{
@@ -106,7 +106,7 @@ export default function Appointments() {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            backgroundColor: "#ffffff",
+            backgroundColor: "#f9f9f9",
             zIndex: 10
           }}>
             <Image
