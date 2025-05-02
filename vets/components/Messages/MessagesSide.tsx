@@ -60,7 +60,7 @@ export default function MessagesSide({ setPageState }: MessageOverviewProps) {
     const currId = Cookies.get('userId');
     const petId = Cookies.get('petId');
 
-    
+
 
 
     //this currently sets the sample appointment data to the state
@@ -211,7 +211,7 @@ export default function MessagesSide({ setPageState }: MessageOverviewProps) {
             await fetch('/api/conversations/addNotification', {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
+                body: JSON.stringify({
                     convoId: newConvoId,
                     sentByUser: true
                 }),
@@ -244,7 +244,7 @@ export default function MessagesSide({ setPageState }: MessageOverviewProps) {
                                 key={message.convoId}
                                 className={`flex flex-row justify-center items-center w-full h-[11vh] rounded-xl border-solid border-[#DFDFDF] ${index === 0 ? 'border-b-[1px]' :
                                     'border-b-[1px]'
-                                    } ${onMessage && message.convoId === convoNum ? 'bg-[#004F82]': 'bg-[#F2F2F2] hover:bg-gray-200'} cursor-pointer`}
+                                    } ${onMessage && message.convoId === convoNum ? 'bg-[#004F82]' : 'bg-[#F2F2F2] hover:bg-gray-200'} cursor-pointer`}
                                 style={{ gap: '20px' }}
                                 onClick={() => {
                                     if (onMessage) {
@@ -260,26 +260,48 @@ export default function MessagesSide({ setPageState }: MessageOverviewProps) {
                                     }
                                 }}
                             >
+
                                 <div className="flex justify-start items-center ml-[10px] w-[20px]">
-                                    {message.numUnreadMessages != 0 && <div
-                                        style={{
-                                            backgroundColor: "#004D81",
-                                            color: "#fff",
-                                            fontSize: "12px",
-                                            width: "20px",
-                                            height: "20px",
-                                            borderRadius: "50%",
-                                            display: "flex",
-                                            alignItems: "center",
-                                            justifyContent: "center",
-                                            fontWeight: 500,
-                                        }}
-                                    >
-                                        {message.numUnreadMessages}
-                                    </div>}
+                                    {currUserData?.userType === 1 && message.numUnreadMessages !== 0 && (
+                                        <div
+                                            style={{
+                                                backgroundColor: "#004D81",
+                                                color: "#fff",
+                                                fontSize: "12px",
+                                                width: "20px",
+                                                height: "20px",
+                                                borderRadius: "50%",
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "center",
+                                                fontWeight: 500,
+                                            }}
+                                        >
+                                            {message.numUnreadMessages}
+                                        </div>
+                                    )}
+
+                                    {currUserData?.userType === 2 && message.numUnreadDoctor !== 0 && (
+                                        <div
+                                            style={{
+                                                backgroundColor: "#004D81",
+                                                color: "#fff",
+                                                fontSize: "12px",
+                                                width: "20px",
+                                                height: "20px",
+                                                borderRadius: "50%",
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "center",
+                                                fontWeight: 500,
+                                            }}
+                                        >
+                                            {message.numUnreadDoctor}
+                                        </div>
+                                    )}
                                 </div>
                                 <Image
-                                    src={currUserData?.userType === 1 
+                                    src={currUserData?.userType === 1
                                         ? (otherEndUserData?.profilePic ? getStorageImageUrl(otherEndUserData.profilePic) : "/img/message/sarah.svg")
                                         : (messageUserData[message.convoId]?.profilePic ? getStorageImageUrl(messageUserData[message.convoId].profilePic || "") : "/img/message/sarah.svg")
                                     }
@@ -374,8 +396,8 @@ export default function MessagesSide({ setPageState }: MessageOverviewProps) {
                                         </div>
                                     </div>
                                 </div>
-                                <MessageText 
-                                    convoID={-2} 
+                                <MessageText
+                                    convoID={-2}
                                     onCreateConversation={handleCreateConversation}
                                     isNewConversation={true}
                                 />

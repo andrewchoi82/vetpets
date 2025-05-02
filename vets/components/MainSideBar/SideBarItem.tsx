@@ -84,12 +84,12 @@ export const SideBarItem = ({
               backgroundColor: "#d9331a",
               color: "#FFFFFF",
               borderRadius: "50%",
-              width: "14px",
-              height: "14px",
+              width: "15px",
+              height: "15px",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              fontSize: "11px",
+              fontSize: "10px",
               fontWeight: "bold",
             }}
           >
