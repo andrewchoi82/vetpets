@@ -671,7 +671,6 @@ const buttonStyle = {
   cursor: "pointer",
   padding: 0,
 };
-
 // Vaccinations Table
 const VaccinationTable = ({ data }: { data: Vaccination[] }) => {
   console.log("Rendering VaccinationTable with data:", data);
@@ -852,3 +851,4 @@ const MedicalHistoryTable = ({ data }: { data: MedicalHistory[] }) => (
     </tbody>
   </table>
 );
+
