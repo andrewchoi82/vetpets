@@ -42,12 +42,8 @@ export default function AppointmentsTable({
                   style={{
                     height: "64px",
                     borderBottom: "1px solid #e5e7eb",
-                    cursor: "pointer",
-                    transition: "background-color 0.2s ease",
-                    backgroundColor: "#ffffff"
+                    cursor: "default",
                   }}
-                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "#f9fafb"}
-                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "#ffffff"}
                 >
                   <td style={{ ...baseTdStyle, paddingLeft: "16px" }}>
                     {new Date(appt.date).toLocaleDateString("en-US", {
