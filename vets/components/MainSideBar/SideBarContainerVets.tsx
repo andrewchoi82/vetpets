@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { SideBarItem } from "@/components/MainSideBar/SideBarItem";
 import { getImageUrl as getStorageImageUrl } from '@/app/lib/supabaseGetImage';
 import Cookies from 'js-cookie';
@@ -25,6 +25,9 @@ export const SideBarContainerVets = ({ selectedPage }: SideBarContainerProps) =>
   const [userData, setUserData] = useState<any>(null);
   const [isUserDataLoading, setIsUserDataLoading] = useState(true);
   const currId = Cookies.get("userId");
+  const [showProfilePopup, setShowProfilePopup] = useState(false);
+  const popupRef = useRef<HTMLDivElement>(null);
+  const profileRef = useRef<HTMLDivElement>(null);
 
   const pathToName: Record<string, string> = {
     "/vet/": "Clients",
@@ -58,11 +61,28 @@ export const SideBarContainerVets = ({ selectedPage }: SideBarContainerProps) =>
     }
   }, [currId]);
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        popupRef.current && 
+        !popupRef.current.contains(event.target as Node) &&
+        profileRef.current &&
+        !profileRef.current.contains(event.target as Node)
+      ) {
+        setShowProfilePopup(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   const menuItems: MenuItem[] = [
     { path: "/img/vet/sidebar-options/nonSelectedVersion/clients.svg", text: "Clients", href: "/vet/" },
     { path: "/img/vet/sidebar-options/nonSelectedVersion/messages.svg", text: "Messages", href: "/vet/messages", notificationCount: 2 },
     { path: "/img/vet/sidebar-options/nonSelectedVersion/calendar.svg", text: "Calendar", href: "/vet/calendar" },
-    { path: "/img/sidebar-options/nonSelectedVersion/settings.svg", text: "Settings", href: "/vet/settings" },
   ];
 
   const handleClick = (href: string, text: string): void => {
@@ -72,6 +92,25 @@ export const SideBarContainerVets = ({ selectedPage }: SideBarContainerProps) =>
     } else {
       router.push(href);
     }
+  };
+
+  const handleLogout = async () => {
+    try {
+      const res = await fetch("/api/auth/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+  
+      if (res.ok) {
+        window.location.href = "/login";
+      } else {
+        alert("Failed to log out.");
+      }
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
+  
+    setShowProfilePopup(false);
   };
 
   return (
@@ -141,7 +180,8 @@ export const SideBarContainerVets = ({ selectedPage }: SideBarContainerProps) =>
           marginTop: "auto"
         }}>
           <div
-            onClick={() => router.push("/vet/settings")}
+            onClick={() => setShowProfilePopup(!showProfilePopup)}
+            ref={profileRef}
             style={{
               width: "28px",
               height: "28px",
@@ -196,6 +236,60 @@ export const SideBarContainerVets = ({ selectedPage }: SideBarContainerProps) =>
           </div>
         </div>
       </aside>
+
+      {showProfilePopup && (
+        <div 
+          ref={popupRef}
+          style={{ 
+            position: "fixed",
+            top: "calc(100vh - 100px - 60px)",
+            left: "100px",
+            zIndex: 10,
+            width: "240px",
+            backgroundColor: "white",
+            borderRadius: "5px",
+            boxShadow: "4px 4px 4px 0px rgba(0,0,0,0.10)",
+            border: "1px solid #E5E5E5",
+            display: "flex",
+            flexDirection: "column"
+          }}
+        >
+          <div 
+            style={{ 
+              padding: "16px", 
+              display: "flex", 
+              alignItems: "center", 
+              gap: "12px",
+              cursor: "pointer"
+            }}
+            onClick={() => {
+              setShowProfilePopup(false);
+              router.push("/vet/settings");
+            }}
+          >
+            <div style={{ fontSize: "16px", color: "#374151", fontWeight: "500" }}>
+              {userData ? `${userData.firstName} ${userData.lastName}` : 'Loading...'}
+            </div>
+            <div style={{ fontSize: "14px", color: "#6B7280" }}>
+              Veterinarian
+            </div>
+          </div>
+          <div style={{ height: "1px", width: "100%", backgroundColor: "#E5E5E5" }} />
+          
+          <div 
+            style={{ 
+              padding: "12px 16px", 
+              display: "flex", 
+              alignItems: "center", 
+              gap: "12px",
+              cursor: "pointer"
+            }}
+            onClick={handleLogout}
+          >
+            <div style={{ fontSize: "16px", color: "#374151" }}>Log out</div>
+          </div>
+        </div>
+      )}
     </>
   );
 };

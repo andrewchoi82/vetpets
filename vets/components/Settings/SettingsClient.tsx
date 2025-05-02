@@ -1,5 +1,5 @@
 "use client";
-import { Header } from "@/components/MainHeader/Header";
+import { HeaderNew } from "@/components/MainHeader/HeaderNew";
 import { SideBarContainerClient } from "@/components/MainSideBar/SideBarContainerClient";
 import { useEffect, useState } from "react";
 import BasicInfoContainer from "@/components/Settings/BasicInfoContainer";
@@ -159,7 +159,7 @@ export default function SettingsClient() {
         overflowY: "auto",
         marginLeft: "120px" // Add margin to avoid overlap with the sidebar
       }}>
-        <Header title="" showSearchBar={true} />
+        <HeaderNew title="" showSearchBar={true} />
         
         {updateSuccess !== null && (
           <div 

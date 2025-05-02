@@ -1,22 +1,61 @@
 "use client";
 
-import { Header } from "@/components/MainHeader/Header";
+import { HeaderNew } from "@/components/MainHeader/HeaderNew";
 import { SideBarContainerClient } from "@/components/MainSideBar/SideBarContainerClient";
 import RecordsHeader from "@/components/HealthRecords/RecordsHeader";
 import RecordsTable from "@/components/HealthRecords/RecordsTable";
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import Cookies from "js-cookie";
 
 export default function HealthRecords() {
   const [selectedTab, setSelectedTab] = useState<"vaccinations" | "test results" | "medications" | "medical history">("vaccinations");
   const [tabChange, setTabChange] = useState(false);
+
+  const [allRecords, setAllRecords] = useState<{
+    vaccinations: any[];
+    test_results: any[];
+    medications: any[];
+    medical_history: any[];
+  }>({
+    vaccinations: [],
+    test_results: [],
+    medications: [],
+    medical_history: []
+  });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    fetchAllHealthRecords();
+  }, []); // Only fetch once when component mounts
+
+  const fetchAllHealthRecords = async () => {
     setLoading(true);
-    const timer = setTimeout(() => setLoading(false), 800); // Replace this with actual data fetch logic
-    return () => clearTimeout(timer);
-  }, [selectedTab, tabChange]);
+    try {
+      const petId = Cookies.get('petId');
+      if (!petId) throw new Error('No pet ID found');
+
+      // Fetch all types of records in parallel using API routes
+      const [vaccinationsRes, testResultsRes, medicationsRes, medicalHistoryRes] = await Promise.all([
+        fetch(`/api/vaccinations?petId=${petId}`).then(res => res.json()),
+        fetch(`/api/tests?petId=${petId}`).then(res => res.json()),
+        fetch(`/api/medications?petId=${petId}`).then(res => res.json()),
+        fetch(`/api/history?petId=${petId}`).then(res => res.json())
+      ]);
+
+      // Update state with all fetched data
+      setAllRecords({
+        vaccinations: vaccinationsRes || [],
+        test_results: testResultsRes || [],
+        medications: medicationsRes || [],
+        medical_history: medicalHistoryRes || []
+      });
+    } catch (error) {
+      console.error("Error fetching health records:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -62,6 +101,10 @@ export default function HealthRecords() {
     );
   }
 
+  // Convert selected tab to the corresponding key in allRecords
+  const selectedTabKey = selectedTab.replace(' ', '_') as keyof typeof allRecords;
+  const currentRecords = allRecords[selectedTabKey];
+
   return (
     <div style={{ display: "flex", height: "100vh", overflow: "hidden" }}>
       <SideBarContainerClient selectedPage="Health records" />
@@ -74,19 +117,34 @@ export default function HealthRecords() {
         overflowY: "auto",
         marginLeft: "120px"
       }}>
-        <Header title="" showSearchBar={true} />
+        <HeaderNew title="" showSearchBar={true} />
         <RecordsHeader
           selectedTab={selectedTab}
           setSelectedTabAction={setSelectedTab}
           tabChange={tabChange}
-          setTabChange={setTabChange}
+          setTabChange={setTabChange} // No longer needed since we fetch all data at once
         />
-        <RecordsTable
-          selectedTab={selectedTab}
-          setSelectedTabAction={setSelectedTab}
-          tabChange={tabChange}
-          setTabChange={setTabChange}
-        />
+        {currentRecords.length === 0 ? (
+          <div style={{ 
+            display: "flex", 
+            flexDirection: "column", 
+            alignItems: "center", 
+            justifyContent: "center", 
+            padding: "40px",
+            color: "#4C4C4C",
+            fontStyle: "italic"
+          }}>
+            {`No ${selectedTab} records found.`}
+          </div>
+        ) : (
+          <RecordsTable
+            selectedTab={selectedTab}
+            setSelectedTabAction={setSelectedTab}
+            tabChange={tabChange}
+            setTabChange={setTabChange} // No longer needed since we fetch all data at once
+            records={currentRecords}
+          />
+        )}
       </div>
     </div>
   );

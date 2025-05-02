@@ -203,8 +203,8 @@ export default function CreatePet() {
                     <input
                       type="pinNum"
                       placeholder="Pin Number"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
+                      value={petId}
+                      onChange={(e) => setPetId(e.target.value)}
                       className="w-full h-12 px-5 py-3.5 rounded-[10px] border border-[#DFDFDF] bg-white shadow-[0px_4px_20px_0px_rgba(0,0,0,0.03)] text-sm mb-2"
                     />
 
@@ -217,7 +217,9 @@ export default function CreatePet() {
                     </div>
                     
                     <div className="flex justify-center">
-                      <button className="w-32 h-12 px-5 py-3.5 bg-sky-800 rounded-[10px] shadow-[0px_4px_20px_0px_rgba(0,0,0,0.03)] text-white text-base font-normal cursor-pointer">
+                      <button 
+                        onClick={handleSubmitPetId}
+                        className="w-32 h-12 px-5 py-3.5 bg-sky-800 rounded-[10px] shadow-[0px_4px_20px_0px_rgba(0,0,0,0.03)] text-white text-base font-normal cursor-pointer">
                         Connect
                       </button>
                     </div>

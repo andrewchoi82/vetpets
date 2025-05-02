@@ -168,90 +168,96 @@ export default function Login() {
             Login
           </div>
 
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            style={{
-              display: "flex",
-              width: "100%",
-              height: "48px",
-              padding: "15px 20px",
-              alignItems: "center",
-              gap: "10px",
-              borderRadius: "10px",
-              border: "1px solid #DFDFDF",
-              background: "#FFF",
-              boxShadow: "0px 4px 20px 0px rgba(0, 0, 0, 0.03)",
-              marginBottom: "16px",
-              fontSize: "14px",
-            }}
-          />
+          <form onSubmit={(e) => {
+            e.preventDefault();
+            handleLogin();
+          }}>
+            <input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              style={{
+                display: "flex",
+                width: "100%",
+                height: "48px",
+                padding: "15px 20px",
+                alignItems: "center",
+                gap: "10px",
+                borderRadius: "10px",
+                border: "1px solid #DFDFDF",
+                background: "#FFF",
+                boxShadow: "0px 4px 20px 0px rgba(0, 0, 0, 0.03)",
+                marginBottom: "16px",
+                fontSize: "14px",
+              }}
+            />
 
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            style={{
-              display: "flex",
-              width: "100%",
-              height: "48px",
-              padding: "15px 20px",
-              alignItems: "center",
-              gap: "10px",
-              borderRadius: "10px",
-              border: "1px solid #DFDFDF",
-              background: "#FFF",
-              boxShadow: "0px 4px 20px 0px rgba(0, 0, 0, 0.03)",
-              fontSize: "14px",
-            }}
-          />
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              style={{
+                display: "flex",
+                width: "100%",
+                height: "48px",
+                padding: "15px 20px",
+                alignItems: "center",
+                gap: "10px",
+                borderRadius: "10px",
+                border: "1px solid #DFDFDF",
+                background: "#FFF",
+                boxShadow: "0px 4px 20px 0px rgba(0, 0, 0, 0.03)",
+                fontSize: "14px",
+              }}
+            />
 
-          <button
-            style={{
-              display: "flex",
-              width: "100%",
-              height: "32px",
-              justifyContent: "end",
-              alignItems: "top",
-              color: "#004F82",
-              background: "none",
-              border: "none",
-              fontSize: "12px",
-              cursor: "pointer",
-              padding: "10px",
-              marginBottom: "14px"
+            <button
+              type="button"
+              style={{
+                display: "flex",
+                width: "100%",
+                height: "32px",
+                justifyContent: "end",
+                alignItems: "top",
+                color: "#004F82",
+                background: "none",
+                border: "none",
+                fontSize: "12px",
+                cursor: "pointer",
+                padding: "10px",
+                marginBottom: "14px"
+              }}
+            >
+              Forgot Password?
+            </button>
 
-            }}
-          >
-            Forgot Password?
-          </button>
+            <button
+              type="submit"
+              style={{
+                display: "flex",
+                width: "100%",
+                height: "48px",
+                padding: "15px 20px",
+                justifyContent: "center",
+                alignItems: "center",
+                gap: "10px",
+                borderRadius: "10px",
+                background: "#004F82",
+                color: "white",
+                fontSize: "16px",
+                fontWeight: 500,
+                border: "none",
+                boxShadow: "0px 4px 20px 0px rgba(0, 0, 0, 0.03)",
+                cursor: "pointer",
+                marginBottom: "8px"
+              }}
+            >
+              Login
+            </button>
+          </form>
 
-          <button
-            onClick={handleLogin}
-            style={{
-              display: "flex",
-              width: "100%",
-              height: "48px",
-              padding: "15px 20px",
-              justifyContent: "center",
-              alignItems: "center",
-              gap: "10px",
-              borderRadius: "10px",
-              background: "#004F82",
-              color: "white",
-              fontSize: "16px",
-              fontWeight: 500,
-              border: "none",
-              boxShadow: "0px 4px 20px 0px rgba(0, 0, 0, 0.03)",
-              cursor: "pointer",
-              marginBottom: "8px"
-            }}
-          >
-            Login
-          </button>
           <div
             style={{
               display: "flex",

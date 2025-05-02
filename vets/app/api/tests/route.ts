@@ -3,17 +3,24 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
-  const userId = searchParams.get('petId');
-  if (!userId) return NextResponse.json({ error: 'petId is required' }, { status: 400 });
+  const petId = searchParams.get('petId');
+  if (!petId) return NextResponse.json({ error: 'petId is required' }, { status: 400 });
 
   const { data, error } = await supabase
     .from('tests')
     .select('*')
-    .eq('petId', userId)
-    .order('dateOrdered', { ascending: false });
+    .eq('petId', petId);
 
   if (error) return NextResponse.json({ error: error.message }, { status: 400 });
-  return NextResponse.json(data);
+
+  // Format dates before sending response
+  const formattedData = data.map((item: any) => ({
+    ...item,
+    dateOrdered: item.dateOrdered ? new Date(item.dateOrdered).toISOString() : null,
+    dateExpected: item.dateExpected ? new Date(item.dateExpected).toISOString() : null
+  }));
+
+  return NextResponse.json(formattedData);
 }
 
 export async function POST(req: NextRequest) {

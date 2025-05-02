@@ -1,29 +1,16 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Cookies from "js-cookie";
+import { formatDate } from "@/app/lib/dateUtils";
 
 interface BillingsTableProps {
   selectedTab: "current bills" | "payment history";
   setSelectedTabAction: (tab: "current bills" | "payment history") => void;
+  billings: any[];
 }
 
-export default function RecordsTable({ selectedTab }: BillingsTableProps) {
-  const [billings, setBillings] = useState<any[]>([]);
+export default function BillingsTable({ selectedTab, setSelectedTabAction, billings }: BillingsTableProps) {
   const petId = Cookies.get("petId") || "1";
-
-  useEffect(() => {
-    const fetchBillings = async () => {
-      try {
-        const res = await fetch(`/api/billings?petId=${petId}`);
-        const data = await res.json();
-        setBillings(data);
-      } catch (error) {
-        console.error("Failed to fetch billings:", error);
-      }
-    };
-
-    fetchBillings();
-  }, []);
 
   const filteredBillings = billings.filter(
     (bill) =>
@@ -53,11 +40,7 @@ export default function RecordsTable({ selectedTab }: BillingsTableProps) {
             return (
               <tr key={index} style={{ height: "64px", borderBottom: "1px solid #e5e5e5" }}>
                 <td style={{ ...baseTdStyle, paddingLeft: "40px" }}>
-                  {new Date(bill.date).toLocaleDateString("en-US", {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  })}
+                  {formatDate(bill.date)}
                 </td>
                 <td style={baseTdStyle}>{bill.name}</td>
                 <td style={baseTdStyle}>${bill.cost.toFixed(2)}</td>

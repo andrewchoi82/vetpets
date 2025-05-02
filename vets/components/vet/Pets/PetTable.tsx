@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from 'next/navigation';
 import { useParams } from 'next/navigation';
+import Image from 'next/image';
 
 interface PetTableProps {
   selected: string,
@@ -62,6 +63,10 @@ export default function PetTable({selected, setSelected, userId: propUserId} : P
   
   return (
     <div style={{ width: "100%" }}>
+      <div style={{ display: "flex", alignItems: "center", marginBottom: "15px", marginTop: "0px" }}>
+        <div style={{ fontSize: 25, fontWeight: 500 }}>Pet Info</div>
+        <Image src="/img/paw.svg" alt="Paw Icon" width={20} height={20} style={{ marginLeft: 9 }} />
+      </div>
       <table style={{ width: "100%", borderCollapse: "collapse" }}>
         <thead>
           <tr style={{ borderBottom: "1px solid #d1d5db" }}>

@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { SideBarItem } from "./SideBarItem";
 import { getImageUrl as getStorageImageUrl } from '@/app/lib/supabaseGetImage';
 import Cookies from 'js-cookie';
@@ -22,6 +22,12 @@ export const SideBarContainerClient = ({ selectedPage }: SideBarContainerProps) 
   const router = useRouter();
   const [isContainerHovered, setIsContainerHovered] = useState<boolean>(false);
   const [currentSelected, setCurrentSelected] = useState<string>(selectedPage);
+  const [userData, setUserData] = useState<any>(null);
+  const [isUserDataLoading, setIsUserDataLoading] = useState(true);
+  const currId = Cookies.get("userId");
+  const [showProfilePopup, setShowProfilePopup] = useState(false);
+  const popupRef = useRef<HTMLDivElement>(null);
+  const profileRef = useRef<HTMLDivElement>(null);
 
   const pathToName: Record<string, string> = {
     "/": "Dashboard",
@@ -38,18 +44,6 @@ export const SideBarContainerClient = ({ selectedPage }: SideBarContainerProps) 
       setCurrentSelected(pathToName[currentPath]);
     }
   }, []);
-
-  const topMenuItems: MenuItem[] = [
-    { path: "/img/sidebar-options/nonSelectedVersion/dashboard.svg", text: "Dashboard", href: "/" },
-    { path: "/img/sidebar-options/nonSelectedVersion/appointments.svg", text: "Appointments", href: "/client/appointments" },
-    { path: "/img/sidebar-options/nonSelectedVersion/messages.svg", text: "Messages", href: "/client/message", notificationCount: 2 },
-    { path: "/img/sidebar-options/nonSelectedVersion/health-records.svg", text: "Health Records", href: "/client/health-records" },
-    { path: "/img/sidebar-options/nonSelectedVersion/billing.svg", text: "Billings", href: "/client/billings" }
-  ];
-
-  const [userData, setUserData] = useState<any>(null);
-  const [isUserDataLoading, setIsUserDataLoading] = useState(true);
-  const currId = Cookies.get("userId");
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -68,7 +62,32 @@ export const SideBarContainerClient = ({ selectedPage }: SideBarContainerProps) 
       fetchUserData();
     }
   }, [currId]);
-  
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        popupRef.current && 
+        !popupRef.current.contains(event.target as Node) &&
+        profileRef.current &&
+        !profileRef.current.contains(event.target as Node)
+      ) {
+        setShowProfilePopup(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const topMenuItems: MenuItem[] = [
+    { path: "/img/sidebar-options/nonSelectedVersion/dashboard.svg", text: "Dashboard", href: "/" },
+    { path: "/img/sidebar-options/nonSelectedVersion/appointments.svg", text: "Appointments", href: "/client/appointments" },
+    { path: "/img/sidebar-options/nonSelectedVersion/messages.svg", text: "Messages", href: "/client/message", notificationCount: 2 },
+    { path: "/img/sidebar-options/nonSelectedVersion/health-records.svg", text: "Health Records", href: "/client/health-records" },
+    { path: "/img/sidebar-options/nonSelectedVersion/billing.svg", text: "Billings", href: "/client/billings" }
+  ];
 
   const handleClick = (href: string, text: string): void => {
     setCurrentSelected(text);
@@ -77,6 +96,25 @@ export const SideBarContainerClient = ({ selectedPage }: SideBarContainerProps) 
     } else {
       router.push(href);
     }
+  };
+
+  const handleLogout = async () => {
+    try {
+      const res = await fetch("/api/auth/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+  
+      if (res.ok) {
+        window.location.href = "/login";
+      } else {
+        alert("Failed to log out.");
+      }
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
+  
+    setShowProfilePopup(false);
   };
 
   return (
@@ -149,7 +187,8 @@ export const SideBarContainerClient = ({ selectedPage }: SideBarContainerProps) 
           marginTop: "auto"
         }}>
           <div
-            onClick={() => router.push("/client/settings")}
+            onClick={() => setShowProfilePopup(!showProfilePopup)}
+            ref={profileRef}
             style={{
               width: "28px",
               height: "28px",
@@ -175,7 +214,7 @@ export const SideBarContainerClient = ({ selectedPage }: SideBarContainerProps) 
                   width: "100%",
                   height: "100%",
                   borderRadius: "50%",
-                  backgroundColor: "#D3D3D3"   // <-- force gray
+                  backgroundColor: "#D3D3D3"
                 }}
               />
             ) : userData?.profilePic ? (
@@ -197,14 +236,85 @@ export const SideBarContainerClient = ({ selectedPage }: SideBarContainerProps) 
                   width: "100%",
                   height: "100%",
                   borderRadius: "50%",
-                  backgroundColor: "#D3D3D3"    // <-- also force gray fallback here
+                  backgroundColor: "#D3D3D3"
                 }}
               />
             )}
           </div>
-
         </div>
       </aside>
+
+      {showProfilePopup && (
+        <div 
+          ref={popupRef}
+          style={{ 
+            position: "fixed",
+            top: "calc(100vh - 100px - 60px)",
+            left: "100px",
+            zIndex: 10,
+            width: "240px",
+            backgroundColor: "white",
+            borderRadius: "5px",
+            boxShadow: "4px 4px 4px 0px rgba(0,0,0,0.10)",
+            border: "1px solid #E5E5E5",
+            display: "flex",
+            flexDirection: "column"
+          }}
+        >
+          <div 
+            style={{ 
+              padding: "16px", 
+              display: "flex", 
+              alignItems: "center", 
+              gap: "12px",
+              cursor: "pointer"
+            }}
+            onClick={() => {
+              setShowProfilePopup(false);
+              router.push("/client/settings");
+            }}
+          >
+            <div style={{ fontSize: "16px", color: "#374151", fontWeight: "500" }}>
+              {userData ? `${userData.firstName} ${userData.lastName}` : 'Loading...'}
+            </div>
+            <div style={{ fontSize: "14px", color: "#6B7280" }}>
+              Client
+            </div>
+          </div>
+          <div style={{ height: "1px", width: "100%", backgroundColor: "#E5E5E5" }} />
+          
+          <div 
+            style={{ 
+              padding: "12px 16px", 
+              display: "flex", 
+              alignItems: "center", 
+              gap: "12px",
+              cursor: "pointer"
+            }}
+            onClick={() => {
+              setShowProfilePopup(false);
+              router.push("/getpet");
+            }}
+          >
+            <div style={{ fontSize: "16px", color: "#374151" }}>Switch Pets</div>
+          </div>
+
+          <div style={{ height: "1px", width: "100%", backgroundColor: "#E5E5E5" }} />
+          
+          <div 
+            style={{ 
+              padding: "12px 16px", 
+              display: "flex", 
+              alignItems: "center", 
+              gap: "12px",
+              cursor: "pointer"
+            }}
+            onClick={handleLogout}
+          >
+            <div style={{ fontSize: "16px", color: "#374151" }}>Log out</div>
+          </div>
+        </div>
+      )}
     </>
   );
 };
