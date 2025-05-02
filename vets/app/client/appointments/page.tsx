@@ -17,6 +17,7 @@ export default function Appointments() {
   }>({ upcoming: [], past: [] });
   const [loading, setLoading] = useState(true);
   const [schedulingMode, setSchedulingMode] = useState(false);
+  const [showConfirmed, setShowConfirmed] = useState(false);
 
   const petId = 1;
 
@@ -65,19 +66,13 @@ export default function Appointments() {
   };
 
   const handleSchedule = async (newAppointment: any) => {
-    try {
-      const response = await fetch("/api/appointments", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...newAppointment, petId }),
-      });
-      if (!response.ok) throw new Error("Failed to schedule appointment");
-      setSchedulingMode(false);
-      setSelectedTab("upcoming");
-      fetchAllAppointmentData(); // Refresh all data
-    } catch (error) {
-      console.log("Error scheduling appointment:", error);
-    }
+    setSchedulingMode(false);
+    setSelectedTab(null);
+    // Force the upcoming appointments content to show even when tab is unselected
+    setAllAppointments(prev => ({
+      ...prev,
+      upcoming: [...prev.upcoming]
+    }));
   };
 
   const handleTabSelect = (tab: "upcoming" | "past") => {
@@ -165,6 +160,39 @@ export default function Appointments() {
               }}
             />
           </div>
+        ) : !selectedTab ? (
+          allAppointments.upcoming.length === 0 ? (
+            <div style={{ 
+              display: "flex", 
+              flexDirection: "column", 
+              alignItems: "center", 
+              justifyContent: "center", 
+              padding: "40px",
+              color: "#4C4C4C",
+              fontStyle: "italic"
+            }}>
+              You have no upcoming appointments.
+              <button
+                onClick={handleScheduleClick}
+                style={{
+                  marginTop: "15px",
+                  padding: "8px 16px",
+                  backgroundColor: "#004d81",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "5px",
+                  cursor: "pointer",
+                  fontSize: "14px"
+                }}
+              >
+                Schedule Appointment
+              </button>
+            </div>
+          ) : (
+            allAppointments.upcoming.map((appt) => (
+              <UpcomingAppointmentCard key={appt.apptId} appt={appt} style={{ marginTop: 35 }} />
+            ))
+          )
         ) : selectedTab === "upcoming" ? (
           currentAppointments.length === 0 ? (
             <div style={{ 
