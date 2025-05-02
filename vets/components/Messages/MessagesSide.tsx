@@ -2,6 +2,7 @@
 import Image from "next/image";
 import React, { useEffect, useState } from 'react'
 import { getImageUrl as getStorageImageUrl } from '@/app/lib/supabaseGetImage';
+import { createClient } from '@supabase/supabase-js';
 
 
 import MessageText from "./MessageText";
@@ -30,6 +31,12 @@ interface User {
     username: string | null;
     profilePic: string | null;
 }
+
+// Initialize Supabase client
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
 
 //takes in prop of the setpagestate from page.tsx of message to change which modal is rendered
 export default function MessagesSide({ setPageState }: MessageOverviewProps) {
@@ -85,12 +92,18 @@ export default function MessagesSide({ setPageState }: MessageOverviewProps) {
                 if (userCurr && userCurr.userType == 1) {
                     const res = await fetch(`/api/conversations?petId=${petId}`);
                     data = await res.json();
-                    setMessageData(data);
+                    // Sort initial data by lastMessageTime
+                    setMessageData(data.sort((a: Conversation, b: Conversation) => 
+                        new Date(b.lastMessageTime).getTime() - new Date(a.lastMessageTime).getTime()
+                    ));
                 }
                 else if (userCurr && userCurr.userType == 2) {
                     const res = await fetch(`/api/conversations/doctor?doctorId=${currId}`);
                     data = await res.json();
-                    setMessageData(data);
+                    // Sort initial data by lastMessageTime
+                    setMessageData(data.sort((a: Conversation, b: Conversation) => 
+                        new Date(b.lastMessageTime).getTime() - new Date(a.lastMessageTime).getTime()
+                    ));
 
                     // Fetch user data for each message when user is doctor
                     const userDataPromises = data.map(async (message: Conversation) => {
@@ -122,6 +135,80 @@ export default function MessagesSide({ setPageState }: MessageOverviewProps) {
                     const user = await res1.json();
                     setOtherEndUserData(user);
                 }
+
+                // Set up Supabase realtime subscription
+                const subscription = supabase
+                    .channel('conversations-changes')
+                    .on(
+                        'postgres_changes',
+                        {
+                            event: '*',
+                            schema: 'public',
+                            table: 'conversations',
+                            filter: userCurr.userType === 1 
+                                ? `petId=eq.${petId}`
+                                : `doctorId=eq.${currId}`
+                        },
+                        (payload) => {
+                            // Handle different types of changes
+                            switch (payload.eventType) {
+                                case 'INSERT':
+                                    setMessageData(prev => 
+                                        [...prev, payload.new as Conversation]
+                                            .sort((a, b) => 
+                                                new Date(b.lastMessageTime).getTime() - new Date(a.lastMessageTime).getTime()
+                                            )
+                                    );
+                                    break;
+                                case 'UPDATE':
+                                    setMessageData(prev => 
+                                        prev.map(conv => 
+                                            conv.convoId === payload.new.convoId 
+                                                ? { ...conv, ...payload.new as Conversation }
+                                                : conv
+                                        ).sort((a, b) => 
+                                            new Date(b.lastMessageTime).getTime() - new Date(a.lastMessageTime).getTime()
+                                        )
+                                    );
+                                    break;
+                                case 'DELETE':
+                                    setMessageData(prev => 
+                                        prev.filter(conv => conv.convoId !== payload.old.convoId)
+                                            .sort((a, b) => 
+                                                new Date(b.lastMessageTime).getTime() - new Date(a.lastMessageTime).getTime()
+                                            )
+                                    );
+                                    break;
+                            }
+                        }
+                    )
+                    .subscribe();
+
+                // Set up broadcast listener for conversation updates
+                const broadcastSubscription = supabase
+                    .channel('conversations-update')
+                    .on(
+                        'broadcast',
+                        { event: 'conversation-updated' },
+                        (payload) => {
+                            setMessageData(prev => 
+                                prev.map(conv => 
+                                    conv.convoId === payload.payload.convoId
+                                        ? { ...conv, lastMessageTime: payload.payload.lastMessageTime }
+                                        : conv
+                                ).sort((a, b) => 
+                                    new Date(b.lastMessageTime).getTime() - new Date(a.lastMessageTime).getTime()
+                                )
+                            );
+                        }
+                    )
+                    .subscribe();
+
+                // Return cleanup function
+                return () => {
+                    subscription.unsubscribe();
+                    broadcastSubscription.unsubscribe();
+                };
             }
             catch (error) {
                 console.error('Error fetching messages:', error);
@@ -131,7 +218,7 @@ export default function MessagesSide({ setPageState }: MessageOverviewProps) {
         };
 
         fetchMessages();
-    }, [convoNum]);
+    }, [convoNum, currId, petId]);
 
     const formatMessageDate = (dateString: string) => {
         // Parse the PostgreSQL timestamptz format

@@ -222,6 +222,17 @@ export default function MessageText({ convoID, onCreateConversation, isNewConver
                 });
 
                 if (otherEndUserData) {
+                    // First update the conversation's lastMessageTime in the database
+                    await fetch('/api/conversations/updateLastMessageTime', {
+                        method: 'PATCH',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ 
+                            convoId: convoID,
+                            lastMessageTime: new Date().toISOString()
+                        }),
+                    });
+
+                    // Then update notifications
                     await fetch('/api/conversations/addNotification', {
                         method: 'PATCH',
                         headers: { 'Content-Type': 'application/json' },
@@ -255,6 +266,17 @@ export default function MessageText({ convoID, onCreateConversation, isNewConver
                     });
 
                     if (otherEndUserData) {
+                        // First update the conversation's lastMessageTime in the database
+                        await fetch('/api/conversations/updateLastMessageTime', {
+                            method: 'PATCH',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ 
+                                convoId: convoID,
+                                lastMessageTime: new Date().toISOString()
+                            }),
+                        });
+
+                        // Then update notifications
                         await fetch('/api/conversations/addNotification', {
                             method: 'PATCH',
                             headers: { 'Content-Type': 'application/json' },
@@ -289,6 +311,17 @@ export default function MessageText({ convoID, onCreateConversation, isNewConver
                     });
 
                     if (otherEndUserData) {
+                        // First update the conversation's lastMessageTime in the database
+                        await fetch('/api/conversations/updateLastMessageTime', {
+                            method: 'PATCH',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ 
+                                convoId: convoID,
+                                lastMessageTime: new Date().toISOString()
+                            }),
+                        });
+
+                        // Then update notifications
                         await fetch('/api/conversations/addNotification', {
                             method: 'PATCH',
                             headers: { 'Content-Type': 'application/json' },
