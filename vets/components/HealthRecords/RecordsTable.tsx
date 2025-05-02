@@ -70,6 +70,10 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction, tabCha
   const [analysisLoading, setAnalysisLoading] = useState(false);
   const [analysisContent, setAnalysisContent] = useState('');
   const petId = Cookies.get("petId");
+  const [vaccinationsData, setVaccinationsData] = useState<Vaccination[]>([]);
+  const [medicationsData, setMedicationsData] = useState<Medication[]>([]);
+  const [medicalHistoryData, setMedicalHistoryData] = useState<MedicalHistory[]>([]);
+  const [testData, setTestData] = useState<TestResult[]>([]);
 
   const handleAnalysis = async (fileURL: string) => {
     try {
