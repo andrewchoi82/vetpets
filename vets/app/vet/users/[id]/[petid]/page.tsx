@@ -48,7 +48,14 @@ export default function PetHealthRecords() {
     <div style={{ display: "flex", height: "100vh", overflow: "hidden" }}>
       <SideBarContainerVets selectedPage="Clients" />
    
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", background: "#fff", overflowY: "auto" }}>
+      <div style={{ 
+        flex: 1, 
+        display: "flex", 
+        flexDirection: "column", 
+        background: "#fff", 
+        overflowY: "auto",
+        marginLeft: "120px" // Add margin to avoid overlap with the sidebar
+      }}>
         <Header title={petName ? `${petName}'s Health Records` : "Pet Health Records"} showSearchBar={true}/>
 
         <RecordsHeader 

@@ -228,6 +228,16 @@ export default function MessagesSide({ setPageState }: MessageOverviewProps) {
         <main className="w-full bg-white h-full overflow-hidden">
             <div className="flex h-full">
                 <div className="w-md h-full overflow-y-auto border-[1px] border-r border-r-[#DFDFDF] border-t-0 border-l-0 border-b-0 space-y-3 p-3">
+                    <div style={{ display: "flex", alignItems: "center", marginBottom: "15px", marginTop: "0px" }}>
+                        <div style={{ fontSize: 25, fontWeight: 500 }}>Messages</div>
+                        <Image
+                            src="/img/paw.svg"
+                            alt="Paw Icon"
+                            width={20}
+                            height={20}
+                            style={{ marginLeft: 9 }}
+                        />
+                    </div>
                     {messageData && messageData.length > 0 ? (
                         messageData.map((message, index) => (
                             <div

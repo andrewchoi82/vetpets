@@ -80,8 +80,8 @@ export default function RecordsHeader({ selectedTab, setSelectedTabAction, tabCh
     }}>
       <div style={{ display: "flex", flexDirection: "column", width: "100%", marginTop: 20, marginBottom: 20}}>
         {/* Title and paw icon */}
-        <div style={{ display: "flex", alignItems: "center" }}>
-          <div style={{ fontSize: 22, fontWeight: 500 }}>Health Records</div>
+        <div style={{ display: "flex", alignItems: "center", marginBottom: "15px", marginTop: "0px" }}>
+          <div style={{ fontSize: 25, fontWeight: 500 }}>Health Records</div>
           <Image
             src="/img/paw.svg"
             alt="Paw Icon"
@@ -99,6 +99,7 @@ export default function RecordsHeader({ selectedTab, setSelectedTabAction, tabCh
             onSelectTab={(tabValue) => {
               setSelectedTabAction(tabValue as "vaccinations" | "test results" | "medications" | "medical history");
               setTabChange(!tabChange);
+              
             }}
           />
         </div>

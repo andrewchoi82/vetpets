@@ -1,7 +1,7 @@
 "use client";
 import AppointmentsHeader from "../../../components/Appointments/AppointmentsHeader";
 import AppointmentsTable from "../../../components/Appointments/AppointmentsTable";
-import { Header } from "../../../components/MainHeader/Header";
+import { HeaderNew } from "../../../components/MainHeader/HeaderNew";
 import { supabase } from "@/app/lib/supabaseClient";
 import { useEffect, useState } from "react";
 import { SideBarContainerClient } from "../../../components/MainSideBar/SideBarContainerClient";
@@ -149,7 +149,7 @@ export default function Appointments() {
         overflowY: "auto",
         marginLeft: "120px"
       }}>
-        <Header title="" showSearchBar={true} />
+        <HeaderNew title="" showSearchBar={true} />
         <AppointmentsHeader
           selectedTab={selectedTab}
           setSelectedTab={handleTabSelect}

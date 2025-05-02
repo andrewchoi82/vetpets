@@ -203,7 +203,7 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction, tabCha
 
   return (
     <div style={{ width: "100%", minHeight: "600px" }}>
-      {onDocumentDetail ? (
+      {tabChange ? (
         <div style={{ display: 'flex', flexDirection: 'column', width: '100%', height: '100%' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', height: '100%' }}>
             {/* Left side - Test details */}
@@ -323,7 +323,7 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction, tabCha
                 setPdfUrl(fileUrl);
                 handleAnalysis(fileUrl);
                 //handleFullAnalysis(fileUrl);
-                setOnDocumentDetail(true);
+                setTabChange(true);
               }}
             />
           )}

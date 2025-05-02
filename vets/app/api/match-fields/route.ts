@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
                 "content": [
                     {
                         "type": "text",
-                        "text": "Given the following text, extract data that fit the format of the output schema. Remember all the values must be from the document. Document: " + document
+                        "text": "Given the following text, extract data that fit the format of the output schema. Remember all the values must be from the document and NOT be blank. Document: " + document
                     }
                 ]
             }
@@ -197,7 +197,7 @@ export async function POST(request: NextRequest) {
                                     },
                                     "dateExpected": {
                                         "type": "string",
-                                        "description": "Expected date of results in YYYY-MM-DD format"
+                                        "description": "Expected date of results in YYYY-MM-DD format. Must not be empty. Use dateOrdered date if not available"
                                     },
                                     "status": {
                                         "type": "string",
