@@ -63,6 +63,24 @@ interface RecordsTableProps {
   records: any[];
 }
 
+const handleDownload = async (details: string) => {
+  try {
+    const fileUrl = getFileUrl(details);
+    const response = await fetch(fileUrl);
+    const blob = await response.blob();
+    const blobUrl = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = blobUrl;
+    a.download = details;
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(blobUrl);
+    document.body.removeChild(a);
+  } catch (error) {
+    console.error('Error downloading file:', error);
+  }
+};
 
 export default function RecordsTable({ selectedTab, setSelectedTabAction, tabChange, setTabChange, records }: RecordsTableProps) {
   const [onDocumentDetail, setOnDocumentDetail] = useState(false);
@@ -85,7 +103,7 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction, tabCha
       setLoading(true);
       setError('');
       setHtmlComponent('');
-
+  
       const res = await fetch('/api/summarize-doc', {
         method: 'POST',
         headers: {
@@ -93,7 +111,7 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction, tabCha
         },
         body: JSON.stringify({ url: fileURL }),
       });
-
+  
       const data = await res.json();
       setHtmlComponent(data.summary);
     } catch (err: any) {
@@ -103,12 +121,12 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction, tabCha
       setLoading(false);
     }
   };
-
+  
   const handleFullAnalysis = async (fileURL: string) => {
     try {
       setAnalysisLoading(true);
       setAnalysisContent('');
-
+  
       const res = await fetch('/api/testing-analysis', {
         method: 'POST',
         headers: {
@@ -116,11 +134,11 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction, tabCha
         },
         body: JSON.stringify({ url: fileURL }),
       });
-
+  
       if (!res.ok) {
         throw new Error('Failed to fetch analysis');
       }
-
+  
       const data = await res.json();
       if (data.analysis) {
         setAnalysisContent(data.analysis);
@@ -133,25 +151,6 @@ export default function RecordsTable({ selectedTab, setSelectedTabAction, tabCha
       setAnalysisContent('Failed to load analysis. Please try again.');
     } finally {
       setAnalysisLoading(false);
-    }
-  };
-
-  const handleDownload = async (details: string) => {
-    try {
-      const fileUrl = getFileUrl(details);
-      const response = await fetch(fileUrl);
-      const blob = await response.blob();
-      const blobUrl = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = blobUrl;
-      a.download = details;
-      a.style.display = 'none';
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(blobUrl);
-      document.body.removeChild(a);
-    } catch (error) {
-      console.error('Error downloading file:', error);
     }
   };
 
@@ -634,7 +633,7 @@ const baseThStyle = {
   height: "64px",
   fontSize: "17px",
   fontWeight: 400,
-  fontFamily: "SF Pro",
+  fontFamily: "Inter",
   color: "#919191",
   lineHeight: "220%",
   fontStyle: "normal",
