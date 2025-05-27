@@ -11,7 +11,9 @@ import ScheduleAppointmentPage from "@/components/Appointments/ScheduleAppointme
 import TempPastAppointment from "@/components/Appointments/TempPastAppointments";
 
 export default function Appointments() {
-  const [selectedTab, setSelectedTab] = useState<"upcoming" | "past" | null>("upcoming");
+  const [selectedTab, setSelectedTab] = useState<"upcoming" | "past" | null>(
+    "upcoming"
+  );
   const [allAppointments, setAllAppointments] = useState<{
     upcoming: any[];
     past: any[];
@@ -19,7 +21,9 @@ export default function Appointments() {
   const [loading, setLoading] = useState(true);
   const [schedulingMode, setSchedulingMode] = useState(false);
   const [showConfirmed, setShowConfirmed] = useState(false);
-  const [selectedPastAppointment, setSelectedPastAppointment] = useState<any | null>(null);
+  const [selectedPastAppointment, setSelectedPastAppointment] = useState<
+    any | null
+  >(null);
 
   const petId = 1;
 
@@ -30,14 +34,19 @@ export default function Appointments() {
   const fetchAllAppointmentData = async () => {
     setLoading(true);
     try {
-      const today = new Date().toISOString().split('T')[0];
+      const today = new Date().toISOString().split("T")[0];
       const { data: allData, error } = await supabase
-        .from('appointments')
-        .select(`
+        .from("appointments")
+        .select(
+          `
           apptId,
           date,
           time,
           name,
+          clinic_name,
+          booked_for,
+          vet_name,
+          location,
           status,
           pets (
             petId,
@@ -47,14 +56,17 @@ export default function Appointments() {
               lastName
             )
           )
-        `)
-        .eq('petId', petId)
-        .order('date', { ascending: false });
+        `
+        )
+        .eq("petId", petId)
+        .order("date", { ascending: false });
 
       if (error) throw error;
 
-      const upcoming = allData.filter(appt => appt.date >= today);
-      const past = allData.filter(appt => appt.date < today);
+      const upcoming = allData.filter((appt) => appt.date >= today);
+      const past = allData.filter((appt) => appt.date < today);
+
+      console.log({ upcoming, past });
 
       setAllAppointments({ upcoming, past });
     } catch (error) {
@@ -65,11 +77,22 @@ export default function Appointments() {
   };
 
   const handleSchedule = async (newAppointment: any) => {
+    // Insert into Supabase
+    const { data, error } = await supabase
+      .from("appointments") // your Supabase table name
+      .insert([newAppointment]);
+
+    if (error) {
+      console.error("Error scheduling appointment:", error);
+      return;
+    }
+
     setSchedulingMode(false);
     setSelectedTab(null);
-    setAllAppointments(prev => ({
+
+    setAllAppointments((prev) => ({
       ...prev,
-      upcoming: [...prev.upcoming]
+      upcoming: [...prev.upcoming, newAppointment],
     }));
   };
 
@@ -88,19 +111,26 @@ export default function Appointments() {
     return (
       <div style={{ display: "flex", height: "100vh", overflow: "hidden" }}>
         <SideBarContainerClient selectedPage="Appointments" />
-        <div style={{ flex: 1, position: "relative", backgroundColor: "#f9f9f9", marginLeft: "120px" }}>
-          <div style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
+        <div
+          style={{
+            flex: 1,
+            position: "relative",
             backgroundColor: "#f9f9f9",
-            zIndex: 10
+            marginLeft: "120px",
           }}>
+          <div
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              backgroundColor: "#f9f9f9",
+              zIndex: 10,
+            }}>
             <Image
               src="/img/vetrail-logo.svg"
               alt="Loading..."
@@ -112,8 +142,12 @@ export default function Appointments() {
 
           <style jsx>{`
             @keyframes spin {
-              0% { transform: rotate(0deg); }
-              100% { transform: rotate(360deg); }
+              0% {
+                transform: rotate(0deg);
+              }
+              100% {
+                transform: rotate(360deg);
+              }
             }
           `}</style>
         </div>
@@ -126,14 +160,15 @@ export default function Appointments() {
   return (
     <div style={{ display: "flex", height: "100vh", overflow: "hidden" }}>
       <SideBarContainerClient selectedPage="Appointments" />
-      <div style={{
-        flex: 1,
-        display: "flex",
-        flexDirection: "column",
-        background: "#fff",
-        overflowY: "auto",
-        marginLeft: "120px"
-      }}>
+      <div
+        style={{
+          flex: 1,
+          display: "flex",
+          flexDirection: "column",
+          background: "#fff",
+          overflowY: "auto",
+          marginLeft: "120px",
+        }}>
         <HeaderNew title="" showSearchBar={true} />
         <AppointmentsHeader
           selectedTab={selectedTab}
@@ -153,15 +188,16 @@ export default function Appointments() {
           </div>
         ) : !selectedTab ? (
           allAppointments.upcoming.length === 0 ? (
-            <div style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-              padding: "40px",
-              color: "#4C4C4C",
-              fontStyle: "italic"
-            }}>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                padding: "40px",
+                color: "#4C4C4C",
+                fontStyle: "italic",
+              }}>
               You have no upcoming appointments.
               <button
                 onClick={handleScheduleClick}
@@ -173,28 +209,32 @@ export default function Appointments() {
                   border: "none",
                   borderRadius: "5px",
                   cursor: "pointer",
-                  fontSize: "14px"
-                }}
-              >
+                  fontSize: "14px",
+                }}>
                 Schedule Appointment
               </button>
             </div>
           ) : (
             allAppointments.upcoming.map((appt) => (
-              <UpcomingAppointmentCard key={appt.apptId} appt={appt} style={{ marginTop: 35 }} />
+              <UpcomingAppointmentCard
+                key={appt.apptId}
+                appt={appt}
+                style={{ marginTop: 35 }}
+              />
             ))
           )
         ) : selectedTab === "upcoming" ? (
           currentAppointments.length === 0 ? (
-            <div style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-              padding: "40px",
-              color: "#4C4C4C",
-              fontStyle: "italic"
-            }}>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                padding: "40px",
+                color: "#4C4C4C",
+                fontStyle: "italic",
+              }}>
               You have no upcoming appointments.
               <button
                 onClick={handleScheduleClick}
@@ -206,15 +246,18 @@ export default function Appointments() {
                   border: "none",
                   borderRadius: "5px",
                   cursor: "pointer",
-                  fontSize: "14px"
-                }}
-              >
+                  fontSize: "14px",
+                }}>
                 Schedule Appointment
               </button>
             </div>
           ) : (
             currentAppointments.map((appt) => (
-              <UpcomingAppointmentCard key={appt.apptId} appt={appt} style={{ marginTop: 35 }} />
+              <UpcomingAppointmentCard
+                key={appt.apptId}
+                appt={appt}
+                style={{ marginTop: 35 }}
+              />
             ))
           )
         ) : selectedTab === "past" ? (
@@ -224,15 +267,16 @@ export default function Appointments() {
               onClose={() => setSelectedPastAppointment(null)}
             />
           ) : currentAppointments.length === 0 ? (
-            <div style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-              padding: "40px",
-              color: "#4C4C4C",
-              fontStyle: "italic"
-            }}>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                padding: "40px",
+                color: "#4C4C4C",
+                fontStyle: "italic",
+              }}>
               You have no past appointments.
             </div>
           ) : (

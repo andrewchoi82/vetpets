@@ -3,7 +3,10 @@ import React, { useState } from "react";
 import WeekCalendar from "../Util/Calendar/WeekCalendar";
 import AppointmentConfirmation from "./AppointmentConfirmation";
 
-export default function ScheduleAppointmentPage({ onSubmit, onCancel }: {
+export default function ScheduleAppointmentPage({
+  onSubmit,
+  onCancel,
+}: {
   onSubmit: (appointment: any) => void;
   onCancel: () => void;
 }) {
@@ -14,8 +17,20 @@ export default function ScheduleAppointmentPage({ onSubmit, onCancel }: {
   const [showConfirmation, setShowConfirmation] = useState(false);
 
   const availableTimes = [
-    "9:00 am", "9:30 am", "10:00 am", "10:30 am", "11:00 am", "11:30 am",
-    "12:00 pm", "12:30 pm", "1:00 pm", "1:30 pm", "2:00 pm", "2:30 pm", "3:00 pm", "3:30 pm",
+    "9:00 am",
+    "9:30 am",
+    "10:00 am",
+    "10:30 am",
+    "11:00 am",
+    "11:30 am",
+    "12:00 pm",
+    "12:30 pm",
+    "1:00 pm",
+    "1:30 pm",
+    "2:00 pm",
+    "2:30 pm",
+    "3:00 pm",
+    "3:30 pm",
   ];
 
   const handleNext = () => {
@@ -28,10 +43,12 @@ export default function ScheduleAppointmentPage({ onSubmit, onCancel }: {
 
   const handleConfirm = () => {
     const newAppointment = {
+      petId: 1,
       date: selectedDate,
       time: selectedTime,
       name: reason,
-      notes,
+      booked_for: "Snowball",
+      vet_name: "Lee",
       status: "pending",
     };
 
@@ -53,7 +70,13 @@ export default function ScheduleAppointmentPage({ onSubmit, onCancel }: {
   }
 
   return (
-    <div style={{ padding: "0 24px", display: "flex", flexDirection: "column", gap: 20 }}>
+    <div
+      style={{
+        padding: "0 24px",
+        display: "flex",
+        flexDirection: "column",
+        gap: 20,
+      }}>
       <div
         style={{
           color: "#1f2937",
@@ -62,8 +85,7 @@ export default function ScheduleAppointmentPage({ onSubmit, onCancel }: {
           fontStyle: "normal",
           fontWeight: 500,
           lineHeight: "28px",
-        }}
-      >
+        }}>
         Schedule appointment
       </div>
 
@@ -74,9 +96,15 @@ export default function ScheduleAppointmentPage({ onSubmit, onCancel }: {
           gap: 40,
           justifyContent: "space-between",
           alignItems: "flex-start",
-        }}
-      >
-        <div style={{ display: "flex", flexDirection: "column", gap: 12, minWidth: 280, flex: 1 }}>
+        }}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 12,
+            minWidth: 280,
+            flex: 1,
+          }}>
           <label
             style={{
               color: "#919191",
@@ -85,18 +113,18 @@ export default function ScheduleAppointmentPage({ onSubmit, onCancel }: {
               fontStyle: "normal",
               fontWeight: 400,
               lineHeight: "220%",
-            }}
-          >
+            }}>
             Reason for appointment
           </label>
 
           <select
             value={reason}
             onChange={(e) => setReason(e.target.value)}
-            style={{ ...inputStyle }}
-          >
+            style={{ ...inputStyle }}>
             <option value="">Select</option>
-            <option value="Annual Check-Up & Vaccination">Annual Check-Up & Vaccination</option>
+            <option value="Annual Check-Up & Vaccination">
+              Annual Check-Up & Vaccination
+            </option>
             <option value="Vaccination">Vaccination</option>
             <option value="Injury">Injury</option>
             <option value="Other">Other</option>
@@ -110,8 +138,7 @@ export default function ScheduleAppointmentPage({ onSubmit, onCancel }: {
               fontStyle: "normal",
               fontWeight: 400,
               lineHeight: "220%",
-            }}
-          >
+            }}>
             Additional notes
           </label>
 
@@ -125,7 +152,10 @@ export default function ScheduleAppointmentPage({ onSubmit, onCancel }: {
 
         <div style={{ minWidth: 300, flex: 1 }}>
           <div style={{ display: "flex", flexDirection: "column" }}>
-            <WeekCalendar onDateSelect={setSelectedDate} onTimeSelect={setSelectedTime} />
+            <WeekCalendar
+              onDateSelect={setSelectedDate}
+              onTimeSelect={setSelectedTime}
+            />
             <div style={{ marginTop: 20, marginLeft: 120 }}>
               <button
                 style={{
@@ -137,14 +167,19 @@ export default function ScheduleAppointmentPage({ onSubmit, onCancel }: {
                   gap: 10,
                   flexShrink: 0,
                   borderRadius: 5,
-                  background: !selectedDate || !selectedTime || !reason ? "#E5E7EB" : "#004D81",
+                  background:
+                    !selectedDate || !selectedTime || !reason
+                      ? "#E5E7EB"
+                      : "#004D81",
                   color: "white",
                   border: "none",
-                  cursor: !selectedDate || !selectedTime || !reason ? "not-allowed" : "pointer",
+                  cursor:
+                    !selectedDate || !selectedTime || !reason
+                      ? "not-allowed"
+                      : "pointer",
                 }}
                 onClick={handleNext}
-                disabled={!selectedDate || !selectedTime || !reason}
-              >
+                disabled={!selectedDate || !selectedTime || !reason}>
                 Next
               </button>
             </div>
