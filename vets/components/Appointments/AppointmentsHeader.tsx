@@ -111,6 +111,7 @@ export default function AppointmentsHeader({
           whiteSpace: "nowrap",
           lineHeight: 1,
           marginBottom: "20px",
+          marginRight: "40px",
           transition: "all 0.2s ease-in-out",
         }}
         onMouseEnter={(e) => {
