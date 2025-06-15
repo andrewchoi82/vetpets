@@ -398,6 +398,7 @@ export default function MessageText({ convoID, onCreateConversation, isNewConver
                         alt="Message image"
                         width={25}
                         height={20}
+                        style={{ marginRight: 57}}
                         className="mr-3 h-auto max-w-[25px]"
                     />
                 </div>
