@@ -370,9 +370,7 @@ export default function MessagesSide({ setPageState }: MessageOverviewProps) {
                         messageData.map((message, index) => (
                             <div
                                 key={message.convoId}
-                                className={`flex flex-row justify-center items-center w-full h-[11vh] rounded-xl border-solid border-[#DFDFDF] ${index === 0 ? 'border-b-[1px]' :
-                                    'border-b-[1px]'
-                                    } ${onMessage && message.convoId === convoNum ? 'bg-[#004F82]' : 'bg-[#F2F2F2] hover:bg-gray-200'} cursor-pointer`}
+                                className={`flex flex-row justify-center items-center w-full h-[11vh] rounded-xl border-solid border-[#DFDFDF] ${onMessage && message.convoId === convoNum ? 'bg-[#004F82]' : 'bg-black/[0.03] hover:bg-black/[0.05]'} cursor-pointer`}
                                 style={{ gap: '20px' }}
                                 onClick={() => {
                                     if (onMessage) {
@@ -491,7 +489,8 @@ export default function MessagesSide({ setPageState }: MessageOverviewProps) {
                                 }
                             }}
                             data-property-1="Default"
-                            className={`w-[330px] h-[270px] flex justify-center items-center relative bg-white rounded-[20px] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.10)] border-[1px] border-dashed border-stone-900 overflow-hidden ${currUserData?.userType === 1 ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'}`}
+                            className={`w-[330px] h-[270px] flex justify-center items-center relative bg-white rounded-[20px] overflow-hidden ${currUserData?.userType === 1 ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'}`}
+                            style={{ border: '2px dashed #1C1917' }}
                         >
                             <div className="mt-3 flex flex-col justify-center items-center gap-8 text-center">
                                 <Image

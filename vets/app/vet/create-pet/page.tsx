@@ -209,7 +209,7 @@ export default function PDFTestPage() {
         <main className="w-full bg-white h-full overflow-hidden p-6">
           <div className="flex h-full">
             <div className="w-1/3 pr-4">
-              <div className="bg-white rounded-lg shadow-md p-4 mb-6">
+              <div className="bg-white rounded-lg p-4 mb-6" style={{ border: "1.3px solid #DFDFDF", borderRadius: "10px", boxShadow: "0 1px 3px rgba(0, 0, 0, 0.05)" }}>
                 <h2 className="text-xl font-semibold mb-4">Upload PDF</h2>
                 
                 <div className="mb-4">
@@ -265,7 +265,7 @@ export default function PDFTestPage() {
                   </div>
                 </div>
               </div>
-              <div className="bg-white rounded-lg shadow-md p-4">
+              <div className="bg-white rounded-lg p-4" style={{ border: "1.3px solid #DFDFDF", borderRadius: "10px", boxShadow: "0 1px 3px rgba(0, 0, 0, 0.05)" }}>
                 <h2 className="text-xl font-semibold mb-4">Recent Uploads</h2>
                 <div className="space-y-3 max-h-[400px] overflow-y-auto">
                   {uploadHistory.map((item, index) => (
@@ -294,7 +294,7 @@ export default function PDFTestPage() {
             
             <div className="w-2/3 pl-4">
               {matchedFields ? (
-                <div className="bg-white rounded-lg shadow-md p-4 h-full">
+                <div className="bg-white rounded-lg p-4 h-full">
                   <div className="flex justify-between items-center mb-4">
                     <h2 className="text-xl font-semibold">Matched Fields</h2>
                     <div className="flex gap-2">
@@ -332,7 +332,7 @@ export default function PDFTestPage() {
                   </div>
                 </div>
               ) : pdfUrl ? (
-                <div className="bg-white rounded-lg shadow-md p-4 h-full">
+                <div className="bg-white rounded-lg p-4 h-full">
                   <div className="flex justify-between items-center mb-4">
                     <h2 className="text-xl font-semibold">{file?.name}</h2>
                     <div className="text-sm text-gray-500">{file && `${(file.size / 1024).toFixed(2)} KB`}</div>
@@ -354,22 +354,12 @@ export default function PDFTestPage() {
                   </p>
                 </div>
               ) : (
-                <div className="bg-white rounded-lg shadow-md p-4 h-full flex flex-col justify-center items-center text-center">
-                  <Image
-                    src="/img/message/create.svg"
-                    alt="Upload PDF"
-                    width={80}
-                    height={80}
-                    className="mb-4 opacity-50"
-                  />
-                  <h3 className="text-xl font-medium text-gray-700 mb-2">No PDF Processed Yet</h3>
-                  <p className="text-gray-500 max-w-md">
-                    Upload a PDF file using FilePond to extract and analyze document fields automatically.
-                  </p>
-                  <div 
-                    className="h-[260px] w-[260px] flex items-center justify-center mt-4"
-                    onClick={() => Notify("success", "Upload a PDF to see matched fields")}
-                  >
+                <div className="bg-white rounded-lg p-4 h-full flex flex-col justify-center items-center text-center" style={{ border: "1.3px solid #DFDFDF", borderRadius: "10px", boxShadow: "0 1px 3px rgba(0, 0, 0, 0.05)", minHeight: "calc(600px + 2rem)" }}>
+                  <div className="transform -translate-y-4">
+                    <h3 className="text-2xl font-medium text-gray-700 mb-4">No PDF Processed Yet</h3>
+                    <p className="text-gray-500 max-w-md text-lg">
+                      Upload a PDF file using FilePond to extract and analyze document fields automatically.
+                    </p>
                   </div>
                 </div>
               )}

@@ -87,7 +87,7 @@ export default function TempPastAppointment({
                 marginBottom: 5,
               }}
             >
-              Los Angeles Vet Clinic
+              {appt.clinic_name}
             </div>
             <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}>
               <Image src="/img/appointments/cursor.svg" alt="Location" width={14} height={14} />
@@ -100,7 +100,7 @@ export default function TempPastAppointment({
                   lineHeight: "220%",
                 }}
               >
-                1544 W Slauson Ave, Los Angeles, CA 90047
+                {appt.location}
               </span>
             </div>
           </div>

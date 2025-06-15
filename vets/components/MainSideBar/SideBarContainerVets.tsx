@@ -36,6 +36,7 @@ export const SideBarContainerVets = ({ selectedPage }: SideBarContainerProps) =>
     "/vet/messages": "Messages",
     "/vet/calendar": "Calendar",
     "/vet/settings": "Settings",
+    "/vet/create-pet": "Clients",
   };
 
   useEffect(() => {
